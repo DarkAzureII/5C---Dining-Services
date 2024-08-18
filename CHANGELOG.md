@@ -2,13 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- Initial release with basic functionalities.
+
 ### Fixed
-- Various minor bug fixes.
+- N/A
 
 ## [0.1.0] - 2024-08-18
 
 ### Added
-- Initial release with basic functionalities.
+- Initial setup and project structure.
 
 ## How to Maintain the Changelog
 

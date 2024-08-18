@@ -40,7 +40,6 @@ We welcome contributions to the Dining Services App project. To ensure a smooth 
 - Variable Naming: Use camelCase for variables and functions, and PascalCase for classes.
 - Line Length: Keep lines under 80 characters.
 - Comments: Write clear and concise comments. Use JSDoc for function documentation.
-For detailed coding style rules, refer to our ESLint configuration: ESLint Configuration (adjust the link if necessary). For general ESLint documentation, see ESLint Documentation.
 
 6. **Write Tests**
 - Unit Tests: Write unit tests for all new features and bug fixes. Ensure coverage is maintained.

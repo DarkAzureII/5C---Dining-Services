@@ -17,22 +17,22 @@ We welcome contributions to the Dining Services App project. To ensure a smooth 
     For each new feature or bugfix, create a new branch from develop.
 
     Feature Branch
-    ```bash
-    git checkout develop
-    git checkout -b feature/your-feature
+        ```bash
+        git checkout develop
+        git checkout -b feature/your-feature
 
     Bugfix Branch
-    ```bash
-    git checkout develop
-    git checkout -b bugfix/your-bugfix
+        ```bash
+        git checkout develop
+        git checkout -b bugfix/your-bugfix
 
     Hotfix Branch
-    ```bash
-    git checkout main
-    git checkout -b hotfix/your-hotfix
+        ```bash
+        git checkout main
+        git checkout -b hotfix/your-hotfix
 
 
-4. **Make Your Changes**
+4. **Make Your Changes**:
     Implement your changes according to the project’s guidelines.
 
 5. **Code Style**
@@ -48,13 +48,13 @@ We welcome contributions to the Dining Services App project. To ensure a smooth 
     ```bash
     npm test
 
-7. **Commit Your Changes**
+7. **Commit Your Changes**:
 Write clear, descriptive commit messages and ensure your changes are committed to the correct branch.
     ```bash
     git add .
     git commit -m "Add feature: your-feature"
 
-8. **Push to Your Fork**
+8. **Push to Your Fork**:
 Push your branch to your forked repository on GitHub.
     ```bash
     git push origin feature/your-feature
@@ -78,13 +78,13 @@ Push your branch to your forked repository on GitHub.
 ### Reporting Issues
 If you encounter bugs or have feature requests:
 
-    1. Go to the "Issues" section of the repository.
-    2. Click on "New Issue".
-    3. Provide detailed information about the issue or feature request, including steps to reproduce and screenshots if applicable.
+1. Go to the "Issues" section of the repository.
+2. Click on "New Issue".
+3. Provide detailed information about the issue or feature request, including steps to reproduce and screenshots if applicable.
 
 ### Project Guidelines
-    - Branching: Follow the branching strategy for creating and managing branches.
-    - Releases: Refer to the changelog for information on current and past releases.
-    
+- Branching: Follow the branching strategy for creating and managing branches.
+- Releases: Refer to the changelog for information on current and past releases.
+
 Thank you for contributing to the Dining Services App!
 

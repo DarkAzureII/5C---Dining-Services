@@ -10,7 +10,7 @@ We welcome contributions to the Dining Services App project. To ensure a smooth 
 
 2. **Clone Your Fork**
    ```bash
-   git clone https://github.com/your-username/5C---dining-services.git
+   git clone https://github.com/DarkAzureII/5C---dining-services.git
    cd 5C---dining-services
 
 3. **Create a Branch**
@@ -83,8 +83,8 @@ If you encounter bugs or have feature requests:
 3. Provide detailed information about the issue or feature request, including steps to reproduce and screenshots if applicable.
 
 ### Project Guidelines
-- Branching: Follow the branching strategy for creating and managing branches.
-- Releases: Refer to the changelog for information on current and past releases.
+- Branching: Follow the [VERSION_CONTROL.md](VERSION_CONTROL.md) strategy for creating and managing branches.
+- Releases: Refer to the change[CHANGELOG.md](CHANGELOG.md) log for information on current and past releases.
 
 Thank you for contributing to the Dining Services App!
 

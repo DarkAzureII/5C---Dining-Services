@@ -41,34 +41,34 @@ We welcome contributions to the Dining Services App project. To ensure a smooth 
 - Line Length: Keep lines under 80 characters.
 - Comments: Write clear and concise comments. Use JSDoc for function documentation.
 
-6. **Write Tests**
+6. ### **Write Tests**
 - Unit Tests: Write unit tests for all new features and bug fixes. Ensure coverage is maintained.
 - Integration Tests: Test interactions between components where applicable.
 - Running Tests: Run tests locally using the following command before pushing:
     ```bash
     npm test
 
-7. **Commit Your Changes**
+7. ### **Commit Your Changes**
     Write clear, descriptive commit messages and ensure your changes are committed to the correct branch.
     ```bash
     git add .
     git commit -m "Add feature: your-feature"
 
-8. **Push to Your Fork**
+8. ### **Push to Your Fork**
     Push your branch to your forked repository on GitHub.
     ```bash
     git push origin feature/your-feature
 
-9. **Create a Pull Request**
-1. Go to the "Pull Requests" section of the original repository.
-2. Click on "New Pull Request".
-3. Select the branch you pushed from your fork and the develop branch of the main repository.
-4. Provide a descriptive title and summary of your changes.
-5. In the description, include:
-    - A summary of what was changed.
-    - Any relevant links or references.
-    - Steps to test your changes if applicable.
-6. Submit the pull request for review.
+9. ### **Create a Pull Request**
+    1. Go to the "Pull Requests" section of the original repository.
+    2. Click on "New Pull Request".
+    3. Select the branch you pushed from your fork and the develop branch of the main repository.
+    4. Provide a descriptive title and summary of your changes.
+    5. In the description, include:
+        - A summary of what was changed.
+        - Any relevant links or references.
+        - Steps to test your changes if applicable.
+    6. Submit the pull request for review.
 
 ### Code Review Process
 - Review: All pull requests will be reviewed by project maintainers.

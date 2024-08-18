@@ -84,7 +84,7 @@ If you encounter bugs or have feature requests:
 
 ### Project Guidelines
 - Branching: Follow the [VERSION_CONTROL.md](VERSION_CONTROL.md) strategy for creating and managing branches.
-- Releases: Refer to the change[CHANGELOG.md](CHANGELOG.md) log for information on current and past releases.
+- Releases: Refer to the change [CHANGELOG.md](CHANGELOG.md) log for information on current and past releases.
 
 Thank you for contributing to the Dining Services App!
 

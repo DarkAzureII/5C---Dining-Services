@@ -32,7 +32,7 @@ We welcome contributions to the Dining Services App project. To ensure a smooth 
         git checkout -b hotfix/your-hotfix
 
 
-4. **Make Your Changes**:
+4. **Make Your Changes**
     Implement your changes according to the project’s guidelines.
 
 5. **Code Style**
@@ -48,27 +48,27 @@ We welcome contributions to the Dining Services App project. To ensure a smooth 
     ```bash
     npm test
 
-7. **Commit Your Changes**:
-Write clear, descriptive commit messages and ensure your changes are committed to the correct branch.
+7. **Commit Your Changes**
+    Write clear, descriptive commit messages and ensure your changes are committed to the correct branch.
     ```bash
     git add .
     git commit -m "Add feature: your-feature"
 
-8. **Push to Your Fork**:
-Push your branch to your forked repository on GitHub.
+8. **Push to Your Fork**
+    Push your branch to your forked repository on GitHub.
     ```bash
     git push origin feature/your-feature
 
 9. **Create a Pull Request**
-    1. Go to the "Pull Requests" section of the original repository.
-    2. Click on "New Pull Request".
-    3. Select the branch you pushed from your fork and the develop branch of the main repository.
-    4. Provide a descriptive title and summary of your changes.
-    5. In the description, include:
-        - A summary of what was changed.
-        - Any relevant links or references.
-        - Steps to test your changes if applicable.
-    6. Submit the pull request for review.
+1. Go to the "Pull Requests" section of the original repository.
+2. Click on "New Pull Request".
+3. Select the branch you pushed from your fork and the develop branch of the main repository.
+4. Provide a descriptive title and summary of your changes.
+5. In the description, include:
+    - A summary of what was changed.
+    - Any relevant links or references.
+    - Steps to test your changes if applicable.
+6. Submit the pull request for review.
 
 ### Code Review Process
 - Review: All pull requests will be reviewed by project maintainers.

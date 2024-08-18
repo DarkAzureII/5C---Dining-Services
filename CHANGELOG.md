@@ -1,27 +1,36 @@
-
-### `CHANGELOG.md`
-
-```markdown
 # Changelog
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.0] - 2024-07-01
+### Fixed
+- Various minor bug fixes.
+
+## [0.1.0] - 2024-08-18
+
 ### Added
-- Initial project setup and basic functionality outline.
+- Initial release with basic functionalities.
 
-## How to Use This File
+## How to Maintain the Changelog
 
-- **Unreleased**: Contains changes that are not yet released.
-- **Version Numbers**: Follow Semantic Versioning (MAJOR.MINOR.PATCH).
-- **Date**: Indicates the release date for each version.
-- **Sections**:
-  - **Added**: New features.
-  - **Changed**: Updates to existing functionality.
-  - **Fixed**: Bug fixes.
-  - **Deprecated**: Features that are planned for removal in future releases.
-  - **Removed**: Features removed in this release.
-  - **Security**: Security updates.
+1. **Updating the Changelog**
+   - **Before Merging**: Ensure all changes are documented in the `Unreleased` section.
+   - **When Ready for Release**: Move changes from `Unreleased` to the relevant version section.
+   - **Tag Releases**: Add a new version section for each release.
 
-Make sure to update this file for each new release, documenting all notable changes in the relevant sections.
+2. **Change Types**
+   - **Added**: For new features.
+   - **Changed**: For updates or changes to existing features.
+   - **Deprecated**: For deprecated features.
+   - **Removed**: For removed features.
+   - **Fixed**: For bug fixes.
+   - **Security**: For changes that affect security.
 
+3. **Version Format**
+   - Use the format `vX.Y.Z` for versions, where `X` is the major version, `Y` is the minor version, and `Z` is the patch version.
+   - Example: `v1.0.0` for the first major release.
+
+4. **Keeping It Updated**
+   - Regularly review and update the changelog with every pull request or significant change.
+   - Ensure consistency and clarity in documenting changes.
+
+For more details on contributing and version control, refer to [CONTRIBUTING.md](CONTRIBUTING.md) and [VERSION_CONTROL.md](VERSION_CONTROL.md).

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DashBoard</title>
+    <link rel="stylesheet" href="home.css" />
+    <style>
+      .tabs {
+        display: flex;
+        background-color: transparent;
+        position: absolute;
+        top: 150px;
+        left: 250px;
+        width: 1200px;
+      }
+      .tabs button {
+        flex: 1;
+        padding: 14px 20px;
+        cursor: pointer;
+        background-color: transparent;
+        color: rgb(0, 0, 0);
+        border: none;
+        outline: none;
+        transition: background-color 0.3s, border-bottom 0.3s;
+      }
+      .tabs button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-bottom: 3px solid white;
+      }
+      .tabs button.active {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-bottom: 3px solid #007bff;
+      }
+      .tab-content {
+        padding: 20px;
+        display: none;
+        color: rgb(0, 0, 0);
+        width: 100%;
+        text-align: center;
+        position: relative; /* Changed from absolute to relative */
+        margin-top: 250px; /* Adds a gap below the tabs */
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      .full-screen-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        object-fit: cover;
+      }
+      .nav-bar {
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: white;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .nav-bar img {
+        height: 40px;
+      }
+      .nav-bar .nav-links {
+        margin-left: 20px;
+        color: #003080;
+        font-size: 18px;
+        font-weight: bold;
+        flex: 1; /* Pushes the right-aligned items towards the right */
+      }
+      .nav-bar .right-items {
+        display: flex;
+        align-items: center;
+        margin-left: auto; /* Moves the container to the far right */
+      }
+      .nav-bar .feedback-button {
+        background-color: #007bff;
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 80px; /* Adjust margin to move towards the left */
+      }
+      .nav-bar .feedback-button:hover {
+        background-color: #0056b3;
+      }
+      .nav-bar .welcome-user {
+        color: black;
+        font-size: 18px;
+        font-weight: bold;
+        margin-right: 100px; /* Adjust margin to move towards the left */
+      }
+      .nav-bar .logout-button {
+        background-color: #ffffff;
+        color: #003080;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 80px;
+      }
+      .nav-bar .logout-button:hover {
+        background-color: #c82333;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Background Image -->
+    <img
+      src="Images/wits-white.jpg"
+      alt="backgroundImage"
+      class="full-screen-image"
+    />
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+      <img src="Images/wits logo.png" alt="Wits Logo" />
+      <div class="nav-links">Dining Services</div>
+      <div class="right-items">
+        <button class="feedback-button">Feedback System</button>
+        <div class="welcome-user">Welcome</div>
+        <button class="logout-button" id="logout">Log Out</button>
+      </div>
+    </div>
+
+    <!-- Tabs for the Dashboard -->
+    <div class="tabs">
+      <button
+        class="tab-link active"
+        onclick="openTab(event, 'DiningServices')"
+      >
+        Dining Services
+      </button>
+      <button class="tab-link" onclick="openTab(event, 'menuAccess')">
+        Menu Access
+      </button>
+      <button class="tab-link" onclick="openTab(event, 'dietaryManagement')">
+        Dietary Management
+      </button>
+      <button class="tab-link" onclick="openTab(event, 'mealCredits')">
+        Meal Credits
+      </button>
+      <button class="tab-link" onclick="openTab(event, 'diningReservations')">
+        Dining Reservations
+      </button>
+    </div>
+
+    <!-- Tab Content -->
+    <div id="DiningServices" class="tab-content active">
+      <h2>Dining Services</h2>
+      <p>Content for Dining Services.</p>
+    </div>
+    <div id="menuAccess" class="tab-content">
+      <h2>Menu Access</h2>
+      <p>Content for Menu Access.</p>
+    </div>
+    <div id="dietaryManagement" class="tab-content">
+      <h2>Dietary Management</h2>
+      <p>Content for Dietary Management.</p>
+    </div>
+    <div id="mealCredits" class="tab-content">
+      <h2>Meal Credits</h2>
+      <p>Content for Meal Credits.</p>
+    </div>
+    <div id="diningReservations" class="tab-content">
+      <h2>Dining Reservations</h2>
+      <p>Content for Dining Reservations.</p>
+    </div>
+
+    <script>
+      function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+
+        // Get all tab content and hide them
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+          tabcontent[i].classList.remove("active");
+        }
+
+        // Get all tabs and remove active class
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the clicked tab's content and add active class
+        document.getElementById(tabName).style.display = "block";
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.className += " active";
+      }
+    </script>
+    <script src="auth.js"></script>
+  </body>
+</html>

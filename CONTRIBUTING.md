@@ -70,6 +70,13 @@ We welcome contributions to the Dining Services App project. To ensure a smooth 
         - Steps to test your changes if applicable.
     6. Submit the pull request for review.
 
+### Environmental Configurations
+environment-specific configurations are stored in the config/ directory.
+- config/
+├── default.json       # Default configuration
+├── production.json    # Production-specific config
+├── development.json   # Development-specific config
+
 ### Code Review Process
 - Review: All pull requests will be reviewed by project maintainers.
 - Feedback: You may receive feedback and requests for changes before your pull request is merged.

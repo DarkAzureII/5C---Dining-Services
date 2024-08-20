@@ -1,13 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dining Services</title>
-</head>
-<body>
-    <h1>Welcome to the Dining Services Subsystem</h1>
-    <h2>The Documentation</h2>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="home.css" />
+  </head>
+  <body>
+    <!-- Background Image -->
+    <img
+      src="Images/wits-white.jpg"
+      alt="backgroundImage"
+      class="full-screen-image"
+    />
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+      <img src="Images/wits logo.png" alt="Wits Logo" />
+      <div class="nav-description">Wits University</div>
+      <div class="nav-links">
+        <!-- Navigation Items... -->
+        <div class="nav-item">
+          <span>Campus Transportation</span>
+          <span class="arrow">&#x25BC;</span>
+          <div class="dropdown-content">
+            <p>
+              The Campus Navigation and Transportation App aims to enhance
+              mobility and accessibility on campus by providing detailed
+              interactive maps, real-time GPS tracking, and route optimization
+              for indoor and outdoor navigation. It integrates transportation
+              schedules and offers rental services for bikes, scooters, and
+              skateboards, with features to locate and check availability at
+              rental stations.
+            </p>
+          </div>
+        </div>
+        <div class="nav-item">
+          <span>Infrastructure Management</span>
+          <span class="arrow">&#x25BC;</span>
+          <div class="dropdown-content">
+            <p>
+              The Classroom/Venue Management App aims to streamline the process
+              of managing classroom and venue assignments, bookings, and
+              maintenance on campus. It features scheduling integration with
+              academic calendars, a room booking system, and a maintenance issue
+              reporting tool. Users can view availability through a visual
+              calendar and receive notifications for bookings and updates.
+            </p>
+          </div>
+        </div>
+        <div class="nav-item">
+          <span>Event & Activities</span>
+          <span class="arrow">&#x25BC;</span>
+          <div class="dropdown-content">
+            <p>
+              The Events and Activities App aims to coordinate and manage all
+              campus events by providing a centralized platform for event
+              creation, management, registration, ticketing (including ticket
+              verification), and notifications
+            </p>
+          </div>
+        </div>
+        <div class="nav-item">
+          <span>Campus Safety App</span>
+          <span class="arrow">&#x25BC;</span>
+          <div class="dropdown-content">
+            <p>
+              The Campus Safety App aims to enhance campus security by providing
+              tools for real-time emergency alerts, direct incident reporting,
+              and access to safety resources. The app features a user-friendly
+              dashboard for receiving alerts, reporting incidents, and accessing
+              safety information, supported by robust APIs for alert management,
+              incident reporting, notifications, and location services. Secure
+              and scalable infrastructure will ensure the platform can handle
+              reasonable volumes of real-time data, enhancing the responsiveness
+              and effectiveness of campus safety measures, thereby creating a
+              secure environment for the entire campus community. It should
+              integrate with the transport system to allow Campus Protection
+              Services to respond to incidents rapidly.
+            </p>
+          </div>
+        </div>
+        <div class="nav-item">
+          <span>Dining Services</span>
+          <span class="arrow">&#x25BC;</span>
+          <div class="dropdown-content">
+            <p>
+              The Dining Services App aims to manage campus dining facilities
+              and meal plans, providing a seamless and personalized dining
+              experience. It features real-time menu access, dietary management
+              tools, meal credit tracking, dining reservations, and a feedback
+              system. The app includes a user-friendly dashboard for viewing
+              menus, managing dietary preferences, and tracking meal credits,
+              supported by robust APIs for menu data, dietary management, meal
+              credits, reservations, and feedback
+            </p>
+          </div>
+        </div>
+        <div class="nav-item">
+          <span>Campus Tutoring</span>
+          <span class="arrow">&#x25BC;</span>
+          <div class="dropdown-content">
+            <p>
+              The Campus Tutoring App aims to enhance the academic support
+              system within the university by connecting students with qualified
+              tutors through a seamless platform. It features detailed tutor
+              profiles, an easy booking system, virtual tutoring integration,
+              resource sharing, and a feedback system. The app includes a
+              user-friendly dashboard for both students and tutors, supported by
+              robust APIs for user management, session booking, virtual
+              tutoring, resource sharing, and feedback. Secure and scalable
+              infrastructure will ensure the platform can handle reasonable
+              volumes of data, providing a reliable and efficient tutoring
+              experience for the campus community.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-signup-buttons">
+        <button class="nav-button" id="login-btn">Login</button>
+        <button class="nav-button" id="signup-btn">Signup</button>
+      </div>
+    </div>
+
+    <!-- System Description -->
+    <div class="system-description" id="system-description">
+      <h1 style="font-size: 36px">Enhancing Campus Life</h1>
+      <p style="font-size: 18px">
+        A seamless blend of technology and convenience, providing real-time
+        navigation, efficient infrastructure management, dynamic event
+        coordination, and personalized dining experiences.
+      </p>
+      <p style="font-size: 20px">Secure. Scalable. User-friendly.</p>
+      <p style="font-size: 16px">
+        All in one platform, designed for a better campus experience.
+      </p>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="container signup-container" id="signup-container">
+      <h2>Sign Up</h2>
+      <form id="signup-form">
+        <input type="email" placeholder="Email" id="signup-email" required />
+        <input
+          type="password"
+          placeholder="Password"
+          id="signup-password"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          id="signup-confirm-password"
+          required
+        />
+        <button type="submit">Sign Up</button>
+        <p id="signup-error" style="color: red"></p>
+        <!-- Error message for signup -->
+      </form>
+      <div class="already-account">
+        <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+      </div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="container login-container" id="login-container">
+      <h2>Login</h2>
+      <form id="login-form">
+        <input type="email" placeholder="Email" id="login-email" required />
+        <input
+          type="password"
+          placeholder="Password"
+          id="login-password"
+          required
+        />
+        <button type="submit">Login</button>
+        <p id="login-error" style="color: red"></p>
+        <!-- Error message for login -->
+      </form>
+      <div class="create-account">
+        <p>
+          Don't have an account?
+          <a href="#" id="show-signup">Create an account</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyBKsNbOuzzk1UxgoF3E7upOfFUXKt_KNks",
+
+        authDomain: "dining-service.firebaseapp.com",
+
+        projectId: "dining-service",
+
+        storageBucket: "dining-service.appspot.com",
+
+        messagingSenderId: "810433911925",
+
+        appId: "1:810433911925:web:a7a7306553870a6fa2ac3c",
+
+        measurementId: "G-NRZLGVCCQ7",
+      };
+      firebase.initializeApp(firebaseConfig);
+
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+      db.settings({ timestampsInSnapshots: true });
+
+      //
+      document.addEventListener("DOMContentLoaded", () => {
+        const navItems = document.querySelectorAll(".nav-item");
+
+        navItems.forEach((item) => {
+          const arrow = item.querySelector(".arrow");
+          const dropdownContent = item.querySelector(".dropdown-content");
+
+          arrow.addEventListener("click", () => {
+            // Toggle the visibility of the dropdown content
+            if (dropdownContent.style.display === "block") {
+              dropdownContent.style.display = "none";
+            } else {
+              // Hide all other dropdowns
+              navItems.forEach((otherItem) => {
+                if (otherItem !== item) {
+                  otherItem.querySelector(".dropdown-content").style.display =
+                    "none";
+                }
+              });
+              dropdownContent.style.display = "block";
+            }
+          });
+        });
+
+        // Initially hide all dropdown contents
+        navItems.forEach((item) => {
+          item.querySelector(".dropdown-content").style.display = "none";
+        });
+
+        // Hide system description on login or signup button click
+        const systemDescription = document.getElementById("system-description");
+        const loginBtn = document.getElementById("login-btn");
+        const signupBtn = document.getElementById("signup-btn");
+
+        loginBtn.addEventListener("click", () => {
+          systemDescription.style.display = "none";
+        });
+
+        signupBtn.addEventListener("click", () => {
+          systemDescription.style.display = "none";
+        });
+      });
+    </script>
+    <script src="auth.js"></script>
+    <h2>Documentation</h2>
     <ul>
         <li><a href="README.md">Project Overview</a></li>
         <li><a href="ARCHITECTURE.md">Architecture</a></li>
@@ -16,5 +269,5 @@
         <li><a href="CHANGELOG.md">Notable Changes</a></li>
         <!-- Add more links as needed -->
     </ul>
-</body>
+  </body>
 </html>

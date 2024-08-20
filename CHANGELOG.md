@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### [1.0.0] - 2024-08-20
--Initial release with basic homepage and login 
+
+### [0.2.0] - 2024-08-20
+
+### Added
+-basic homepage and login implementation
 
 ### Fixed
 - N/A

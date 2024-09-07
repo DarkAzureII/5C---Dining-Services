@@ -1,0 +1,79 @@
+/* NavBar.css */
+.nav-bar {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    justify-content: space-between;
+  }
+  
+  .nav-bar img {
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  .nav-description {
+    font-size: 14px;
+    font-weight: bold;
+    color: #003080;
+    margin-left: 10px;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .nav-button {
+    background-color: #ffffff;
+    color: #003080;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .nav-button:hover {
+    background-color: #abcaff;
+  }
+  
+  .nav-item {
+    position: relative;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .arrow {
+    margin-left: 5px;
+    font-size: 10px;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    width: 200px;
+  }
+  
+  .dropdown-content.active {
+    display: block;
+  }
+  
+  .dropdown-content p {
+    margin: 0;
+  }
+  

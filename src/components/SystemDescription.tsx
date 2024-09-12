@@ -1,16 +1,16 @@
-import './SystemDescription.css'; // Add your CSS styling here
+import React from 'react';
 
-const SystemDescription = () => {
+const SystemDescription: React.FC = () => {
   return (
-    <div className="system-description" id="system-description">
-      <h1 style={{ fontSize: '36px' }}>Enhancing Campus Life</h1>
-      <p style={{ fontSize: '18px' }}>
+    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center p-5 rounded-lg bg-transparent">
+      <h1 className="text-4xl font-bold mb-4">Enhancing Campus Life</h1>
+      <p className="text-lg mb-4">
         A seamless blend of technology and convenience, providing real-time
         navigation, efficient infrastructure management, dynamic event
         coordination, and personalized dining experiences.
       </p>
-      <p style={{ fontSize: '20px' }}>Secure. Scalable. User-friendly.</p>
-      <p style={{ fontSize: '16px' }}>
+      <p className="text-xl font-semibold mb-2">Secure. Scalable. User-friendly.</p>
+      <p className="text-base">
         All in one platform, designed for a better campus experience.
       </p>
     </div>

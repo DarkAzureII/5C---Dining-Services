@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
-import './AuthForms.css';
 
 type LoginFormProps = {
   isActive: boolean;
@@ -13,14 +12,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ isActive, onCreateAccountClick })
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/dashboard'); // Redirect to the Dashboard component
+      navigate('/dashboard');
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -31,32 +30,43 @@ const LoginForm: React.FC<LoginFormProps> = ({ isActive, onCreateAccountClick })
   };
 
   return (
-    <div className={`container login-container ${isActive ? 'active' : ''}`} id="login-container">
-      <h2>Login</h2>
-      <form id="login-form" onSubmit={handleLogin}>
+    <div className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                     bg-white bg-opacity-80 p-5 rounded-lg shadow-lg w-96 text-center z-10
+                     ${isActive ? 'block' : 'hidden'}`}>
+      <h2 className="text-2xl font-bold mb-4">Login</h2>
+      <form onSubmit={handleLogin} className="space-y-4">
         <input
           type="email"
           placeholder="Email"
-          id="login-email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           type="password"
           placeholder="Password"
-          id="login-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button type="submit">Login</button>
-        {error && <p id="login-error" style={{ color: 'red' }}>{error}</p>}
+        <button 
+          type="submit"
+          className="w-full py-2 px-4 bg-blue-900 text-white rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200"
+        >
+          Login
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
       </form>
-      <div className="create-account">
+      <div className="mt-4">
         <p>
           Don't have an account?{' '}
-          <a href="#" onClick={(e) => { e.preventDefault(); onCreateAccountClick(); }} id="show-signup">
+          <a 
+            href="#" 
+            onClick={(e) => { e.preventDefault(); onCreateAccountClick(); }}
+            className="text-blue-900 font-bold hover:underline"
+          >
             Create an account
           </a>
         </p>

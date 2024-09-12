@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { auth } from '../firebaseConfig'; // Import auth from your config file
-import { createUserWithEmailAndPassword } from 'firebase/auth'; // Correct import
+import { auth } from '../firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 type SignupFormProps = {
   isActive: boolean;
@@ -30,40 +30,53 @@ const SignupForm: React.FC<SignupFormProps> = ({ isActive, onAlreadyHaveAccountC
   };
 
   return (
-    <div className={`container signup-container ${isActive ? 'active' : ''}`} id="signup-container">
-      <h2>Sign Up</h2>
-      <form id="signup-form" onSubmit={handleSubmit}>
+    <div className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                     bg-white bg-opacity-80 p-5 rounded-lg shadow-lg w-96 text-center z-10
+                     ${isActive ? 'block' : 'hidden'}`}>
+      <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="email"
           placeholder="Email"
-          id="signup-email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           type="password"
           placeholder="Password"
-          id="signup-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           type="password"
           placeholder="Confirm Password"
-          id="signup-confirm-password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button type="submit">Sign Up</button>
-        <p id="signup-error" style={{ color: 'red' }}>{error}</p>
+        <button 
+          type="submit"
+          className="w-full py-2 px-4 bg-blue-900 text-white rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200"
+        >
+          Sign Up
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
       </form>
-      <div className="already-account">
+      <div className="mt-4">
         <p>
-          Already have an account? 
-          <a href="#" onClick={(e) => { e.preventDefault(); onAlreadyHaveAccountClick(); }} id="show-login">Login</a>
+          Already have an account?{' '}
+          <a 
+            href="#" 
+            onClick={(e) => { e.preventDefault(); onAlreadyHaveAccountClick(); }}
+            className="text-blue-900 font-bold hover:underline"
+          >
+            Login
+          </a>
         </p>
       </div>
     </div>

@@ -44,11 +44,30 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className='flex flex-col'>
       <NavBar onLoginClick={handleLoginClick} onSignupClick={handleSignupClick} onLogoClick={handleLogoClick} />
-      {!showLogin && !showSignup && <SystemDescription />}
-      {showLogin && <LoginForm isActive={showLogin} onCreateAccountClick={handleCreateAccountClick} />} {/* Pass the handler */}
-      {showSignup && <SignupForm isActive={showSignup} onAlreadyHaveAccountClick={handleAlreadyHaveAccountClick} />}
+
+      {/* Centered content container */}
+      <div className="flex-grow flex justify-center items-center px-4">
+        <div className="w-full max-w-md">
+          {!showLogin && !showSignup && <SystemDescription />}
+          {showLogin && <LoginForm isActive={showLogin} onCreateAccountClick={handleCreateAccountClick} />}
+          {showSignup && <SignupForm isActive={showSignup} onAlreadyHaveAccountClick={handleAlreadyHaveAccountClick} />}
+        </div>
+      </div>
+      
+      {/* Render heading immediately after NavBar */}
+      <div className="fixed top-[60px] left-0 w-full h-[20%] bg-[#0c0d43] text-white flex items-center z-[1000]">
+        <img src="wits-logo.png" alt="Wits Logo" className="ml-12 w-[100px] h-auto rounded-lg border-2 border-white" />
+        <h1 className="ml-5 text-xl font-bold">Smart Campus!</h1>
+      </div>
+
+      <div className="mt-[10%] w-full h-[calc(100vh-60px-20%)] flex justify-center items-center">
+        <img src="Wits-DH.jpg" alt="Main Image" className="w-full h-1/2 object-cover" />
+      </div>
+      
+
+
     </div>
   );
 };

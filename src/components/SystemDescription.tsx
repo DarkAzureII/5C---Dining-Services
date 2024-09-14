@@ -2,7 +2,7 @@ import React from 'react';
 
 const SystemDescription: React.FC = () => {
   return (
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center p-5 rounded-lg bg-transparent">
+    <div className="fixed text-white top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center p-5 rounded-lg bg-transparent">
       <h1 className="text-4xl font-bold mb-4">Enhancing Campus Life</h1>
       <p className="text-lg mb-4">
         A seamless blend of technology and convenience, providing real-time

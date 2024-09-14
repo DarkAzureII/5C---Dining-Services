@@ -30,7 +30,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ isActive, onCreateAccountClick })
   };
 
   return (
-    <div className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+    <div className={`fixed top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                      bg-white bg-opacity-80 p-5 rounded-lg shadow-lg w-96 text-center z-10
                      ${isActive ? 'block' : 'hidden'}`}>
       <h2 className="text-2xl font-bold mb-4">Login</h2>

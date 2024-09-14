@@ -4,7 +4,12 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'Wits-DH' : "url('/Wits-DH.jpg')",
+        'wits-logo' : "url('/wits-logo.png')" 
+      }
+    },
   },
   plugins: [],
 }

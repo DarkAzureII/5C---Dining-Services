@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import Menu from './Menu'; // Import the MenuAccess component
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -330,7 +331,7 @@ const Dashboard: React.FC = () => {
         {activeTab === 'menuAccess' && (
           <div>
             <h2 className="text-2xl font-bold">Menu Access</h2>
-            <p>Content for Menu Access.</p>
+            <Menu /> {/* Render the MenuAccess component */}
           </div>
         )}
         {activeTab === 'dietaryManagement' && (

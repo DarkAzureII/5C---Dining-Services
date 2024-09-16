@@ -1,63 +1,91 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../firebaseConfig";
+import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
-
-const Dashboard: React.FC = () => {
+import { onAuthStateChanged } from "firebase/auth";
+import BalanceTab from "./Balance";
+import Transaction from "./Transaction";
+import TrackUsage from "./TrackUsage";
+const MealCreditsPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("DiningServices");
+
+  // States
+
+  // Sample transactions
+  const transactions = [
+    { amount: 25.75, date: "2024-09-01" },
+    { amount: 10.0, date: "2024-09-03" },
+    { amount: 5.5, date: "2024-09-10" },
+  ];
+  const [activeTab, setActiveTab] = useState("MealCredits");
   const [searchTerm, setSearchTerm] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [feedbackSidebarVisible, setFeedbackSidebarVisible] = useState(false);
   const [userDropdownVisible, setUserDropdownVisible] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
+  // UseEffect to fetch user info
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserEmail(user.email);
+        setUserName(user.displayName); // You can also use displayName if available
       } else {
         setUserEmail(null);
+        setUserName(null);
       }
     });
+
+    // Clean up the subscription
     return () => unsubscribe();
   }, []);
 
+  // Tab switching function
   const openTab = (tabName: string) => {
     setActiveTab(tabName);
   };
 
-  const toggleFeedbackSidebar = () => {
-    setFeedbackSidebarVisible(!feedbackSidebarVisible); // Toggle feedback sidebar
-  };
-
+  // Toggle for sidebar menu
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
+  // Toggle for dropdowns
   const toggleDropdown = (dropdownName: string) => {
     setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
   };
 
+  // Logout functionality
   const handleLogoutClick = async () => {
     try {
-      await auth.signOut();
+      await auth.signOut(); // Ensure 'auth' is properly imported and configured.
       navigate("/");
     } catch (error) {
       console.error("Error signing out: ", error);
     }
   };
 
+  // Search change handler
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
+  // Toggle user dropdown
   const toggleUserDropdown = () => {
     setUserDropdownVisible(!userDropdownVisible);
   };
+
+  // Navigate to Meal Credits page
   const handleMealCreditsClick = () => {
-    navigate('/meal-credits');
+    navigate("/meal-credits");
   };
+
+  // Toggle feedback sidebar
+  const toggleFeedbackSidebar = () => {
+    setFeedbackSidebarVisible(!feedbackSidebarVisible);
+  };
+
   return (
     <div className="relative min-h-screen">
       {/* Background Image */}
@@ -98,13 +126,14 @@ const Dashboard: React.FC = () => {
           >
             Feedback System
           </button>
+
           {/* Welcome User Dropdown */}
           <div className="">
             <div
               className="text-[#a0c3ff] text-lg font-bold mr-5 cursor-pointer"
               onClick={toggleUserDropdown}
             >
-              Welcome, {userEmail || "Guest"} ▼
+              Welcome, {userName || userEmail || "Guest"} ▼
             </div>
             {/* User Dropdown Tab */}
             {userDropdownVisible && (
@@ -157,34 +186,10 @@ const Dashboard: React.FC = () => {
             </a>
             {openDropdown === "menuAccess" && (
               <ul className="list-none pt-7 pb-7 px-7 mt-10">
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#breakfast"
-                  >
-                    Breakfast
-                  </a>
-                </li>
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#lunch"
-                  >
-                    Lunch
-                  </a>
-                </li>
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#dinner"
-                  >
-                    Dinner
-                  </a>
-                </li>
+                {/* Dropdown items */}
               </ul>
             )}
           </li>
-
           {/* Dietary Management Dropdown */}
           <li className="mb-2.5">
             <a
@@ -224,14 +229,13 @@ const Dashboard: React.FC = () => {
             )}
           </li>
 
-          {/* Meal Credits Dropdown */}
+          {/* Meal Credits Button */}
           <button
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleMealCreditsClick}
           >
             Meal Credits
           </button>
-
           {/* Dining Reservations Dropdown */}
           <li className="mb-2.5">
             <a
@@ -246,17 +250,17 @@ const Dashboard: React.FC = () => {
                 <li className="mb-2.5">
                   <a
                     className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#makeReservation"
+                    href="#studentResidence"
                   >
-                    Make a Reservation
+                    Student Residence
                   </a>
                 </li>
                 <li className="mb-2.5">
                   <a
                     className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#viewReservations"
+                    href="#staffResidence"
                   >
-                    View Reservations
+                    Staff Residence
                   </a>
                 </li>
               </ul>
@@ -264,142 +268,96 @@ const Dashboard: React.FC = () => {
           </li>
         </ul>
       </div>
-
       {/* Tabs for the Dashboard */}
-      <div className="absolute top-36 left-64 flex w-3/4">
+      <div className="absolute top-36 left-64 flex w-3/4 ">
         <button
           className={`flex-1 py-3 px-5 text-black transition-all duration-300 group relative ${
-            activeTab === "menuAccess" ? "bg-transparent bg-opacity-20" : ""
+            activeTab === "Balance" ? "bg-transparent bg-opacity-20" : ""
           }`}
-          onClick={() => openTab("menuAccess")}
+          onClick={() => openTab("Balance")}
         >
-          <span className="relative z-10">Menu Access</span>
+          <span className="relative z-10">Balance</span>
           <span
             className={`absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "menuAccess" ? "w-1/2" : ""
+              activeTab === "Balance" ? "w-1/2" : ""
             }`}
           ></span>
           <span
             className={`absolute bottom-0 right-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "menuAccess" ? "w-1/2" : ""
+              activeTab === "Balance" ? "w-1/2" : ""
             }`}
           ></span>
         </button>
 
         <button
           className={`flex-1 py-3 px-5 text-black transition-all duration-300 group relative ${
-            activeTab === "dietaryManagement"
-              ? "bg-transparent bg-opacity-20"
-              : ""
+            activeTab === "Transactions" ? "bg-transparent bg-opacity-20" : ""
           }`}
-          onClick={() => openTab("dietaryManagement")}
+          onClick={() => openTab("Transactions")}
         >
-          <span className="relative z-10">Dietary Management</span>
+          <span className="relative z-10">Transactions</span>
           <span
             className={`absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "dietaryManagement" ? "w-1/2" : ""
+              activeTab === "Transactions" ? "w-1/2" : ""
             }`}
           ></span>
           <span
             className={`absolute bottom-0 right-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "dietaryManagement" ? "w-1/2" : ""
+              activeTab === "Transactions" ? "w-1/2" : ""
             }`}
           ></span>
         </button>
 
         <button
           className={`flex-1 py-3 px-5 text-black transition-all duration-300 group relative ${
-            activeTab === "mealCredits" ? "bg-transparent bg-opacity-20" : ""
+            activeTab === "TrackUsage" ? "bg-transparent bg-opacity-20" : ""
           }`}
-          onClick={() => openTab("mealCredits")}
+          onClick={() => openTab("TrackUsage")}
         >
-          <span className="relative z-10">Meal Credits</span>
+          <span className="relative z-10">Track Usage</span>
           <span
             className={`absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "mealCredits" ? "w-1/2" : ""
+              activeTab === "TrackUsage" ? "w-1/2" : ""
             }`}
           ></span>
           <span
             className={`absolute bottom-0 right-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "mealCredits" ? "w-1/2" : ""
+              activeTab === "TrackUsage" ? "w-1/2" : ""
             }`}
           ></span>
         </button>
+      </div>
+      {/* Tab Content */}
+      <div className="absolute border rounded top-64 left-64 w-3/4 p-5 text-black text-center overflow-y-auto max-h-[80vh]">
+        {activeTab === "MealCredits" && (
+          <div>
+            <h2 className="text-2xl font-bold">Meal Credits</h2>
+            <p>Track your meal credits.</p>
+          </div>
+        )}
+        {activeTab === "Balance" && <BalanceTab />}
 
-        <button
-          className={`flex-1 py-3 px-5 text-black transition-all duration-300 group relative ${
-            activeTab === "diningReservations"
-              ? "bg-transparent bg-opacity-20"
-              : ""
-          }`}
-          onClick={() => openTab("diningReservations")}
-        >
-          <span className="relative z-10">Dining Reservations</span>
-          <span
-            className={`absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "diningReservations" ? "w-1/2" : ""
-            }`}
-          ></span>
-          <span
-            className={`absolute bottom-0 right-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "diningReservations" ? "w-1/2" : ""
-            }`}
-          ></span>
-        </button>
+        {activeTab === "Transactions" && (
+          <Transaction transactions={transactions} />
+        )}
+        {activeTab === "TrackUsage" && <TrackUsage />}
       </div>
 
       {/* Feedback Sidebar */}
-      <div
-        className={`fixed top-0 right-0 w-[300px] h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-[1000] p-5 ${
-          feedbackSidebarVisible ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <button
-          className="absolute top-4 right-4 text-xl text-gray-700 hover:text-gray-900"
-          onClick={toggleFeedbackSidebar}
-        >
-          &times;
-        </button>
-        <h2>Feedback System</h2>
-        <p>Provide your feedback here.</p>
-        {/* You can add more content or a feedback form here */}
-      </div>
-
-      {/* Tab Content */}
-      <div className="absolute border rounded h-50 top-64 left-64 w-3/4 p-5 text-black text-center">
-        {activeTab === "DiningServices" && (
-          <div>
-            <h2 className="text-2xl font-bold">Dining Services</h2>
-            <p>Content for Dining Services.</p>
-          </div>
-        )}
-        {activeTab === "menuAccess" && (
-          <div>
-            <h2 className="text-2xl font-bold">Menu Access</h2>
-            <p>Content for Menu Access.</p>
-          </div>
-        )}
-        {activeTab === "dietaryManagement" && (
-          <div>
-            <h2 className="text-2xl font-bold">Dietary Management</h2>
-            <p>Content for Dietary Management.</p>
-          </div>
-        )}
-        {activeTab === "mealCredits" && (
-          <div>
-            <h2 className="text-2xl font-bold">Meal Credits</h2>
-            <p>Content for Meal Credits.</p>
-          </div>
-        )}
-        {activeTab === "diningReservations" && (
-          <div>
-            <h2 className="text-2xl font-bold">Dining Reservations</h2>
-            <p>Content for Dining Reservations.</p>
-          </div>
-        )}
-      </div>
+      {feedbackSidebarVisible && (
+        <div className="fixed right-0 top-0 w-[275px] h-full bg-[#e6f7ff] shadow-lg transition-all duration-300 z-20">
+          {/* Sidebar content */}
+          <button
+            className="absolute top-4 left-4 text-2xl bg-none border-none cursor-pointer text-gray-600"
+            onClick={toggleFeedbackSidebar}
+          >
+            &times;
+          </button>
+          {/* Feedback system content goes here */}
+        </div>
+      )}
     </div>
   );
 };
 
-export default Dashboard;
+export default MealCreditsPage;

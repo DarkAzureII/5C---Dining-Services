@@ -1,0 +1,410 @@
+/* Nav Bar Styles */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-bar .menu-button {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.nav-bar img {
+  height: 40px;
+  cursor: pointer;
+}
+
+.nav-bar .nav-links {
+  margin-left: 20px;
+  color: #0c0d43;
+  font-size: 18px;
+  font-weight: bold;
+  flex: 1; /* Pushes the right-aligned items towards the right */
+}
+
+.nav-bar .search-bar {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  margin: 0 20px; /* Adjust spacing as needed */
+  width: 400px; /* Adjust width as needed */
+}
+
+.nav-bar .right-items {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Moves the container to the far right */
+}
+
+.nav-bar .feedback-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 20px; /* Adjust margin as needed */
+}
+
+.nav-bar .feedback-button:hover {
+  background-color: #0056b3;
+}
+
+/* Welcome User Styles */
+.nav-bar .welcome-user-container {
+  position: relative;
+}
+
+.nav-bar .welcome-user {
+  color: #a0c3ff;
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 20px; /* Adjust margin as needed */
+  cursor: pointer;
+}
+
+/* User Dropdown Styles */
+.nav-bar .user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  width: 150px;
+  text-align: center;
+}
+
+.nav-bar .logout-button {
+  background-color: #ffffff;
+  color: #003080;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.nav-bar .logout-button:hover {
+  background-color: #a0c3ff;
+}
+
+/* Side Menu Styles */
+.side-menu {
+  position: fixed;
+  top: 0%;
+  left: -275px; /* Hide the menu off-screen */
+  width: 275px; /* Width of the side menu */
+  height: 100%;
+  background-color: #0c0d43;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+  transition: left 0.3s ease;
+  z-index: 2;
+}
+
+.side-menu.visible {
+  left: 0; /* Show the menu */
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 30px; /* Increased padding to move content lower */
+  margin-top: 40px; /* Moves the entire list lower */
+}
+
+.side-menu ul li {
+  margin-bottom: 10px; /* Reduced margin */
+}
+
+.side-menu ul li a {
+  display: block;
+  text-decoration: none;
+  color: white;
+  font-size: 14px; /* Reduced font size */
+  padding: 10px; /* Reduced padding inside the boxes */
+  background-color: #003080; /* Background color for the box */
+  border-radius: 6px; /* Slightly reduced corner radius */
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Smaller box shadow */
+  width: calc(100%); /* Full width of the side menu */
+  margin: 0 auto; /* Center the boxes */
+}
+
+.side-menu ul li a:hover {
+  background-color: #0056b3; /* Change background on hover */
+}
+
+.side-menu .close-menu {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 20px; /* Reduced font size */
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.side-menu .dashboard-link {
+  display: block;
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  background-color: #003080;
+  border-radius: 6px;
+  text-align: center;
+  margin: 50px auto 20px; /* Increased top margin to move it lower */
+  width: 90%; /* Adjust width if needed */
+}
+
+.side-menu .dashboard-link:hover {
+  background-color: #0056b3;
+}
+
+.side-menu .separator {
+  width: 80%;
+  height: 1px;
+  background-color: #ccc; /* Light gray line */
+  margin: 10px auto; /* Center and add spacing */
+}
+
+/* Tabs Styles */
+.tabs {
+  display: flex;
+  background-color: transparent;
+  position: absolute;
+  top: 15%; /* Adjust as needed to align with your layout */
+  left: 20%;
+  width: 70%; /* Full width to fit the layout */
+  justify-content: center; /* Center the tabs */
+}
+
+.tabs button {
+  flex: 1;
+  padding: 14px 20px;
+  cursor: pointer;
+  background-color: transparent;
+  color: rgb(0, 0, 0);
+  border: none;
+  outline: none;
+  transition: background-color 0.3s, border-bottom 0.3s;
+}
+
+.tabs button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-bottom: 3px solid white;
+}
+
+.tabs button.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-bottom: 3px solid #007bff;
+}
+
+/* Tab Content Styles */
+.tab-content {
+  padding: 20px;
+  display: none;
+  color: rgb(0, 0, 0);
+  width: 70%;
+  left: 20%;
+  top: 50px; /* Adjust if needed */
+  text-align: center;
+  position: relative;
+  margin-top: 120px; /* Increase this value if needed */
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  background-color: #007bff09;
+  height: 650px; /* Increase height as needed */
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Feedback Sidebar Styles */
+.feedback-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.feedback-sidebar.visible {
+  transform: translateX(0);
+}
+
+.close-feedback-sidebar {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  float: right;
+}
+
+.feedback-sidebar h2 {
+  margin-top: 0;
+}
+
+.feedback-sidebar p {
+  margin: 20px 0 0;
+}
+
+/* Full Screen Background Image */
+.full-screen-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Reservation Actions */
+.reservation-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f7f9fc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-action {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.reservation-action:hover {
+  background-color: #0056b3;
+  transform: translateY(-3px); /* Adds a slight pop effect on hover */
+}
+
+.reservation-action.active {
+  background-color: #0056b3;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* View Existing Reservations Styling */
+.view-reservations {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.view-reservations h3 {
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.view-reservations p {
+  font-size: 16px;
+  color: #666;
+}
+
+/* Reservation Form Styling */
+.tab-content form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 80%; /* Adjusted to keep the form within a reasonable width */
+  margin: 20px auto; /* Center the form */
+}
+
+.tab-content form label {
+  font-size: 16px;
+  margin-bottom: 8px;
+  width: 100%;
+  text-align: left;
+  color: #333;
+  font-weight: 600;
+}
+
+.tab-content form input,
+.tab-content form select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  margin-bottom: 20px;
+  background-color: #f9faff; /* Light background for form inputs */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.tab-content form input:hover,
+.tab-content form select:hover {
+  border-color: #007bff; /* Blue border on hover */
+}
+
+.tab-content form input:focus,
+.tab-content form select:focus {
+  outline: none;
+  border-color: #0056b3; /* Darker blue on focus */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2); /* Soft blue glow */
+}
+
+.tab-content form input[type="date"],
+.tab-content form input[type="time"] {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tab-content form button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds depth to the button */
+}
+
+.tab-content form button:hover {
+  background-color: #0056b3;
+  transform: translateY(-3px);
+}
+
+.tab-content form button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}

@@ -15,6 +15,7 @@ const Dashboard: React.FC = () => {
   const [userDropdownVisible, setUserDropdownVisible] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [reservationAction, setReservationAction] = useState('view');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -29,6 +30,11 @@ const Dashboard: React.FC = () => {
 
   const openTab = (tabName: string) => {
     setActiveTab(tabName);
+  };
+
+  const handleReservationAction = (action: React.SetStateAction<string>) => {
+    setReservationAction(action);
+    setOpenDropdown(null); // Close the dropdown after selection
   };
 
   const toggleFeedbackSidebar = () => {
@@ -65,7 +71,7 @@ const Dashboard: React.FC = () => {
     <div className="relative min-h-screen overflow-y-auto">
       {/* Background Image */}
       <img
-        src="wits-blue.jpg"
+        src="wits-white.jpg"
         alt="backgroundImage"
         className="fixed inset-0 w-full h-full object-cover z-0"
       /> 
@@ -221,12 +227,28 @@ const Dashboard: React.FC = () => {
             {openDropdown === "diningReservations" && (
               <ul className="list-none pt-7 pb-7 px-7 mt-10">
                 <li className="mb-2.5">
-                  <a className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                   href="#makeReservation">Make a Reservation</a>
+                <a 
+                  className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
+                  href="#makeReservation"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleReservationAction("make");
+                  }}
+                >
+                  Make a Reservation
+                </a>
                 </li>
                 <li className="mb-2.5">
-                  <a className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                   href="#viewReservations">View Reservations</a>
+                <a 
+                  className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
+                  href="#viewReservations"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleReservationAction("view");
+                  }}
+                >
+                  View Reservations
+                </a>
                 </li>
               </ul>
             )}
@@ -352,7 +374,7 @@ const Dashboard: React.FC = () => {
         {activeTab === 'diningReservations' && (
           <div>
             <h2 className="text-2xl font-bold">Dining Reservations</h2>
-            <Reservations />
+            <Reservations reservationAction={reservationAction} />
           </div>
         )}
       </div>

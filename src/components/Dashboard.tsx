@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-y-auto">
       {/* Background Image */}
       <img
         src="wits-blue.jpg"
@@ -321,7 +321,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="absolute border rounded h-50 top-64 left-64 w-3/4 p-5 text-black text-center">
+      <div className="relative grow bg-blue-400 border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-auto">
         {activeTab === 'DiningServices' && (
           <div>
             <h2 className="text-2xl font-bold">Dining Services</h2>
@@ -329,7 +329,7 @@ const Dashboard: React.FC = () => {
           </div>
         )}
         {activeTab === 'menuAccess' && (
-          <div>
+          <div className=''>
             <h2 className="text-2xl font-bold">Menu Access</h2>
             <Menu /> {/* Render the MenuAccess component */}
           </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db, auth } from "../../firebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
+import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 
 interface Account {
   name: string;
@@ -8,107 +8,82 @@ interface Account {
 }
 
 const BalanceTab: React.FC = () => {
-  const [user, setUser] = useState<any | null>(null); // `any` type can be used for user object
-  const [accounts, setAccounts] = useState<string[]>([]); // Stores account names
-  const [balances, setBalances] = useState<number[]>([]); // Stores corresponding balances
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [newAccountName, setNewAccountName] = useState("");
-  const [dropdownVisible, setDropdownVisible] = useState<number | null>(null); // To manage which account's dropdown is visible
-  const [defaultAccountIndex, setDefaultAccountIndex] = useState<number | null>(null); // Track default account
+  const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
-  // Fetch the authenticated user and their accounts
+  // Fetch current user's accounts from Firestore
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user);
-        try {
-          const userRef = db.collection("mealCredits").doc(user.email);
-          const doc = await userRef.get();
+    const fetchAccounts = async () => {
+      const currentUser = auth.currentUser;
 
-          if (doc.exists) {
-            const userData = doc.data();
-            if (userData && userData.accounts && userData.balances) {
-              setAccounts(userData.accounts); // Set accounts from Firestore
-              setBalances(userData.balances); // Set balances from Firestore
-            }
-          } else {
-            console.error("User not found in the mealCredits collection.");
-          }
-        } catch (error) {
-          console.error("Error fetching user accounts:", error);
+      if (currentUser) {
+        setUserEmail(currentUser.email);
+
+        const userDocRef = doc(db, "mealCredits", currentUser.email);
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        if (userDocSnapshot.exists()) {
+          const userData = userDocSnapshot.data();
+          setAccounts(userData.accounts || []);
         }
-      } else {
-        setUser(null);
       }
-    });
+    };
 
-    return () => unsubscribe();
+    fetchAccounts();
   }, []);
 
+  // Function to handle adding a new account
   const handleAddAccount = async () => {
-    if (!user) {
-      console.error("No user is authenticated");
-      return;
-    }
+    if (newAccountName.trim() && userEmail) {
+      const userDocRef = doc(db, "mealCredits", userEmail);
+      const userDocSnapshot = await getDoc(userDocRef);
 
-    if (newAccountName.trim()) {
-      try {
-        const userRef = db.collection("mealCredits").doc(user.email);
-        const doc = await userRef.get();
-
-        if (doc.exists) {
-          // User exists, update the accounts and balances arrays
-          const existingData = doc.data();
-          const updatedAccounts = [...existingData.accounts, newAccountName]; // Add new account
-          const updatedBalances = [...existingData.balances, 0.0]; // Add corresponding balance
-
-          // Update the document with the new accounts and balances
-          await userRef.update({
-            accounts: updatedAccounts,
-            balances: updatedBalances,
-          });
-
-          // Update local state
-          setAccounts(updatedAccounts);
-          setBalances(updatedBalances);
-        } else {
-          console.error("User not found in the mealCredits collection.");
-        }
-
-        // Clear input after adding
-        setNewAccountName("");
-      } catch (error) {
-        console.error("Error adding account:", error);
-      }
-    }
-  };
-
-  const handleDeleteAccount = async (index: number) => {
-    const updatedAccounts = accounts.filter((_, i) => i !== index);
-    const updatedBalances = balances.filter((_, i) => i !== index);
-    setAccounts(updatedAccounts);
-    setBalances(updatedBalances);
-
-    if (user) {
-      const userRef = db.collection("mealCredits").doc(user.email);
-      try {
-        await userRef.update({
-          accounts: updatedAccounts,
-          balances: updatedBalances,
+      // If user document doesn't exist, create it with the new account
+      if (!userDocSnapshot.exists()) {
+        await setDoc(userDocRef, {
+          username: userEmail,
+          accounts: [{ name: newAccountName, balance: 0.0 }]
         });
-      } catch (error) {
-        console.error("Error deleting account:", error);
+      } else {
+        // If the document exists, update the accounts array
+        await updateDoc(userDocRef, {
+          accounts: arrayUnion({ name: newAccountName, balance: 0.0 })
+        });
       }
-    }
 
-    // If the deleted account was the default, reset default
-    if (defaultAccountIndex === index) {
-      setDefaultAccountIndex(null);
+      // Update local state
+      setAccounts((prevAccounts) => [
+        ...prevAccounts,
+        { name: newAccountName, balance: 0.0 }
+      ]);
+
+      setNewAccountName(""); // Clear input after adding
     }
   };
 
-  const handleSetDefaultAccount = (index: number) => {
-    setDefaultAccountIndex(index);
-    setDropdownVisible(null); // Close dropdown after setting default
+  // Function to handle deleting an account
+  const handleDeleteAccount = async (index: number) => {
+    if (userEmail) {
+      const userDocRef = doc(db, "mealCredits", userEmail);
+
+      // Get the current document
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        const updatedAccounts = userData.accounts.filter((_: Account, i: number) => i !== index);
+
+        // Update the document with the filtered accounts array
+        await updateDoc(userDocRef, {
+          accounts: updatedAccounts
+        });
+
+        // Update local state
+        setAccounts(updatedAccounts);
+      }
+    }
   };
 
   return (
@@ -137,17 +112,14 @@ const BalanceTab: React.FC = () => {
                     &#x22EE; {/* Vertical ellipsis (three dots) */}
                   </button>
 
-                  {/* Account name with default tag */}
-                  <span className="font-semibold">
-                    {account}{" "}
-                    {defaultAccountIndex === index && <span>(Default)</span>}
-                  </span>
+                  {/* Account name */}
+                  <span className="font-semibold">{account.name}</span>
                 </div>
 
                 {/* Account balance */}
-                <span>{balances[index]?.toFixed(2)} Kudus</span>
+                <span>{account.balance.toFixed(2)} Kudus</span>
 
-                {/* Dropdown menu for options (delete, set as default) */}
+                {/* Dropdown menu for delete option */}
                 {dropdownVisible === index && (
                   <div className="absolute top-full left-0 bg-white border shadow-md rounded mt-2 w-32 z-10">
                     <button
@@ -155,12 +127,6 @@ const BalanceTab: React.FC = () => {
                       className="w-full text-left px-4 py-2 hover:bg-gray-100"
                     >
                       Delete
-                    </button>
-                    <button
-                      onClick={() => handleSetDefaultAccount(index)}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                    >
-                      Set as Default
                     </button>
                   </div>
                 )}

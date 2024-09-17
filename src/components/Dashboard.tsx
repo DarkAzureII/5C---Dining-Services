@@ -1,6 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { auth } from "../firebaseConfig";
-import { useNavigate } from "react-router-dom";
+
+import React, { useState, useEffect } from 'react';
+import { auth } from '../firebaseConfig';
+import { useNavigate } from 'react-router-dom';
+import Menu from './Menu'; // Import the MenuAccess component
+import Reservations from './Reservations';
+import DietaryManagement from './DietaryManagement';
+import Feedback from './Feedback';
+
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +17,7 @@ const Dashboard: React.FC = () => {
   const [userDropdownVisible, setUserDropdownVisible] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [reservationAction, setReservationAction] = useState('view');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -25,6 +32,11 @@ const Dashboard: React.FC = () => {
 
   const openTab = (tabName: string) => {
     setActiveTab(tabName);
+  };
+
+  const handleReservationAction = (action: React.SetStateAction<string>) => {
+    setReservationAction(action);
+    setOpenDropdown(null); // Close the dropdown after selection
   };
 
   const toggleFeedbackSidebar = () => {
@@ -59,7 +71,7 @@ const Dashboard: React.FC = () => {
     navigate('/meal-credits');
   };
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-y-auto">
       {/* Background Image */}
       <img
         src="wits-white.jpg"
@@ -244,20 +256,30 @@ const Dashboard: React.FC = () => {
             {openDropdown === "diningReservations" && (
               <ul className="list-none pt-7 pb-7 px-7 mt-10">
                 <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#makeReservation"
-                  >
-                    Make a Reservation
-                  </a>
+
+                <a 
+                  className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
+                  href="#makeReservation"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleReservationAction("make");
+                  }}
+                >
+                  Make a Reservation
+                </a>
                 </li>
                 <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#viewReservations"
-                  >
-                    View Reservations
-                  </a>
+                <a 
+                  className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
+                  href="#viewReservations"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleReservationAction("view");
+                  }}
+                >
+                  View Reservations
+                </a>
+
                 </li>
               </ul>
             )}
@@ -361,28 +383,32 @@ const Dashboard: React.FC = () => {
           &times;
         </button>
         <h2>Feedback System</h2>
-        <p>Provide your feedback here.</p>
+        <Feedback />
         {/* You can add more content or a feedback form here */}
       </div>
 
       {/* Tab Content */}
-      <div className="absolute border rounded h-50 top-64 left-64 w-3/4 p-5 text-black text-center">
-        {activeTab === "DiningServices" && (
+
+      <div className="relative grow bg-blue-400 border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-auto">
+        {activeTab === 'DiningServices' && (
+
           <div>
             <h2 className="text-2xl font-bold">Dining Services</h2>
             <p>Content for Dining Services.</p>
           </div>
         )}
-        {activeTab === "menuAccess" && (
-          <div>
+
+        {activeTab === 'menuAccess' && (
+          <div className=''>
+
             <h2 className="text-2xl font-bold">Menu Access</h2>
-            <p>Content for Menu Access.</p>
+            <Menu /> {/* Render the MenuAccess component */}
           </div>
         )}
         {activeTab === "dietaryManagement" && (
           <div>
             <h2 className="text-2xl font-bold">Dietary Management</h2>
-            <p>Content for Dietary Management.</p>
+            <DietaryManagement />
           </div>
         )}
         {activeTab === "mealCredits" && (
@@ -394,7 +420,7 @@ const Dashboard: React.FC = () => {
         {activeTab === "diningReservations" && (
           <div>
             <h2 className="text-2xl font-bold">Dining Reservations</h2>
-            <p>Content for Dining Reservations.</p>
+            <Reservations reservationAction={reservationAction} />
           </div>
         )}
       </div>

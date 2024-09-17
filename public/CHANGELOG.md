@@ -2,8 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
 
+### [1.0.0] - 2024-09-16
+
+-Added core fuctionalities
 
 ### [0.2.0] - 2024-08-20
 

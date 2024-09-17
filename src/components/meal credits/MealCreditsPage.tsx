@@ -9,6 +9,7 @@ const MealCreditsPage: React.FC = () => {
   const navigate = useNavigate();
 
   // States
+  
 
   // Sample transactions
   const transactions = [

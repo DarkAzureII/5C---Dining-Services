@@ -7,7 +7,11 @@ interface Transaction {
   date: string;
 }
 
-const Transaction: React.FC = () => {
+interface TransactionProps {
+  transactions: Transaction[];
+}
+
+const Transaction: React.FC<TransactionProps> = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +27,7 @@ const Transaction: React.FC = () => {
           setUserEmail(currentUser.email);
 
           // Use currentUser.email if that's how you reference the document in Firestore
-          const userDocRef = doc(db, "moneyOut", currentUser.email);
+          const userDocRef = doc(db, "moneyOut", currentUser.email!);
 
           const userDocSnapshot = await getDoc(userDocRef);
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { auth } from "../firebaseConfig";
-import { getDietaryPreferences, addDietaryPreference, deleteDietaryPreference, updateDietaryPreference } from "../api/dietaryAPI";
+//import { getDietaryPreferences, addDietaryPreference, deleteDietaryPreference, updateDietaryPreference } from "../api/dietaryAPI";
 
 interface DietaryPreference {
   id?: string;

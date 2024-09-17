@@ -21,7 +21,7 @@ const BalanceTab: React.FC = () => {
       if (currentUser) {
         setUserEmail(currentUser.email);
 
-        const userDocRef = doc(db, "mealCredits", currentUser.email);
+        const userDocRef = doc(db, "mealCredits", currentUser?.email || "");
         const userDocSnapshot = await getDoc(userDocRef);
 
         if (userDocSnapshot.exists()) {

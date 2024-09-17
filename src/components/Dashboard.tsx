@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { auth } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import Menu from './Menu'; // Import the MenuAccess component
+import Reservations from './Reservations';
+import DietaryManagement from './DietaryManagement';
+import Feedback from './Feedback';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -316,7 +319,7 @@ const Dashboard: React.FC = () => {
           &times;
         </button>
         <h2>Feedback System</h2>
-        <p>Provide your feedback here.</p>
+        <Feedback />
         {/* You can add more content or a feedback form here */}
       </div>
 
@@ -337,7 +340,7 @@ const Dashboard: React.FC = () => {
         {activeTab === 'dietaryManagement' && (
           <div>
             <h2 className="text-2xl font-bold">Dietary Management</h2>
-            <p>Content for Dietary Management.</p>
+            <DietaryManagement />
           </div>
         )}
         {activeTab === 'mealCredits' && (
@@ -349,7 +352,7 @@ const Dashboard: React.FC = () => {
         {activeTab === 'diningReservations' && (
           <div>
             <h2 className="text-2xl font-bold">Dining Reservations</h2>
-            <p>Content for Dining Reservations.</p>
+            <Reservations />
           </div>
         )}
       </div>

@@ -3,6 +3,8 @@ import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
 import HomePage from './components/HomePage';
 import Dashboard from './components/Dashboard';
+import OrderHistory from './components/OrderHistory';
+import ReservationHistory from './components/ReservationHistory';
 
 const App = () => {
   return (
@@ -16,6 +18,8 @@ const App = () => {
           throw new Error('Function not implemented.');
         } } />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/order-history" element={<OrderHistory />} />
+        <Route path="/reservation-history" element={<ReservationHistory />} />
       </Routes>
     </Router>
   );

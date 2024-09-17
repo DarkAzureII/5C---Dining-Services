@@ -32,7 +32,10 @@ const Menu: React.FC = () => {
             return docSnap.exists() ? docSnap.data() : null;
           })
         );
-        setBreakfastItems(breakfastItems.filter(item => item !== null));
+        setBreakfastItems(
+          breakfastItems
+            .filter((item): item is DocumentData => item !== null) // Type guard to assert non-null items
+        );
 
         // Fetch today's Lunch items
         const lunchRefs: DocumentReference<DocumentData>[] = [
@@ -47,7 +50,7 @@ const Menu: React.FC = () => {
             return docSnap.exists() ? docSnap.data() : null;
           })
         );
-        setLunchItems(lunchItems.filter(item => item !== null));
+        setLunchItems(lunchItems.filter((item): item is DocumentData => item !== null));
 
         // Fetch today's Supper items
         const supperRefs: DocumentReference<DocumentData>[] = [
@@ -62,7 +65,7 @@ const Menu: React.FC = () => {
             return docSnap.exists() ? docSnap.data() : null;
           })
         );
-        setSupperItems(supperItems.filter(item => item !== null));
+        setSupperItems(supperItems.filter((item): item is DocumentData => item !== null));
 
         // Fetch today's Side Vegetables items
         const sideVegetablesRefs: DocumentReference<DocumentData>[] = [
@@ -80,7 +83,7 @@ const Menu: React.FC = () => {
             return docSnap.exists() ? docSnap.data() : null;
           })
         );
-        setSideVegetables(sideVegetables.filter(item => item !== null));
+        setSideVegetables(sideVegetables.filter((item): item is DocumentData => item !== null));
 
         // Fetch today's Drinks items
         const drinksRefs: DocumentReference<DocumentData>[] = [
@@ -98,7 +101,7 @@ const Menu: React.FC = () => {
             return docSnap.exists() ? docSnap.data() : null;
           })
         );
-        setDrinksItems(drinksItems.filter(item => item !== null));
+        setDrinksItems(drinksItems.filter((item): item is DocumentData => item !== null));
 
         // Fetch Weekly Schedule (Breakfast, Lunch, and Supper for each day)
         const weeklyRefs: WeeklySchedule = {
@@ -242,11 +245,18 @@ const Menu: React.FC = () => {
           })
         );
 
-        const weeklyScheduleData = schedule.reduce((acc: Record<string, DocumentData[][]>, { day, mealOptions }) => {
-          acc[day] = mealOptions;
+        const weeklyScheduleData = schedule.reduce<Record<string, DocumentData[][]>>((acc, { day, mealOptions }) => {
+          // Filter out `null` values from `mealOptions` and ensure it's of type `DocumentData[][]`
+          const filteredMealOptions = mealOptions.map(mealArray =>
+            mealArray.filter((item): item is DocumentData => item !== null)
+          );
+          
+          acc[day] = filteredMealOptions;
           return acc;
         }, {});
+        
         setWeeklySchedule(weeklyScheduleData);
+        
 
         setLoading(false);
       } catch (error) {

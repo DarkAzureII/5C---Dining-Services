@@ -12,7 +12,6 @@ const firebaseMenuConfig = {
   measurementId: "G-EEKN8KL3EE"
 };
 
-
 // Initialize a separate Firebase app for menus with a unique name
 const menuApp = !getApps().some(app => app.name === "menuApp")
   ? initializeApp(firebaseMenuConfig, "menuApp")

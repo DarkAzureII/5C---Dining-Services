@@ -1,6 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { db, auth } from "../firebaseConfig"; // Assuming db is initialized Firebase Firestore instance
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore"; 
+import React, { useState, useEffect } from "react";
+import { db, auth } from "../../firebaseConfig"; // Assuming db is initialized Firebase Firestore instance
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+} from "firebase/firestore";
 
 interface DietaryPreference {
   id?: string;
@@ -11,13 +20,19 @@ interface DietaryPreference {
 }
 
 const DietaryManagement: React.FC = () => {
-  const [dietaryPreferences, setDietaryPreferences] = useState<DietaryPreference[]>([]);
+  const [dietaryPreferences, setDietaryPreferences] = useState<
+    DietaryPreference[]
+  >([]);
   const [selectedPreference, setSelectedPreference] = useState("");
   const [description, setDescription] = useState("");
   const [allergies, setAllergies] = useState("");
-  const [editingPreferenceId, setEditingPreferenceId] = useState<string | null>(null);
+  const [editingPreferenceId, setEditingPreferenceId] = useState<string | null>(
+    null
+  );
   const [message, setMessage] = useState<string | null>(null); // State to display success or error messages
-  const [messageType, setMessageType] = useState<"success" | "error" | null>(null); // Message type
+  const [messageType, setMessageType] = useState<"success" | "error" | null>(
+    null
+  ); // Message type
 
   const userId = auth.currentUser?.email || ""; // Get the current user's email
 
@@ -29,7 +44,10 @@ const DietaryManagement: React.FC = () => {
     try {
       const q = query(preferencesCollectionRef, where("userID", "==", userId)); // Only fetch preferences for the logged-in user
       const data = await getDocs(q);
-      const preferencesData = data.docs.map(doc => ({ ...doc.data(), id: doc.id })) as DietaryPreference[];
+      const preferencesData = data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as DietaryPreference[];
       setDietaryPreferences(preferencesData);
     } catch (error) {
       console.error("Error fetching preferences:", error);
@@ -102,10 +120,17 @@ const DietaryManagement: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-2 bg-white rounded-lg shadow-md" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
+    <div
+      className="container mx-auto p-2 bg-white rounded-lg shadow-md"
+      style={{ marginBottom: "1rem", marginTop: "1rem" }}
+    >
       {/* Display success or error message */}
       {message && (
-        <div className={`p-4 mb-4 text-white ${messageType === 'success' ? 'bg-green-500' : 'bg-red-500'} rounded`}>
+        <div
+          className={`p-4 mb-4 text-white ${
+            messageType === "success" ? "bg-green-500" : "bg-red-500"
+          } rounded`}
+        >
           {message}
         </div>
       )}
@@ -114,9 +139,11 @@ const DietaryManagement: React.FC = () => {
         {/* Left: Form for adding or updating preferences */}
         <div className="bg-gray-100 p-4 rounded-lg shadow-inner w-full md:w-1/2">
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Choose a preference</label>
-            <select 
-              value={selectedPreference} 
+            <label className="block text-gray-700 mb-2">
+              Choose a preference
+            </label>
+            <select
+              value={selectedPreference}
               onChange={(e) => setSelectedPreference(e.target.value)}
               className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -130,25 +157,27 @@ const DietaryManagement: React.FC = () => {
           {/* Allergies Box */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Allergies </label>
-            <textarea 
-              value={allergies} 
-              onChange={(e) => setAllergies(e.target.value)} 
+            <textarea
+              value={allergies}
+              onChange={(e) => setAllergies(e.target.value)}
               placeholder="Enter any allergies"
               className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             ></textarea>
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Description (optional)</label>
-            <textarea 
-              value={description} 
-              onChange={(e) => setDescription(e.target.value)} 
+            <label className="block text-gray-700 mb-2">
+              Description (optional)
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter any special notes or description"
               className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             ></textarea>
           </div>
 
-          <button 
+          <button
             onClick={handleAddOrUpdatePreference}
             className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
           >
@@ -163,22 +192,27 @@ const DietaryManagement: React.FC = () => {
           ) : (
             <ul>
               {dietaryPreferences.map((preference) => (
-                <li key={preference.id} className="mb-4 p-4 bg-white rounded-lg shadow-md">
+                <li
+                  key={preference.id}
+                  className="mb-4 p-4 bg-white rounded-lg shadow-md"
+                >
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="font-semibold">{preference.type}</p>
                       <p className="text-gray-600">{preference.addNotes}</p>
-                      <p className="text-gray-600">Allergies: {preference.allergens || "None"}</p>
+                      <p className="text-gray-600">
+                        Allergies: {preference.allergens || "None"}
+                      </p>
                     </div>
                     <div className="space-x-2">
-                      <button 
-                        onClick={() => handleEditPreference(preference)} 
+                      <button
+                        onClick={() => handleEditPreference(preference)}
                         className="text-blue-500 hover:underline"
                       >
                         Edit
                       </button>
-                      <button 
-                        onClick={() => handleDeletePreference(preference.id!)} 
+                      <button
+                        onClick={() => handleDeletePreference(preference.id!)}
                         className="text-red-500 hover:underline"
                       >
                         Delete
@@ -193,17 +227,6 @@ const DietaryManagement: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
 export default DietaryManagement;
-
-
-
-
-
-
-
-
-
-
-

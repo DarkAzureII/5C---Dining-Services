@@ -1,45 +1,53 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../firebaseConfig";
+import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
-import Menu from "./Menu Access/Menu"; // Import the MenuAccess component
-import DietaryManagement from "./Dietary Management/DietaryManagement";
-import Reservations from "./Dining Reservations/Reservations";
-import Feedback from "./Feedback System/Feedback";
+import { onAuthStateChanged } from "firebase/auth";
+import Feedback from "../Feedback System/Feedback";
+import Reservations from "./Reservations";
 
-const Dashboard: React.FC = () => {
+const DiningReservationsPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("menuAccess");
+  const [activeTab, setActiveTab] = useState("DiningReservations");
   const [searchTerm, setSearchTerm] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [feedbackSidebarVisible, setFeedbackSidebarVisible] = useState(false);
   const [userDropdownVisible, setUserDropdownVisible] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  // UseEffect to fetch user info
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserEmail(user.email);
+        setUserName(user.displayName);
       } else {
         setUserEmail(null);
+        setUserName(null);
       }
     });
-    return () => unsubscribe();
+    return () => unsubscribe(); // Cleanup subscription
   }, []);
-
-  const openTab = (tabName: string) => {
-    setActiveTab(tabName);
-  };
-
-  const toggleFeedbackSidebar = () => {
-    setFeedbackSidebarVisible(!feedbackSidebarVisible); // Toggle feedback sidebar
-  };
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
-  const toggleDropdown = (dropdownName: string) => {
-    setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
+  const toggleFeedbackSidebar = () => {
+    setFeedbackSidebarVisible(!feedbackSidebarVisible);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const toggleUserDropdown = () => {
+    setUserDropdownVisible(!userDropdownVisible);
+  };
+  // Tab switching function
+  const openTab = (tabName: string) => {
+    setActiveTab(tabName);
   };
 
   const handleLogoutClick = async () => {
@@ -51,18 +59,16 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const toggleUserDropdown = () => {
-    setUserDropdownVisible(!userDropdownVisible);
-  };
   const handleMealCreditsClick = () => {
     navigate("/meal-credits");
   };
+
   const handleReservationClick = () => {
     navigate("/dining-reservations"); // Route to Dining Reservations
+  };
+
+  const toggleDropdown = (dropdown: string) => {
+    setOpenDropdown(openDropdown === dropdown ? null : dropdown);
   };
 
   return (
@@ -73,7 +79,6 @@ const Dashboard: React.FC = () => {
         alt="backgroundImage"
         className="fixed inset-0 w-full h-full object-cover z-0"
       />
-
       {/* Navigation Bar */}
       <div className="flex items-center px-5 py-2 bg-transparent fixed top-0 w-full z-10 shadow-md">
         <button
@@ -106,7 +111,7 @@ const Dashboard: React.FC = () => {
             Feedback System
           </button>
           {/* Welcome User Dropdown */}
-          <div className="">
+          <div>
             <div
               className="text-[#a0c3ff] text-lg font-bold mr-5 cursor-pointer"
               onClick={toggleUserDropdown}
@@ -127,7 +132,6 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Side Menu */}
       <div
         className={`fixed top-0 ${
@@ -163,7 +167,7 @@ const Dashboard: React.FC = () => {
               Dietary Management
             </a>
             {openDropdown === "dietaryManagement" && (
-              <ul className="list-none pt-7 pb-7 px-7 mt-10">
+              <ul className="list-none pt-2">
                 <li className="mb-2.5">
                   <a
                     className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
@@ -192,7 +196,7 @@ const Dashboard: React.FC = () => {
             )}
           </li>
 
-          {/* Meal Credits Dropdown */}
+          {/* Meal Credits Button */}
           <button
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleMealCreditsClick}
@@ -200,45 +204,15 @@ const Dashboard: React.FC = () => {
             Meal Credits
           </button>
 
-          {/* Dining Reservations Dropdown */}
+          {/* Dining Reservations Button */}
           <button
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
-            onClick={handleReservationClick} // Use the new handler
+            onClick={handleReservationClick}
           >
             Dining Reservation
           </button>
         </ul>
       </div>
-
-      {/* Tabs for the Dashboard */}
-      <div className="absolute top-36 left-64 flex w-3/4">
-        {[
-          { label: "Menu Access", value: "menuAccess" },
-          { label: "Dietary Management", value: "dietaryManagement" },
-          { label: "Dining Reservations", value: "diningReservations" },
-        ].map((tab) => (
-          <button
-            key={tab.value}
-            className={`flex-1 py-3 px-5 text-black bg-transparent transition-all duration-300 group relative ${
-              activeTab === tab.value ? "bg-opacity-20" : ""
-            }`}
-            onClick={() => openTab(tab.value)}
-          >
-            <span className="relative z-10">{tab.label}</span>
-            <span
-              className={`absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-                activeTab === tab.value ? "w-1/2" : ""
-              }`}
-            ></span>
-            <span
-              className={`absolute bottom-0 right-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-                activeTab === tab.value ? "w-1/2" : ""
-              }`}
-            ></span>
-          </button>
-        ))}
-      </div>
-
       {/* Feedback Sidebar */}
       <div
         className={`fixed top-0 right-0 w-[300px] h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-[1000] p-5 ${
@@ -255,30 +229,35 @@ const Dashboard: React.FC = () => {
         <Feedback />
         {/* You can add more content or a feedback form here */}
       </div>
-
+      {/* Tabs for the Dashboard */}
+      <div className="absolute top-36 left-64 flex w-3/4 ">
+        <button
+          className={`flex-1 py-3 px-5 text-black transition-all duration-300 group relative ${
+            activeTab === "DiningReservations"
+              ? "bg-transparent bg-opacity-20"
+              : ""
+          }`}
+          onClick={() => openTab("DiningReservations")}
+        >
+          <span className="relative z-10">Dining Reservations</span>
+          <span
+            className={`absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
+              activeTab === "DiningReservations" ? "w-1/2" : ""
+            }`}
+          ></span>
+          <span
+            className={`absolute bottom-0 right-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
+              activeTab === "DiningReservations" ? "w-1/2" : ""
+            }`}
+          ></span>
+        </button>
+      </div>
       {/* Tab Content */}
-
       <div className="relative grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-auto">
-        {activeTab === "menuAccess" && (
-          <div className="">
-            <h2 className="text-2xl font-bold">Menu Access</h2>
-            <Menu /> {/* Render the MenuAccess component */}
-          </div>
-        )}
-        {activeTab === "dietaryManagement" && (
-          <div>
-            <h2 className="text-2xl font-bold">Dietary Management</h2>
-            <DietaryManagement />
-          </div>
-        )}
-        {activeTab === "diningReservations" && (
-          <div>
-            <h2 className="text-2xl font-bold">Dining Reservations</h2>
-          </div>
-        )}
+      {activeTab === "DiningReservations" && <Reservations />}
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default DiningReservationsPage;

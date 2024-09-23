@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../menuFirebaseConfig';
+import {db} from "./menuFirebaseConfig"
 import { doc, getDoc, DocumentReference, DocumentData } from 'firebase/firestore';
 
 // Define the types for weeklyRefs and weeklySchedule

@@ -1,17 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { addDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { db } from '../firebaseConfig';  // Make sure the path is correct
+import React, { useState, useEffect } from "react";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { db } from "../../firebaseConfig"; // Make sure the path is correct
 
 const Feedback: React.FC = () => {
-  const [review, setReview] = useState('');
+  const [review, setReview] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState('');
-  const [reviews, setReviews] = useState<Array<{ id: string; review: string; timestamp: Date }>>([]);
+  const [error, setError] = useState("");
+  const [reviews, setReviews] = useState<
+    Array<{ id: string; review: string; timestamp: Date }>
+  >([]);
 
   // Function to fetch reviews from Firestore
   const fetchReviews = async () => {
     try {
-      const q = query(collection(db, 'reviews'), orderBy('timestamp', 'desc'));
+      const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
       const querySnapshot = await getDocs(q);
       const fetchedReviews = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -20,7 +28,7 @@ const Feedback: React.FC = () => {
       }));
       setReviews(fetchedReviews);
     } catch (e) {
-      console.error('Error fetching reviews: ', e);
+      console.error("Error fetching reviews: ", e);
     }
   };
 
@@ -32,27 +40,27 @@ const Feedback: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (review.trim() === '') {
-      setError('Please enter your feedback before submitting.');
+    if (review.trim() === "") {
+      setError("Please enter your feedback before submitting.");
       return;
     }
 
     try {
       // Add review to Firestore
-      await addDoc(collection(db, 'reviews'), {
+      await addDoc(collection(db, "reviews"), {
         review: review,
         timestamp: new Date(),
       });
 
-      setReview('');  // Clear the input
+      setReview(""); // Clear the input
       setSubmitted(true);
-      setError('');    // Clear any error
+      setError(""); // Clear any error
 
       // Re-fetch reviews after submitting a new one
       fetchReviews();
     } catch (e) {
-      console.error('Error adding review: ', e);
-      setError('Error submitting feedback. Please try again.');
+      console.error("Error adding review: ", e);
+      setError("Error submitting feedback. Please try again.");
     }
   };
 
@@ -61,7 +69,9 @@ const Feedback: React.FC = () => {
       <h2 className="text-2xl font-bold mb-4">Submit Feedback</h2>
 
       {submitted ? (
-        <p className="text-green-600 font-semibold">Thank you for your feedback!</p>
+        <p className="text-green-600 font-semibold">
+          Thank you for your feedback!
+        </p>
       ) : (
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -94,7 +104,10 @@ const Feedback: React.FC = () => {
         {reviews.length > 0 ? (
           <ul>
             {reviews.map((review) => (
-              <li key={review.id} className="mb-4 p-4 bg-white shadow rounded-lg">
+              <li
+                key={review.id}
+                className="mb-4 p-4 bg-white shadow rounded-lg"
+              >
                 <p className="text-gray-800">{review.review}</p>
                 <p className="text-sm text-gray-500">
                   {new Date(review.timestamp).toLocaleString()}
@@ -111,4 +124,3 @@ const Feedback: React.FC = () => {
 };
 
 export default Feedback;
-

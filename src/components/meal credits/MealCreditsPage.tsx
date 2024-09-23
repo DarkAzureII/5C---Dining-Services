@@ -9,7 +9,6 @@ const MealCreditsPage: React.FC = () => {
   const navigate = useNavigate();
 
   // States
-  
 
   // Sample transactions
   const transactions = [
@@ -17,7 +16,7 @@ const MealCreditsPage: React.FC = () => {
     { amount: 10.0, date: "2024-09-03" },
     { amount: 5.5, date: "2024-09-10" },
   ];
-  const [activeTab, setActiveTab] = useState("MealCredits");
+  const [activeTab, setActiveTab] = useState("Balance");
   const [searchTerm, setSearchTerm] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [feedbackSidebarVisible, setFeedbackSidebarVisible] = useState(false);
@@ -80,6 +79,12 @@ const MealCreditsPage: React.FC = () => {
   // Navigate to Meal Credits page
   const handleMealCreditsClick = () => {
     navigate("/meal-credits");
+  };
+  const handleReservationClick = () => {
+    navigate("/dining-reservations"); // Route to Dining Reservations
+  };
+  const handleDietaryClick = () => {
+    navigate("/dietary-management"); // Route to Dietary Management
   };
 
   // Toggle feedback sidebar
@@ -176,59 +181,12 @@ const MealCreditsPage: React.FC = () => {
         <div className="w-4/5 h-px bg-gray-300 my-2.5 mx-auto"></div>
 
         <ul className="list-none pt-7 pb-7 px-7 mt-10">
-          {/* Menu Access Dropdown */}
-          <li className="mb-2.5">
-            <a
-              className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-              href="#menuAccess"
-              onClick={() => toggleDropdown("menuAccess")}
-            >
-              Menu Access
-            </a>
-            {openDropdown === "menuAccess" && (
-              <ul className="list-none pt-7 pb-7 px-7 mt-10">
-                {/* Dropdown items */}
-              </ul>
-            )}
-          </li>
           {/* Dietary Management Dropdown */}
-          <li className="mb-2.5">
-            <a
-              className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-              href="#dietaryManagement"
-              onClick={() => toggleDropdown("dietaryManagement")}
-            >
-              Dietary Management
-            </a>
-            {openDropdown === "dietaryManagement" && (
-              <ul className="list-none pt-7 pb-7 px-7 mt-10">
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#vegan"
-                  >
-                    Vegan
-                  </a>
-                </li>
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#glutenFree"
-                  >
-                    Gluten-Free
-                  </a>
-                </li>
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#halal"
-                  >
-                    Halal
-                  </a>
-                </li>
-              </ul>
-            )}
-          </li>
+          <button
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
+            onClick={handleDietaryClick}
+          >Dietary Management
+          </button>
 
           {/* Meal Credits Button */}
           <button
@@ -237,36 +195,13 @@ const MealCreditsPage: React.FC = () => {
           >
             Meal Credits
           </button>
-          {/* Dining Reservations Dropdown */}
-          <li className="mb-2.5">
-            <a
-              className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-              href="#diningReservations"
-              onClick={() => toggleDropdown("diningReservations")}
-            >
-              Dining Reservations
-            </a>
-            {openDropdown === "diningReservations" && (
-              <ul className="list-none pt-7 pb-7 px-7 mt-10">
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#studentResidence"
-                  >
-                    Student Residence
-                  </a>
-                </li>
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#staffResidence"
-                  >
-                    Staff Residence
-                  </a>
-                </li>
-              </ul>
-            )}
-          </li>
+         {/* Dining Reservations Dropdown */}
+         <button
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
+            onClick={handleReservationClick} // Use the new handler
+          >
+            Dining Reservation
+          </button>
         </ul>
       </div>
       {/* Tabs for the Dashboard */}
@@ -330,12 +265,12 @@ const MealCreditsPage: React.FC = () => {
       </div>
       {/* Tab Content */}
       <div className="absolute border rounded top-64 left-64 w-3/4 p-5 text-black text-center overflow-y-auto max-h-[80vh]">
-        {activeTab === "MealCredits" && (
+        {/* {activeTab === "MealCredits" && (
           <div>
             <h2 className="text-2xl font-bold">Meal Credits</h2>
             <p>Track your meal credits.</p>
           </div>
-        )}
+        )} */}
         {activeTab === "Balance" && <BalanceTab />}
 
         {activeTab === "Transactions" && (
@@ -357,6 +292,7 @@ const MealCreditsPage: React.FC = () => {
           {/* Feedback system content goes here */}
         </div>
       )}
+      
     </div>
   );
 };

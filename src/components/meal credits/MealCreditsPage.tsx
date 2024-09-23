@@ -83,6 +83,9 @@ const MealCreditsPage: React.FC = () => {
   const handleReservationClick = () => {
     navigate("/dining-reservations"); // Route to Dining Reservations
   };
+  const handleDietaryClick = () => {
+    navigate("/dietary-management"); // Route to Dietary Management
+  };
 
   // Toggle feedback sidebar
   const toggleFeedbackSidebar = () => {
@@ -179,43 +182,11 @@ const MealCreditsPage: React.FC = () => {
 
         <ul className="list-none pt-7 pb-7 px-7 mt-10">
           {/* Dietary Management Dropdown */}
-          <li className="mb-2.5">
-            <a
-              className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-              href="#dietaryManagement"
-              onClick={() => toggleDropdown("dietaryManagement")}
-            >
-              Dietary Management
-            </a>
-            {openDropdown === "dietaryManagement" && (
-              <ul className="list-none pt-7 pb-7 px-7 mt-10">
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#vegan"
-                  >
-                    Vegan
-                  </a>
-                </li>
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#glutenFree"
-                  >
-                    Gluten-Free
-                  </a>
-                </li>
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#halal"
-                  >
-                    Halal
-                  </a>
-                </li>
-              </ul>
-            )}
-          </li>
+          <button
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
+            onClick={handleDietaryClick}
+          >Dietary Management
+          </button>
 
           {/* Meal Credits Button */}
           <button

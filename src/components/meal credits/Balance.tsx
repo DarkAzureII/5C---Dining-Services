@@ -5,6 +5,7 @@ import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase
 interface Account {
   name: string;
   balance: number;
+  default: boolean; // New attribute for default status
 }
 
 const BalanceTab: React.FC = () => {
@@ -40,26 +41,46 @@ const BalanceTab: React.FC = () => {
       const userDocRef = doc(db, "mealCredits", userEmail);
       const userDocSnapshot = await getDoc(userDocRef);
 
+      // New account object
+      const newAccount = { name: newAccountName, balance: 0.0, default: accounts.length === 0 };
+
       // If user document doesn't exist, create it with the new account
       if (!userDocSnapshot.exists()) {
         await setDoc(userDocRef, {
           username: userEmail,
-          accounts: [{ name: newAccountName, balance: 0.0 }]
+          accounts: [newAccount],
         });
       } else {
         // If the document exists, update the accounts array
         await updateDoc(userDocRef, {
-          accounts: arrayUnion({ name: newAccountName, balance: 0.0 })
+          accounts: arrayUnion(newAccount),
         });
       }
 
       // Update local state
       setAccounts((prevAccounts) => [
         ...prevAccounts,
-        { name: newAccountName, balance: 0.0 }
+        newAccount,
       ]);
 
       setNewAccountName(""); // Clear input after adding
+    }
+  };
+
+  // Function to handle setting an account as default
+  const handleSetDefault = async (index: number) => {
+    if (userEmail) {
+      const updatedAccounts = accounts.map((account, i) => ({
+        ...account,
+        default: i === index,
+      }));
+
+      // Update Firestore document
+      const userDocRef = doc(db, "mealCredits", userEmail);
+      await updateDoc(userDocRef, { accounts: updatedAccounts });
+
+      // Update local state
+      setAccounts(updatedAccounts);
     }
   };
 
@@ -77,7 +98,7 @@ const BalanceTab: React.FC = () => {
 
         // Update the document with the filtered accounts array
         await updateDoc(userDocRef, {
-          accounts: updatedAccounts
+          accounts: updatedAccounts,
         });
 
         // Update local state
@@ -113,13 +134,16 @@ const BalanceTab: React.FC = () => {
                   </button>
 
                   {/* Account name */}
-                  <span className="font-semibold">{account.name}</span>
+                  <span className="font-semibold">
+                    {account.name}
+                    {account.default && " (default)"}
+                  </span>
                 </div>
 
                 {/* Account balance */}
                 <span>{account.balance.toFixed(2)} Kudus</span>
 
-                {/* Dropdown menu for delete option */}
+                {/* Dropdown menu for delete/set default options */}
                 {dropdownVisible === index && (
                   <div className="absolute top-full left-0 bg-white border shadow-md rounded mt-2 w-32 z-10">
                     <button
@@ -128,6 +152,14 @@ const BalanceTab: React.FC = () => {
                     >
                       Delete
                     </button>
+                    {!account.default && (
+                      <button
+                        onClick={() => handleSetDefault(index)}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                      >
+                        Set Default
+                      </button>
+                    )}
                   </div>
                 )}
               </li>

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import Menu from "./Menu Access/Menu"; // Import the MenuAccess component
-import DietaryManagement from "./Dietary Management/DietaryManagement";
-import Reservations from "./Dining Reservations/Reservations";
 import Feedback from "./Feedback System/Feedback";
+import DietaryPreferencesList from "./Dietary Management/DietaryPreferencesList";
+import ViewReservations from "./Dining Reservations/ViewReservation";
 
 const Dashboard: React.FC = () => {
+  
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("menuAccess");
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,6 +64,9 @@ const Dashboard: React.FC = () => {
   };
   const handleReservationClick = () => {
     navigate("/dining-reservations"); // Route to Dining Reservations
+  };
+  const handleDietaryClick = () => {
+    navigate("/dietary-management"); // Route to Dietary Management
   };
 
   return (
@@ -154,43 +158,11 @@ const Dashboard: React.FC = () => {
 
         <ul className="list-none pt-7 pb-7 px-7 mt-10">
           {/* Dietary Management Dropdown */}
-          <li className="mb-2.5">
-            <a
-              className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-              href="#dietaryManagement"
-              onClick={() => toggleDropdown("dietaryManagement")}
-            >
-              Dietary Management
-            </a>
-            {openDropdown === "dietaryManagement" && (
-              <ul className="list-none pt-7 pb-7 px-7 mt-10">
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#vegan"
-                  >
-                    Vegan
-                  </a>
-                </li>
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#glutenFree"
-                  >
-                    Gluten-Free
-                  </a>
-                </li>
-                <li className="mb-2.5">
-                  <a
-                    className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3]"
-                    href="#halal"
-                  >
-                    Halal
-                  </a>
-                </li>
-              </ul>
-            )}
-          </li>
+          <button
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
+            onClick={handleDietaryClick}
+          >Dietary Management
+          </button>
 
           {/* Meal Credits Dropdown */}
           <button
@@ -268,12 +240,13 @@ const Dashboard: React.FC = () => {
         {activeTab === "dietaryManagement" && (
           <div>
             <h2 className="text-2xl font-bold">Dietary Management</h2>
-            <DietaryManagement />
+            <DietaryPreferencesList/>
           </div>
         )}
         {activeTab === "diningReservations" && (
           <div>
             <h2 className="text-2xl font-bold">Dining Reservations</h2>
+            <ViewReservations/>
           </div>
         )}
       </div>

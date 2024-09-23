@@ -5,6 +5,8 @@ import HomePage from "./components/HomePage";
 import Dashboard from "./components/Dashboard";
 import MealCreditsPage from "./components/meal credits/MealCreditsPage"; // Import the Meal Credits page
 import DiningReservationsPage from "./components/Dining Reservations/DiningReservationsPage";
+import DietaryManagementPage from "./components/Dietary Management/DietaryManagementPage";
+
 
 const App = () => {
   return (
@@ -26,6 +28,7 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/meal-credits" element={<MealCreditsPage />} /> {/* Add this route */}
         <Route path="/dining-reservations" element={<DiningReservationsPage />} /> {/* Add the route for Dining Reservations */}
+        <Route path="/dietary-management" element={<DietaryManagementPage/>} /> {/* Add the route for Dietary Management*/}
       </Routes>
     </Router>
   );

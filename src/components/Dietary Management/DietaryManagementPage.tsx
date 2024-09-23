@@ -3,11 +3,11 @@ import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import Feedback from "../Feedback System/Feedback";
-import Reservations from "./MakeReservation";
+import DietaryPreferencesHandler from "./DietaryPreferencesHandler";
 
-const DiningReservationsPage: React.FC = () => {
+const DietaryManagementPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("DiningReservations");
+  const [activeTab, setActiveTab] = useState("DietaryManagement");
   const [searchTerm, setSearchTerm] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [feedbackSidebarVisible, setFeedbackSidebarVisible] = useState(false);
@@ -201,35 +201,35 @@ const DiningReservationsPage: React.FC = () => {
         <Feedback />
         {/* You can add more content or a feedback form here */}
       </div>
-      {/* Tabs for the Dashboard */}
-      <div className="absolute top-36 left-64 flex w-3/4 ">
+     {/* Tabs for the Dashboard */}
+     <div className="absolute top-36 left-64 flex w-3/4 ">
         <button
           className={`flex-1 py-3 px-5 text-black transition-all duration-300 group relative ${
-            activeTab === "DiningReservations"
+            activeTab === "DietaryManagement"
               ? "bg-transparent bg-opacity-20"
               : ""
           }`}
-          onClick={() => openTab("DiningReservations")}
+          onClick={() => openTab("DietaryManagement")}
         >
-          <span className="relative z-10">Dining Reservations</span>
+          <span className="relative z-10">Dietary Management</span>
           <span
             className={`absolute bottom-0 left-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "DiningReservations" ? "w-1/2" : ""
+              activeTab === "DietaryManagement" ? "w-1/2" : ""
             }`}
           ></span>
           <span
             className={`absolute bottom-0 right-1/2 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-1/2 ${
-              activeTab === "DiningReservations" ? "w-1/2" : ""
+              activeTab === "DietaryManagement" ? "w-1/2" : ""
             }`}
           ></span>
         </button>
       </div>
       {/* Tab Content */}
       <div className="relative grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-auto">
-      {activeTab === "DiningReservations" && <Reservations />}
+      {activeTab === "DietaryManagement" && <DietaryPreferencesHandler/>}
       </div>
     </div>
   );
 };
 
-export default DiningReservationsPage;
+export default DietaryManagementPage;

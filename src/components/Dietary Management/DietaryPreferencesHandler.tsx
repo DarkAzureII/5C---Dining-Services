@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { deleteDoc } from 'firebase/firestore';
 import { db, auth } from "../../firebaseConfig";
 import {
   collection,

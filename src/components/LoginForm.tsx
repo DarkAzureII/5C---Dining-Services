@@ -57,7 +57,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ isActive, onCreateAccountClick })
         >
           Login
         </button>
-        {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-red-500">invalid credentials</p>}
       </form>
       <div className="mt-4">
         <p>

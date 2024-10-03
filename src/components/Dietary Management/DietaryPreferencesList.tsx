@@ -12,7 +12,12 @@ interface DietaryPreference {
 
 const API_BASE_URL = 'https://appdietary-appdietary-xu5p2zrq7a-uc.a.run.app/DietaryManagement';
 
-const DietaryManagement: React.FC = () => {
+interface DietaryManagementProps {
+  onDietTypeChange: (dietType: string) => void; // Callback for updating diet type in the parent component
+}
+
+
+const DietaryManagement: React.FC<DietaryManagementProps> = ({ onDietTypeChange }) => { // Added props destructure
   const [dietaryPreferences, setDietaryPreferences] = useState<DietaryPreference[]>([]);
   const [selectedPreference, setSelectedPreference] = useState("");
   const [description, setDescription] = useState("");
@@ -20,7 +25,8 @@ const DietaryManagement: React.FC = () => {
   const [editingPreferenceId, setEditingPreferenceId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null); // State to display success or error messages
   const [messageType, setMessageType] = useState<"success" | "error" | null>(null); // Message type
-
+  const [dietType, setDietType] = useState<string | null>(null); // State to manage the diet type
+  
   // Fetch the current user's email from Firebase Auth
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -37,12 +43,16 @@ const DietaryManagement: React.FC = () => {
 
   // Fetch preferences from the API when the user is authenticated
   const getPreferences = async () => {
-    if (!userId) return; // Exit if no user ID
-
+    if (!userId) return;
     try {
       const response = await axios.get(API_BASE_URL, { params: { userID: userId } });
       const preferencesData = response.data as DietaryPreference[];
       setDietaryPreferences(preferencesData);
+
+      // Automatically update the diet type in the parent if preference exists
+      if (preferencesData.length > 0 && preferencesData[0].type) {
+        onDietTypeChange(preferencesData[0].type); // Notify parent about the diet type
+      }
     } catch (error) {
       console.error("Error fetching preferences:", error);
     }
@@ -104,6 +114,10 @@ const DietaryManagement: React.FC = () => {
         await axios.post(API_BASE_URL, newPreference);
         displayMessage("Preference added successfully!", "success");
       }
+
+      // Update diet type in the parent component
+      onDietTypeChange(selectedPreference);
+
   
       // Refresh preferences and reset form fields
       getPreferences();
@@ -125,17 +139,23 @@ const DietaryManagement: React.FC = () => {
   
       // Now perform the delete operation
       await axios.delete(`${API_BASE_URL}/${preferenceId}`);
-      
+  
+      // Reset the diet type when a preference is deleted
+      setDietType(null); // Reset diet type in the component state
+      localStorage.removeItem("dietType"); // Remove diet type from localStorage
+      onDietTypeChange(""); // Notify the parent component to switch to the default menu
+  
       displayMessage("Preference deleted successfully!", "success");
   
       // Re-fetch preferences to ensure the local state is in sync with the server
-      getPreferences(); 
+      getPreferences();
     } catch (error) {
       displayMessage("Failed to delete preference. Please try again.", "error");
-      // If there is an error, refetch the preferences to recover the correct state
-      getPreferences();
+      getPreferences(); // Refetch preferences in case of error
     }
   };
+  
+  
 
   const handleEditPreference = (preference: DietaryPreference) => {
     setSelectedPreference(preference.type);

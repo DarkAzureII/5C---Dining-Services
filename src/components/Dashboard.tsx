@@ -276,7 +276,7 @@ const Dashboard: React.FC = () => {
         )}
         {activeTab === "diningReservations" && (
           <div>
-            <h2 className="text-2xl font-bold">Dining Reservations</h2>
+            <h2 className="text-2xl font-bold">Upcoming Reservations</h2>
             <ViewReservations userEmail={userEmail}/>
           </div>
         )}

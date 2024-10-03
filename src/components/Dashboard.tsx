@@ -3,7 +3,6 @@ import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import Menu from "./Menu Access/Menu"; // Import the MenuAccess component
 import Feedback from "./Feedback System/Feedback";
-import DietaryPreferencesList from "./Dietary Management/DietaryPreferencesList";
 import ViewReservations from "./Dining Reservations/ViewReservation";
 
 import ReservationHistory from './Feedback System/ReservationHistory';
@@ -217,7 +216,6 @@ const Dashboard: React.FC = () => {
       <div className="absolute top-36 left-64 flex w-3/4">
         {[
           { label: "Menu Access", value: "menuAccess" },
-          { label: "Dietary Management", value: "dietaryManagement" },
           { label: "Dining Reservations", value: "diningReservations" },
         ].map((tab) => (
           <button
@@ -268,12 +266,6 @@ const Dashboard: React.FC = () => {
             <Menu /> {/* Render the MenuAccess component */}
           </div>
         )}
-        {activeTab === "dietaryManagement" && (
-          <div>
-            <h2 className="text-2xl font-bold">Dietary Management</h2>
-            <DietaryPreferencesList/>
-          </div>
-        )}
         {activeTab === "diningReservations" && (
           <div>
             <h2 className="text-2xl font-bold">Upcoming Reservations</h2>
@@ -297,3 +289,4 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+

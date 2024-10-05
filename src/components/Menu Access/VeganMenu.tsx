@@ -7,7 +7,7 @@ interface WeeklySchedule {
   [key: string]: DocumentReference<DocumentData>[][];
 }
 
-const Menu: React.FC = () => {
+const VeganMenu: React.FC = () => {
   const [breakfastItems, setBreakfastItems] = useState<DocumentData[]>([]);
   const [lunchItems, setLunchItems] = useState<DocumentData[]>([]);
   const [supperItems, setSupperItems] = useState<DocumentData[]>([]);
@@ -24,121 +24,121 @@ const Menu: React.FC = () => {
         const weeklyRefs: WeeklySchedule = {
           Sunday: [
             [
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Yoghurt and Mixed Fruits'),
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Oats'),
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Waffles'),
+              doc(db, 'Menus', 'Vegan Menu','Breakfast-menu', 'Cheese Toast'),
+              doc(db, 'Menus', 'Vegan Menu','Breakfast-menu', 'Tofu Scramble'),
+              doc(db, 'Menus', 'Vegan Menu','Breakfast-menu', 'Smoothie Bowl'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Rice and Chicken'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Steak Pie'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Russian Roll'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Greek Pizza'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Stir-Fry'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Vegan Chilli'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Spaggheti'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Salmon'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pizza and Fries'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Vegan Pizza'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Butternut Squash'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Asparagus'),
             ]  // Supper
           ],
           Monday: [
             [
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Waffles'),
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Yoghurt and Muesli'),
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Omelet'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Tacos'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Oats'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Vegan French Toast'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Beef Burger'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Burger'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Turkey Sandwhich'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Pita Pocket'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Veggie Wrap'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'R Salad'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Beef Stew'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Roast Beef'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pap and Chicken'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Lasagna'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Stir-Fry'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'C Salad'),
             ]  // Supper
           ],
           Tuesday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Bread and Sausage'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Yoghurt and Muesli'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Cornflakes'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Vegan Pancakes'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Tacos'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Vegan Waffles'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Rice and Chicken'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Sandwhich'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Ribs'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Vegan Pie'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'R Salad'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Stir-Fry'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Salmon'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Mushroom Pizza'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pap and Chicken'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Asparagus'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Veggie Burger'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Butternut Squash'),
             ]  // Supper
           ],
           Wednesday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Cheese Toast'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Oats'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Pancakes'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Smoothie Bowl'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Acai Bowl'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Vegan Pancakes'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Russian Roll'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Wrap'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Stir-Fry'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Veggie Burger'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Vegan Chilli'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Greek Pizza'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Beef Stew'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pizza and Fries'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Roast Beef'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Stir-Fry'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'C Salad'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Lasagna'),
             ]  // Supper
           ],
           Thursday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Bread and Sausage'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Smoothie Bowl'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Cornflakes'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Tofu Scramble'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Vegan Omelette'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Oats'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Burger'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Rice and Chicken'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Wrap'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Vegan Pie'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Stir-Fry'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Lentil Burger'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pap and Chicken'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Mushroom Pizza'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Chicken Wrap'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Veggie Burger'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Asparagus'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Vegan Pizza'),
             ]  // Supper
           ],
           Friday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Cheese Toast'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Waffles'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Omelet'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Acai Bowl'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Vegan Pancakes'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Vegan Waffles'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Stir-Fry'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Turkey Sandwhich'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Beef Burger'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Stir-Fry'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Greek Pizza'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'R Salad'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Salmon'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Spaggheti'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Mushroom Pizza'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Vegan Pizza'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Lasagna'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Butternut Squash'),
             ]  // Supper
           ],
           Saturday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Omelet'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Yoghurt and Mixed Fruits'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Pancakes'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Muffins'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Vegan French Toast'),
+              doc(db, 'Menus', 'Vegan Menu', 'Breakfast-menu', 'Tofu Scramble'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Beef Burger'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Ribs'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Sandwhich'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Pita Pocket'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'C Salad'),
+              doc(db, 'Menus', 'Vegan Menu', 'Lunch-menu', 'Lentil Burger'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Beef Stew'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu','Pizza and Fries'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Chicken Wrap'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'C Salad'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Veggie Burger'),
+              doc(db, 'Menus', 'Vegan Menu', 'Supper-menu', 'Stir-Fry'),
             ]  // Supper
           ],
          
@@ -302,7 +302,7 @@ const renderProduct = (product: DocumentData, index: number) => {
     <div className="p-4">
       {/* Today's Menu Display */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Today's Menu(Main)</h2>
+        <h2 className="text-2xl font-bold">Today's Menu(Vegan)</h2>
         <span className="text-lg font-medium">{new Date().toLocaleDateString()}</span>
       </div>
 
@@ -388,4 +388,4 @@ const renderProduct = (product: DocumentData, index: number) => {
   );
 };
 
-export default Menu;
+export default VeganMenu;

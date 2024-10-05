@@ -7,7 +7,7 @@ interface WeeklySchedule {
   [key: string]: DocumentReference<DocumentData>[][];
 }
 
-const Menu: React.FC = () => {
+const GlutenFreeMenu: React.FC = () => {
   const [breakfastItems, setBreakfastItems] = useState<DocumentData[]>([]);
   const [lunchItems, setLunchItems] = useState<DocumentData[]>([]);
   const [supperItems, setSupperItems] = useState<DocumentData[]>([]);
@@ -24,121 +24,121 @@ const Menu: React.FC = () => {
         const weeklyRefs: WeeklySchedule = {
           Sunday: [
             [
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Yoghurt and Mixed Fruits'),
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Oats'),
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Waffles'),
+              doc(db, 'Menus', 'Gluten-Free Menu','Breakfast-menu', 'Banana Muffins'),
+              doc(db, 'Menus', 'Gluten-Free Menu','Breakfast-menu', 'Pancakes'),
+              doc(db, 'Menus', 'Gluten-Free Menu','Breakfast-menu', 'French Toast'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Rice and Chicken'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Steak Pie'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Russian Roll'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Lentil Soup'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Turkey Wrap'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Caesar S'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Spaggheti'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Salmon'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pizza and Fries'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Beef Dumpling Stew'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Rice and Chicken'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'M Pizza'),
             ]  // Supper
           ],
           Monday: [
             [
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Waffles'),
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Yoghurt and Muesli'),
-              doc(db, 'Menus', 'Main Menu','Breakfast-menu', 'Omelet'),
+              doc(db, 'Menus', 'Gluten-Free Menu','Breakfast-menu', 'Avo Toast'),
+              doc(db, 'Menus', 'Gluten-Free Menu','Breakfast-menu', 'Oats'),
+              doc(db, 'Menus', 'Gluten-Free Menu','Breakfast-menu', 'Smoothie Bowl'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Beef Burger'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Burger'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Turkey Sandwhich'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Q Salad'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Grilled Chicken Wrap'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'GF Pasta'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Beef Stew'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Roast Beef'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pap and Chicken'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Rice and Salmon'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Beef Stir-Fry'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Chicken and Quinoa S'),
             ]  // Supper
           ],
           Tuesday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Bread and Sausage'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Yoghurt and Muesli'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Cornflakes'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Greek Yoghurt'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Vegan Smoothie'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Pancakes'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Rice and Chicken'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Sandwhich'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Ribs'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Caesar S'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Rice Noodles'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Turkey Wrap'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Salmon'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Mushroom Pizza'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pap and Chicken'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Roasted Chicken'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Meatballs and Zoodles'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Q Salad'),
             ]  // Supper
           ],
           Wednesday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Cheese Toast'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Oats'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Pancakes'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Omelet Toast'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Waffles'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Chia Pudding'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Russian Roll'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Wrap'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Stir-Fry'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Grilled Chicken Wrap'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Chicken and Q Salad'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'GF Pasta'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Beef Stew'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pizza and Fries'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Roast Beef'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Beef Stir-Fry'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'M Pizza'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Beef Dumpling Stew'),
             ]  // Supper
           ],
           Thursday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Bread and Sausage'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Smoothie Bowl'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Cornflakes'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Avo Toast'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Greek Yoghurt'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Banana Muffins'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Burger'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Rice and Chicken'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Wrap'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Rice Noodles'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Q Salad'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'BBQ Pizza'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Pap and Chicken'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Mushroom Pizza'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Chicken Wrap'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Rice and Chicken'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Chicken Chilli'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Roasted Chicken'),
             ]  // Supper
           ],
           Friday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Cheese Toast'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Waffles'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Omelet'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Oats'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'French Toast'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Waffles'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Stir-Fry'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Turkey Sandwhich'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Beef Burger'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Greek Salad'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Turkey Wrap'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Chicken and Q Salad'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Salmon'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Spaggheti'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Mushroom Pizza'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Grilled Steak'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Meatballs and Zoodles'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Beef Stir-Fry'),
             ]  // Supper
           ],
           Saturday: [
             [
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Omelet'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Yoghurt and Mixed Fruits'),
-              doc(db, 'Menus', 'Main Menu', 'Breakfast-menu', 'Pancakes'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Vegan Smoothie'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Banana Muffins'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Breakfast-menu', 'Cornflakes'),
             ], // Breakfast
             [
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Beef Burger'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Ribs'),
-              doc(db, 'Menus', 'Main Menu', 'Lunch-menu', 'Chicken Sandwhich'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Rice Noodles'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'BBQ Pizza'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Lunch-menu', 'Lentil Soup'),
             ], // Lunch
             [
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Rice and Beef Stew'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu','Pizza and Fries'),
-              doc(db, 'Menus', 'Main Menu', 'Supper-menu', 'Chicken Wrap'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Q Salad'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Rice and Salmon'),
+              doc(db, 'Menus', 'Gluten-Free Menu', 'Supper-menu', 'Chicken Chilli'),
             ]  // Supper
           ],
          
@@ -302,7 +302,7 @@ const renderProduct = (product: DocumentData, index: number) => {
     <div className="p-4">
       {/* Today's Menu Display */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Today's Menu(Main)</h2>
+        <h2 className="text-2xl font-bold">Today's Menu(Gluten-Free)</h2>
         <span className="text-lg font-medium">{new Date().toLocaleDateString()}</span>
       </div>
 
@@ -388,4 +388,4 @@ const renderProduct = (product: DocumentData, index: number) => {
   );
 };
 
-export default Menu;
+export default GlutenFreeMenu;

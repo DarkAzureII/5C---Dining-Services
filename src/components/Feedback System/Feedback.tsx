@@ -1,4 +1,13 @@
 import React, { useState, useEffect } from "react";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+} from "firebase/firestore";
+import { db } from "../../firebaseConfig"; // Ensure the path is correct
 import { auth } from "../../firebaseConfig"; // Firebase authentication
 
 // StarRating component to handle the rating visually with stars
@@ -30,39 +39,38 @@ const Feedback: React.FC = () => {
   const [submitted, setSubmitted] = useState(false); // Tracks submission state
   const [error, setError] = useState(""); // Error handling for empty input
   const [reviews, setReviews] = useState<
-    Array<{ id: string; review: string; rating: number; timestamp: string }>
+    Array<{ id: string; review: string; rating: number; timestamp: Date }>
   >([]); // Array to store fetched reviews
-  const [userEmail, setUserEmail] = useState<string | null>(null); // Store current user's email
+  const [userId, setUserId] = useState<string | null>(null); // Store current user's ID
   const [userFeedbackExists, setUserFeedbackExists] = useState(false); // Check if user already provided feedback
-  const [userReview, setUserReview] = useState<{ review: string; rating: number; timestamp: string } | null>(null); // Store user's feedback if exists
+  const [userReview, setUserReview] = useState<{ review: string; rating: number; timestamp: Date } | null>(null); // Store user's feedback if exists
 
   // Fetch the current authenticated user
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setUserEmail(user.email); // Set the email instead of userId
-        checkUserFeedback(user.email!); // Pass the email to checkUserFeedback
+        setUserId(user.uid);
+        checkUserFeedback(user.uid); // Check if user has already submitted feedback
       } else {
-        setUserEmail(null);
+        setUserId(null);
       }
     });
     return () => unsubscribe();
   }, []);
 
   // Check if the user has already submitted feedback
-  const checkUserFeedback = async (email: string) => {
+  const checkUserFeedback = async (uid: string) => {
     try {
-      const response = await fetch(
-        `https://feedback-xu5p2zrq7a-uc.a.run.app/appFeedback?userId=${email}`
-      );
-      const data = await response.json();
+      const q = query(collection(db, "appReviews"), where("userId", "==", uid));
+      const querySnapshot = await getDocs(q);
 
-      if (response.status === 200 && Array.isArray(data) && data.length > 0) {
+      if (!querySnapshot.empty) {
         setUserFeedbackExists(true); // User has already submitted feedback
+        const userDoc = querySnapshot.docs[0]; // Get the first document (there should only be one)
         setUserReview({
-          review: data[0].review,
-          rating: data[0].rating,
-          timestamp: data[0].timestamp,
+          review: userDoc.data().review,
+          rating: userDoc.data().rating,
+          timestamp: userDoc.data().timestamp.toDate(),
         }); // Set the user's review, rating, and timestamp
       }
     } catch (e) {
@@ -70,18 +78,20 @@ const Feedback: React.FC = () => {
     }
   };
 
-  // Fetch reviews from the API
+  // Fetch reviews from Firestore
   const fetchReviews = async () => {
     try {
-      const response = await fetch("https://feedback-xu5p2zrq7a-uc.a.run.app/appFeedback");
-      const data = await response.json();
-      if (response.ok) {
-        setReviews(data);
-      } else {
-        console.error("Error fetching reviews: ", data.message);
-      }
+      const q = query(collection(db, "appReviews"), orderBy("timestamp", "desc"));
+      const querySnapshot = await getDocs(q);
+      const fetchedReviews = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        review: doc.data().review,
+        rating: doc.data().rating,
+        timestamp: doc.data().timestamp.toDate(),
+      }));
+      setReviews(fetchedReviews);
     } catch (e) {
-      console.error("Error fetching reviews: ", e);
+      console.error("Error fetching review: ", e);
     }
   };
 
@@ -100,39 +110,25 @@ const Feedback: React.FC = () => {
     }
 
     try {
-      if (!userEmail) {
+      if (!userId) {
         setError("You must be logged in to submit feedback.");
         return;
       }
 
-      const feedbackData = {
-        review,
-        rating,
-        userId: userEmail, // Use email as userId
-        timestamp: new Date().toISOString(),
-      };
-
-      const response = await fetch("https://feedback-xu5p2zrq7a-uc.a.run.app/appFeedback", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(feedbackData),
+      // Add review with rating to Firestore
+      await addDoc(collection(db, "appReviews"), {
+        review: review,
+        rating: rating,
+        userId: userId, // Store the user's ID
+        timestamp: new Date(),
       });
 
-      const data = await response.json();
-
-      if (response.status === 201) {
-        setReview(""); // Clear the input after submission
-        setRating(null); // Clear the rating after submission
-        setSubmitted(true); // Set submission state to true
-        setError(""); // Clear any error
-        fetchReviews(); // Refresh the reviews after submission
-        setUserFeedbackExists(true); // Mark that the user has submitted feedback
-      } else {
-        console.error("Error submitting feedback:", data.message);
-        setError("Error submitting feedback. Please try again.");
-      }
+      setReview(""); // Clear the input after submission
+      setRating(null); // Clear the rating after submission
+      setSubmitted(true); // Set submission state to true
+      setError(""); // Clear any error
+      fetchReviews(); // Refresh the reviews after submission
+      setUserFeedbackExists(true); // Mark that the user has submitted feedback
     } catch (e) {
       console.error("Error adding review: ", e);
       setError("Error submitting feedback. Please try again.");
@@ -153,7 +149,7 @@ const Feedback: React.FC = () => {
             <p className="text-gray-800">{userReview.review}</p>
             <StarRating rating={userReview.rating} readOnly={true} />
             <p className="text-gray-600 mt-4">
-              Date: {new Date(userReview.timestamp).toLocaleDateString()}
+              Date: {userReview.timestamp.toLocaleDateString()}
             </p>
           </div>
         </div>
@@ -199,3 +195,5 @@ const Feedback: React.FC = () => {
 };
 
 export default Feedback;
+
+

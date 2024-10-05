@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { db, auth } from "../../firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { auth } from "../../firebaseConfig";
+import { fetchData } from "../../API/MealCredits"; // Assuming your API methods are in api.ts
 
 interface Transaction {
   amount: number;
@@ -21,7 +21,6 @@ const TrackUsage: React.FC = () => {
     new Date().getFullYear()
   );
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const filterTransactionsByMonth = (
     transactions: Transaction[],
@@ -37,91 +36,69 @@ const TrackUsage: React.FC = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       setLoading(true);
-      setError(null);
-
       const currentUser = auth.currentUser;
 
       if (currentUser) {
         try {
-          const username = currentUser.email;
+          const userId = currentUser.email;
 
-          // Fetch "Money In" transactions
-          const moneyInDocRef = doc(db, "moneyIn", username || "");
-          const moneyInDocSnapshot = await getDoc(moneyInDocRef);
+          // Fetch data from API
+          const data = await fetchData(`MealCredits/Retrieve/${userId}`);
 
-          if (moneyInDocSnapshot.exists()) {
-            const moneyInData = moneyInDocSnapshot.data();
-            const moneyInAmounts = moneyInData?.Amounts || [];
-            const moneyInDates = moneyInData?.Dates || [];
+          // Find the default account
+          const defaultAccount = data.accounts.find(
+            (account: any) => account.isDefault === true
+          );
 
-            // Combine amounts and dates for "Money In"
-            const loadedMoneyInTransactions = moneyInAmounts.map(
-              (amount: number, index: number) => {
-                const dateObj = moneyInDates[index]?.toDate();
-                const formattedDate = dateObj ? dateObj.toISOString() : ""; // Store the date as ISO string
-                return { amount, date: formattedDate };
-              }
-            );
+          if (defaultAccount) {
+            // Extract moneyIn and moneyOut from the default account
+            const moneyInMap = defaultAccount.moneyIn || {};
+            const moneyOutMap = defaultAccount.moneyOut || {};
 
-            // Filter "Money In" transactions by selected month and year
+            // Convert maps to arrays of transactions
+            const moneyInTransactions: Transaction[] = Object.entries(
+              moneyInMap
+            ).map(([date, amount]) => ({
+              amount: Number(amount), // Ensure amount is a number
+              date: new Date(date).toISOString(), // Convert date string to ISO format
+            }));
+
+            const moneyOutTransactions: Transaction[] = Object.entries(
+              moneyOutMap
+            ).map(([date, amount]) => ({
+              amount: Number(amount), // Ensure amount is a number
+              date: new Date(date).toISOString(), // Convert date string to ISO format
+            }));
+
+            // Filter transactions by selected month and year
             const filteredMoneyIn = filterTransactionsByMonth(
-              loadedMoneyInTransactions,
+              moneyInTransactions,
               selectedMonth,
               selectedYear
             );
-            setMoneyInTransactions(filteredMoneyIn);
-          } else {
-            setError("No Money In transactions found.");
-          }
-
-          // Fetch "Money Out" transactions
-          const moneyOutDocRef = doc(db, "moneyOut", username || "");
-          const moneyOutDocSnapshot = await getDoc(moneyOutDocRef);
-
-          if (moneyOutDocSnapshot.exists()) {
-            const moneyOutData = moneyOutDocSnapshot.data();
-            const moneyOutAmounts = moneyOutData?.Amounts || [];
-            const moneyOutDates = moneyOutData?.Dates || [];
-
-            // Combine amounts and dates for "Money Out"
-            const loadedMoneyOutTransactions = moneyOutAmounts.map(
-              (amount: number, index: number) => {
-                const dateObj = moneyOutDates[index]?.toDate();
-                const formattedDate = dateObj ? dateObj.toISOString() : ""; // Store the date as ISO string
-                return { amount, date: formattedDate };
-              }
-            );
-
-            // Filter "Money Out" transactions by selected month and year
             const filteredMoneyOut = filterTransactionsByMonth(
-              loadedMoneyOutTransactions,
+              moneyOutTransactions,
               selectedMonth,
               selectedYear
             );
+
+            setMoneyInTransactions(filteredMoneyIn);
             setMoneyOutTransactions(filteredMoneyOut);
           } else {
-            setError("No Money Out transactions found.");
+            console.error("No default account found.");
           }
         } catch (error) {
           console.error("Error fetching transactions:", error);
-          setError("Error fetching transactions.");
         }
       } else {
-        setError("No user is logged in.");
+        console.error("No user is currently authenticated.");
       }
+
       setLoading(false);
     };
 
     fetchTransactions();
   }, [selectedMonth, selectedYear]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
 
   return (
     <div className="p-5">

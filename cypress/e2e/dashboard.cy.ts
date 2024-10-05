@@ -1,3 +1,5 @@
+export {}; 
+
 describe('dashboard', () => {
     beforeEach(() => {
         cy.visit('http://localhost:5173/dashboard')

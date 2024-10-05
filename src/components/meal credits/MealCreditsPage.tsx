@@ -115,6 +115,7 @@ const MealCreditsPage: React.FC = () => {
       {/* Navigation Bar */}
       <div className="flex items-center px-5 py-2 bg-transparent fixed top-0 w-full z-10 shadow-md">
         <button
+          test-id = "menu-button"
           className="text-3xl bg-none border-none cursor-pointer mr-5"
           onClick={toggleMenu}
         >
@@ -177,6 +178,7 @@ const MealCreditsPage: React.FC = () => {
 
         {/* Dashboard Link */}
         <a
+          test-id="dashboard-link"
           href="/dashboard"
           className="block text-white text-lg py-2 px-4 bg-[#003080] rounded-md text-center my-12 mx-auto w-11/12 hover:bg-[#0056b3] no-underline"
         >

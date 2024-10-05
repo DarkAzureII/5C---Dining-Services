@@ -102,6 +102,7 @@ const DietaryManagementPage: React.FC = () => {
       {/* Navigation Bar */}
       <div className="flex items-center px-5 py-2 bg-transparent fixed top-0 w-full z-10 shadow-md">
         <button
+          test-id="menu-button"
           className="text-3xl bg-none border-none cursor-pointer mr-5"
           onClick={toggleMenu}
         >
@@ -154,6 +155,7 @@ const DietaryManagementPage: React.FC = () => {
         } w-[275px] h-full bg-[#0c0d43] shadow-lg transition-all duration-300 z-20`}
       >
         <button
+          test-id = "close-menu-button"
           className="absolute top-4 right-4 text-2xl bg-none border-none cursor-pointer text-white"
           onClick={toggleMenu}
         >
@@ -162,6 +164,7 @@ const DietaryManagementPage: React.FC = () => {
 
         {/* Dashboard Link */}
         <a
+          test-id="dashboard-link"
           href="/dashboard"
           className="block text-white text-lg py-2 px-4 bg-[#003080] rounded-md text-center my-12 mx-auto w-11/12 hover:bg-[#0056b3] no-underline"
         >

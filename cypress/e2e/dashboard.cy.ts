@@ -113,4 +113,34 @@ describe('dashboard', () => {
         cy.get('button').contains('Hide Nutritional Info').click();
     });
 
+    it('renders the proper components when the sidebar buttons are clicked', () => {
+        // Click the menu button to open the menu
+        cy.get('button[test-id="menu-button"]').click();
+        cy.get('button[test-id="dietary-management-button"]').click();
+        cy.url().should('include', '/dietary-management');
+
+        cy.get('button[test-id="menu-button"]').click();
+        cy.get('a[test-id="dashboard-link"]').click(); 
+        
+        // Click on "Dining Reservations" tab
+        cy.get('button[test-id="menu-button"]').click();
+        cy.get('button[test-id="meal-credits-button"]').click();
+        cy.url().should('include', '/meal-credits');
+
+        cy.get('button[test-id="menu-button"]').click();
+        cy.get('a[test-id="dashboard-link"]').click();
+
+        cy.get('button[test-id="menu-button"]').click();
+        cy.get('button[test-id="reservation-button"]').click();
+        cy.url().should('include', '/dining-reservations');
+
+        cy.get('button[test-id="menu-button"]').click();
+        cy.get('a[test-id="dashboard-link"]').click();
+
+        cy.get('button[test-id="menu-button"]').click();
+        cy.get('button[test-id="reservation-history-button"]').click();
+        cy.get('button[test-id="close-menu-button"]').click();
+        
+    });
+
 })

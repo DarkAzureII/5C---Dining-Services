@@ -179,6 +179,7 @@ const Dashboard: React.FC = () => {
 
         {/* Dashboard Link */}
         <a
+          test-id="dashboard-link"
           href="/dashboard"
           className="block text-white text-lg py-2 px-4 bg-[#003080] rounded-md text-center my-12 mx-auto w-11/12 hover:bg-[#0056b3] no-underline"
         >
@@ -190,6 +191,7 @@ const Dashboard: React.FC = () => {
 
         <ul className="list-none pt-7 pb-7 px-7 mt-10">
           <button
+            test-id="dietary-management-button"
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleDietaryClick}
           >
@@ -197,6 +199,7 @@ const Dashboard: React.FC = () => {
           </button>
 
           <button
+            test-id="meal-credits-button"
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleMealCreditsClick}
           >
@@ -204,6 +207,7 @@ const Dashboard: React.FC = () => {
           </button>
 
           <button
+            test-id="reservation-button"
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleReservationClick}
           >
@@ -211,6 +215,7 @@ const Dashboard: React.FC = () => {
           </button>
 
           <button
+            test-id="reservation-history-button"
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={toggleReservationHistory}
           >

@@ -221,7 +221,7 @@ const BalanceTab: React.FC = () => {
                 className="flex justify-between items-center p-4 bg-gray-100 rounded shadow"
               >
                 <span className="font-semibold">{account.name}</span>
-                <span className="text-gray-700">
+                <span test-id={`bal-${account.name}`} className="text-gray-700">
                   {account.balance.toFixed(2)} Kudus
                 </span>
                 <div className="flex space-x-2">
@@ -236,6 +236,7 @@ const BalanceTab: React.FC = () => {
                     {account.default ? "Default" : "Set as Default"}
                   </button>
                   <button
+                    test-id={`dropdown-${account.name}`}
                     className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                     onClick={() => handleDeleteAccount(index)}
                   >

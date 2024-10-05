@@ -5,7 +5,6 @@ import Menu from "./Menu Access/Menu";
 import VeganMenu from "./Menu Access/VeganMenu";
 import GlutenFreeMenu from "./Menu Access/GlutenFreeMenu";
 import Feedback from "./Feedback System/Feedback";
-import DietaryPreferencesList from "./Dietary Management/DietaryPreferencesList";
 import ViewReservations from "./Dining Reservations/ViewReservation";
 import ReservationHistory from './Feedback System/ReservationHistory';
 
@@ -234,7 +233,6 @@ const Dashboard: React.FC = () => {
       <div className="absolute top-36 left-64 flex w-3/4">
         {[
           { label: "Menu Access", value: "menuAccess" },
-          { label: "Dietary Management", value: "dietaryManagement" },
           { label: "Dining Reservations", value: "diningReservations" },
         ].map((tab) => (
           <button
@@ -283,16 +281,10 @@ const Dashboard: React.FC = () => {
             {renderMenu()}
           </div>
         )}
-        {activeTab === "dietaryManagement" && (
-          <div>
-            <h2 className="text-2xl font-bold">Dietary Management</h2>
-            <DietaryPreferencesList onDietTypeChange={handleDietTypeChange} /> {/* Pass the diet type change handler */}
-          </div>
-        )}
         {activeTab === "diningReservations" && (
           <div>
-            <h2 className="text-2xl font-bold">Dining Reservations</h2>
-            <ViewReservations userEmail={userEmail} />
+            <h2 className="text-2xl font-bold">Upcoming Reservations</h2>
+            <ViewReservations userEmail={userEmail}/>
           </div>
         )}
       </div>
@@ -311,3 +303,4 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+

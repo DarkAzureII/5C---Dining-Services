@@ -13,19 +13,12 @@ describe('Dashboard', () => {
         <Dashboard />
       </MemoryRouter>
     );
-    // Check that the NavBar buttons are rendered
+    
     expect(screen.getByAltText(/Wits-Logo/i)).toBeInTheDocument();
-    // Check for the heading "Dashboard"
     expect(screen.getByText(/Dining Services/i)).toBeInTheDocument();
-    // Check that the Wits logo and Main image are present
     expect(screen.getByPlaceholderText(/Search/i)).toBeInTheDocument();
-    // Check that the system description is rendered
     expect(screen.getByText(/Welcome/i)).toBeInTheDocument();
-    // Check that the "Create Event" button is present
     expect(screen.getByRole('button', {name: /Menu Access/i})).toBeInTheDocument();
-    // Check that the "View Events" button is present
-    //expect(screen.getByRole('button', {name: /Dietary Management/i})).toBeInTheDocument();
-    // Check that the "View Users" button is present
     expect(screen.getByRole('button', {name: /Dining Reservations/i})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: /Rate/i})).toBeInTheDocument();
   });

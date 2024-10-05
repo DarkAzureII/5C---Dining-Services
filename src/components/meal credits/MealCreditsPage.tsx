@@ -259,12 +259,6 @@ const MealCreditsPage: React.FC = () => {
       </div>
       {/* Tab Content */}
       <div className="fixed border rounded top-64 left-64 w-3/4 p-5 text-black text-center overflow-y-scroll max-h-[60vh]">
-        {/* {activeTab === "MealCredits" && (
-          <div>
-            <h2 className="text-2xl font-bold">Meal Credits</h2>
-            <p>Track your meal credits.</p>
-          </div>
-        )} */}
         {activeTab === "Balance" && <BalanceTab />}
 
         {activeTab === "Transactions" && (

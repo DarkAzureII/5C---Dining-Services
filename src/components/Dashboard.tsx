@@ -118,6 +118,7 @@ const Dashboard: React.FC = () => {
       {/* Navigation Bar */}
       <div className="flex items-center px-5 py-2 bg-transparent fixed top-0 w-full z-10 shadow-md">
         <button
+          test-id="menu-button"
           className="text-3xl bg-none border-none cursor-pointer mr-5"
           onClick={toggleMenu}
         >
@@ -144,6 +145,7 @@ const Dashboard: React.FC = () => {
           {/* Welcome User Dropdown */}
           <div className="">
             <div
+              test-id="user-dropdown"
               className="text-[#a0c3ff] text-lg font-bold mr-5 cursor-pointer"
               onClick={toggleUserDropdown}
             >
@@ -168,6 +170,7 @@ const Dashboard: React.FC = () => {
         className={`fixed top-0 ${menuVisible ? "left-0" : "left-[-275px]"} w-[275px] h-full bg-[#0c0d43] shadow-lg transition-all duration-300 z-20`}
       >
         <button
+          test-id = "close-menu-button"
           className="absolute top-4 right-4 text-2xl bg-none border-none cursor-pointer text-white"
           onClick={toggleMenu}
         >

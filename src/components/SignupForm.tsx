@@ -68,6 +68,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
       <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
+          test-id="email-input"
           type="email"
           placeholder="Email"
           value={email}
@@ -76,6 +77,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
           className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
+          test-id="password-input"
           type="password"
           placeholder="Password"
           value={password}
@@ -84,6 +86,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
           className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
+          test-id="confirm-password-input"
           type="password"
           placeholder="Confirm Password"
           value={confirmPassword}

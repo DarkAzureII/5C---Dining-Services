@@ -17,6 +17,7 @@ const NavBar: React.FC<NavBarProps> = ({ onLoginClick, onSignupClick, onLogoClic
     <div className="flex items-center justify-between px-5 py-2.5 bg-white fixed top-0 w-full z-10 shadow-md">
       <div className="flex items-center">
         <img
+          test-id="wits-logo"
           src="/wits-logo.png"
           alt="Wits-Logo"
           onClick={onLogoClick}

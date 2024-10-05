@@ -36,6 +36,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ isActive, onCreateAccountClick })
       <h2 className="text-2xl font-bold mb-4">Login</h2>
       <form onSubmit={handleLogin} className="space-y-4">
         <input
+          test-id="email-input"
           type="email"
           placeholder="Email"
           value={email}
@@ -44,6 +45,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ isActive, onCreateAccountClick })
           className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
+          test-id="password-input"
           type="password"
           placeholder="Password"
           value={password}

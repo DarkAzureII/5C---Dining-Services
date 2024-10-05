@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import Feedback from "../Feedback System/Feedback";
 import Reservations from "./MakeReservation";
-import ReservationHistory from '../Feedback System/ReservationHistory';
 
 const DiningReservationsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,18 +28,6 @@ const DiningReservationsPage: React.FC = () => {
       }
     });
     return () => unsubscribe(); // Cleanup subscription
-  }, []);
-
-  const [showReservationHistory, setShowReservationHistory] = useState(false);
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserEmail(user.email);
-      } else {
-        setUserEmail(null);
-      }
-    });
-    return () => unsubscribe();
   }, []);
 
   const toggleMenu = () => {
@@ -83,10 +70,6 @@ const DiningReservationsPage: React.FC = () => {
     navigate("/dietary-management"); // Route to Dietary Management
   };
 
-  const toggleReservationHistory = () => {
-    setShowReservationHistory(!showReservationHistory); 
-  };
-
   const toggleDropdown = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
   };
@@ -124,7 +107,12 @@ const DiningReservationsPage: React.FC = () => {
             placeholder="Search..."
             className="border border-gray-300 rounded px-2 py-2 mx-5 w-96 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-5 transition duration-300 ease-in-out"
+            onClick={toggleFeedbackSidebar}
+          >
+            Feedback System
+          </button>
           {/* Welcome User Dropdown */}
           <div>
             <div
@@ -195,31 +183,24 @@ const DiningReservationsPage: React.FC = () => {
           >
             Dining Reservation
           </button>
-
-        {/* History Dropdown */}
-        <button
-            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
-            onClick={toggleReservationHistory}
-          >
-            History
-          </button>
         </ul>
       </div>
-
-      {/* Reservation History Side Tab */}
-      {showReservationHistory && (
+      {/* Feedback Sidebar */}
       <div
-        className="fixed top-0 left-[275px] w-[600px] h-full bg-gray-50 shadow-lg transition-transform duration-500 ease-in-out z-[1000] translate-x-0"
+        className={`fixed top-0 right-0 w-[300px] h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-[1000] p-5 ${
+          feedbackSidebarVisible ? "translate-x-0" : "translate-x-full"
+        }`}
       >
-      <button
-        className="absolute top-4 right-4 text-xl text-gray-700 hover:text-gray-900"
-        onClick={() => setShowReservationHistory(false)}
-      >
-        &times;
-      </button>
-      <ReservationHistory />
+        <button
+          className="absolute top-4 right-4 text-xl text-gray-700 hover:text-gray-900"
+          onClick={toggleFeedbackSidebar}
+        >
+          &times;
+        </button>
+        <h2>Feedback System</h2>
+        <Feedback />
+        {/* You can add more content or a feedback form here */}
       </div>
-    )}
       {/* Tabs for the Dashboard */}
       <div className="absolute top-36 left-64 flex w-3/4 ">
         <button

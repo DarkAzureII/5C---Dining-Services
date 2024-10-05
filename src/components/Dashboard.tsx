@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-y-auto">
+    <div className="fixed min-h-screen overflow-y-scroll">
       {/* Background Image */}
       <img
         src="wits-white.jpg"
@@ -274,7 +274,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="relative grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-scroll">
+      <div className="fixed grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-scroll max-h-[70vh]">
         {activeTab === "menuAccess" && (
           <div className="">
             <h2 className="text-2xl font-bold">Menu Access</h2>

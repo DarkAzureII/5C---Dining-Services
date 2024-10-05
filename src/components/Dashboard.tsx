@@ -274,7 +274,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="fixed grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-scroll max-h-[80vh]">
+      <div className="relative grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-scroll">
         {activeTab === "menuAccess" && (
           <div className="">
             <h2 className="text-2xl font-bold">Menu Access</h2>

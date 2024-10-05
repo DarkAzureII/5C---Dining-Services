@@ -225,7 +225,7 @@ const DietaryManagementPage: React.FC = () => {
         </button>
       </div>
       {/* Tab Content */}
-      <div className="fixed grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-scroll max-h-[80vh]">
+      <div className="fixed grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 text-black text-center overflow-y-scroll max-h-[80vh]">
       {activeTab === "DietaryManagement" && <DietaryPreferencesHandler/>}
       </div>
     </div>

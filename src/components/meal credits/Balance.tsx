@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { db, auth } from "../../firebaseConfig";
-import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import React, { useState, useEffect, useRef } from "react";
+import { auth } from "../../firebaseConfig";
+import {
+  fetchData,
+  postData,
+  updateData,
+  deleteData,
+} from "../../API/MealCredits"; // Import the API methods
 
 interface Account {
   name: string;
   balance: number;
-  default: boolean; // New attribute for default status
+  default: boolean;
 }
 
 const BalanceTab: React.FC = () => {
@@ -13,96 +18,189 @@ const BalanceTab: React.FC = () => {
   const [newAccountName, setNewAccountName] = useState("");
   const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [transferAmount, setTransferAmount] = useState<number>(0);
+  const [fromAccount, setFromAccount] = useState<string>("");
+  const [toAccount, setToAccount] = useState<string>("");
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  // Fetch current user's accounts from Firestore
+  // Fetch current user's accounts from the API
   useEffect(() => {
-    const fetchAccounts = async () => {
-      const currentUser = auth.currentUser;
-
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         setUserEmail(currentUser.email);
 
-        const userDocRef = doc(db, "mealCredits", currentUser?.email || "");
-        const userDocSnapshot = await getDoc(userDocRef);
+        try {
+          const userId = currentUser.email;
+          const fetchedAccounts = await fetchData(
+            `MealCredits/Retrieve/${userId}`
+          );
 
-        if (userDocSnapshot.exists()) {
-          const userData = userDocSnapshot.data();
-          setAccounts(userData.accounts || []);
+          if (fetchedAccounts && fetchedAccounts.accounts) {
+            setAccounts(
+              fetchedAccounts.accounts.map((account: any) => ({
+                name: account.accountName,
+                balance: account.balance,
+                default: account.isDefault || false,
+              }))
+            );
+          } else {
+            setAccounts([]);
+          }
+        } catch (error) {
+          console.error("Error fetching accounts:", error);
+          setAccounts([]);
         }
+      } else {
+        setAccounts([]);
       }
-    };
+    });
 
-    fetchAccounts();
+    return () => unsubscribe();
   }, []);
 
   // Function to handle adding a new account
   const handleAddAccount = async () => {
     if (newAccountName.trim() && userEmail) {
-      const userDocRef = doc(db, "mealCredits", userEmail);
-      const userDocSnapshot = await getDoc(userDocRef);
+      const userId = userEmail;
 
-      // New account object
-      const newAccount = { name: newAccountName, balance: 0.0, default: accounts.length === 0 };
+      try {
+        await postData(`MealCredits/Create/${userId}`, {
+          accountName: newAccountName,
+        });
 
-      // If user document doesn't exist, create it with the new account
-      if (!userDocSnapshot.exists()) {
-        await setDoc(userDocRef, {
-          username: userEmail,
-          accounts: [newAccount],
-        });
-      } else {
-        // If the document exists, update the accounts array
-        await updateDoc(userDocRef, {
-          accounts: arrayUnion(newAccount),
-        });
+        const updatedAccounts = await fetchData(
+          `MealCredits/Retrieve/${userId}`
+        );
+
+        if (updatedAccounts && updatedAccounts.accounts) {
+          setAccounts(
+            updatedAccounts.accounts.map((account: any) => ({
+              name: account.accountName,
+              balance: account.balance,
+              default: account.isDefault || false,
+            }))
+          );
+        } else {
+          setAccounts([]);
+        }
+
+        setNewAccountName("");
+      } catch (error) {
+        console.error("Error adding account:", error);
       }
-
-      // Update local state
-      setAccounts((prevAccounts) => [
-        ...prevAccounts,
-        newAccount,
-      ]);
-
-      setNewAccountName(""); // Clear input after adding
     }
   };
 
   // Function to handle setting an account as default
   const handleSetDefault = async (index: number) => {
     if (userEmail) {
+      const userId = userEmail;
+      const accountName = accounts[index].name;
+
       const updatedAccounts = accounts.map((account, i) => ({
         ...account,
         default: i === index,
       }));
 
-      // Update Firestore document
-      const userDocRef = doc(db, "mealCredits", userEmail);
-      await updateDoc(userDocRef, { accounts: updatedAccounts });
+      try {
+        await updateData(`MealCredits/Update/${userId}/${accountName}`, {
+          isDefault: true,
+        });
 
-      // Update local state
-      setAccounts(updatedAccounts);
+        setAccounts(updatedAccounts);
+      } catch (error) {
+        console.error("Error setting default account:", error);
+      }
     }
   };
 
   // Function to handle deleting an account
   const handleDeleteAccount = async (index: number) => {
     if (userEmail) {
-      const userDocRef = doc(db, "mealCredits", userEmail);
+      const userId = userEmail;
+      const accountName = accounts[index].name;
 
-      // Get the current document
-      const userDocSnapshot = await getDoc(userDocRef);
+      try {
+        await deleteData(`MealCredits/Delete/${userId}/${accountName}`);
 
-      if (userDocSnapshot.exists()) {
-        const userData = userDocSnapshot.data();
-        const updatedAccounts = userData.accounts.filter((_: Account, i: number) => i !== index);
+        const updatedAccounts = await fetchData(
+          `MealCredits/Retrieve/${userId}`
+        );
 
-        // Update the document with the filtered accounts array
-        await updateDoc(userDocRef, {
-          accounts: updatedAccounts,
+        if (updatedAccounts && updatedAccounts.accounts) {
+          setAccounts(
+            updatedAccounts.accounts.map((account: any) => ({
+              name: account.accountName,
+              balance: account.balance,
+              default: account.isDefault || false,
+            }))
+          );
+        } else {
+          setAccounts([]);
+        }
+      } catch (error) {
+        console.error("Error deleting account:", error);
+      }
+    }
+  };
+
+  // Function to handle transferring money between accounts
+  const handleTransferMoney = async () => {
+    if (fromAccount && toAccount && transferAmount > 0 && userEmail) {
+      const fromAccountObj = accounts.find((acc) => acc.name === fromAccount);
+      const toAccountObj = accounts.find((acc) => acc.name === toAccount);
+
+      if (
+        fromAccountObj &&
+        toAccountObj &&
+        fromAccountObj.balance >= transferAmount
+      ) {
+        // Create a date for the transaction
+        const transactionDate = new Date().toISOString();
+
+        // Update the accounts in local state
+        const updatedAccounts = accounts.map((acc) => {
+          if (acc.name === fromAccount) {
+            return {
+              ...acc,
+              balance: acc.balance - transferAmount,
+            };
+          } else if (acc.name === toAccount) {
+            return {
+              ...acc,
+              balance: acc.balance + transferAmount,
+            };
+          }
+          return acc;
         });
 
-        // Update local state
-        setAccounts(updatedAccounts);
+        try {
+          // Call API to update both accounts with transaction details
+          await Promise.all([
+            updateData(`MealCredits/Update/${userEmail}/${fromAccount}`, {
+              account: fromAccount,
+              amount: transferAmount,
+              transactionType: "moneyOut", // Specify transaction type for fromAccount
+              date: transactionDate, // Associate the transfer with the current date
+            }),
+            updateData(`MealCredits/Update/${userEmail}/${toAccount}`, {
+              account: toAccount,
+              amount: transferAmount,
+              transactionType: "moneyIn", // Specify transaction type for toAccount
+              date: transactionDate, // Associate the transfer with the current date
+            }),
+          ]);
+
+          // Update local state
+          setAccounts(updatedAccounts);
+          setTransferAmount(0);
+          setFromAccount("");
+          setToAccount("");
+        } catch (error) {
+          console.error("Error transferring money:", error);
+        }
+      } else {
+        alert("Insufficient funds in the source account or invalid accounts.");
       }
     }
   };
@@ -111,7 +209,7 @@ const BalanceTab: React.FC = () => {
     <div>
       <h2 className="text-2xl font-bold">Balance</h2>
 
-      {/* Display list of accounts with balance */}
+      {/* Display list of accounts */}
       <div className="mt-4">
         {accounts.length === 0 ? (
           <p>No accounts available. Add a new account to get started.</p>
@@ -120,68 +218,92 @@ const BalanceTab: React.FC = () => {
             {accounts.map((account, index) => (
               <li
                 key={index}
-                className="flex justify-between items-center bg-white shadow-md p-4 rounded relative"
+                className="flex justify-between items-center p-4 bg-gray-100 rounded shadow"
               >
-                <div className="flex items-center">
-                  {/* Three dots button */}
+                <span className="font-semibold">{account.name}</span>
+                <span className="text-gray-700">
+                  {account.balance.toFixed(2)} Kudus
+                </span>
+                <div className="flex space-x-2">
                   <button
-                    onClick={() =>
-                      setDropdownVisible(dropdownVisible === index ? null : index)
-                    }
-                    className="mr-4 focus:outline-none"
+                    className={`text-sm px-2 py-1 rounded ${
+                      account.default
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-blue-500"
+                    }`}
+                    onClick={() => handleSetDefault(index)}
                   >
-                    &#x22EE; {/* Vertical ellipsis (three dots) */}
+                    {account.default ? "Default" : "Set as Default"}
                   </button>
-
-                  {/* Account name */}
-                  <span className="font-semibold">
-                    {account.name}
-                    {account.default && " (default)"}
-                  </span>
+                  <button
+                    className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    onClick={() => handleDeleteAccount(index)}
+                  >
+                    Delete
+                  </button>
                 </div>
-
-                {/* Account balance */}
-                <span>{account.balance.toFixed(2)} Kudus</span>
-
-                {/* Dropdown menu for delete/set default options */}
-                {dropdownVisible === index && (
-                  <div className="absolute top-full left-0 bg-white border shadow-md rounded mt-2 w-32 z-10">
-                    <button
-                      onClick={() => handleDeleteAccount(index)}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                    >
-                      Delete
-                    </button>
-                    {!account.default && (
-                      <button
-                        onClick={() => handleSetDefault(index)}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                      >
-                        Set Default
-                      </button>
-                    )}
-                  </div>
-                )}
               </li>
             ))}
           </ul>
         )}
       </div>
 
-      {/* Add account form */}
-      <div className="mt-8">
+      {/* Input for adding a new account */}
+      <div className="mt-6">
         <input
           type="text"
           value={newAccountName}
           onChange={(e) => setNewAccountName(e.target.value)}
-          placeholder="Account Name"
-          className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="New Account Name"
+          className="border rounded p-2 mr-2"
         />
         <button
           onClick={handleAddAccount}
-          className="ml-3 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 ease-in-out"
+          className="bg-blue-500 text-white rounded px-4 py-2"
         >
           Add Account
+        </button>
+      </div>
+
+      {/* Transfer Money Section */}
+      <div className="mt-6">
+        <h3 className="text-xl font-semibold">Transfer Money</h3>
+        <input
+          type="number"
+          value={transferAmount}
+          onChange={(e) => setTransferAmount(Number(e.target.value))}
+          placeholder="Amount"
+          className="border rounded p-2 mr-2"
+        />
+        <select
+          value={fromAccount}
+          onChange={(e) => setFromAccount(e.target.value)}
+          className="border rounded p-2 mr-2"
+        >
+          <option value="">From Account</option>
+          {accounts.map((account, index) => (
+            <option key={index} value={account.name}>
+              {account.name}
+            </option>
+          ))}
+        </select>
+        <select
+          value={toAccount}
+          onChange={(e) => setToAccount(e.target.value)}
+          className="border rounded p-2 mr-2"
+        >
+          <option value="">To Account</option>
+          {accounts.map((account, index) => (
+            <option key={index} value={account.name}>
+              {account.name}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={handleTransferMoney}
+          className="bg-green-500 text-white rounded px-4 py-2"
+        >
+          Transfer
         </button>
       </div>
     </div>

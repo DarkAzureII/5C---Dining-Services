@@ -1,58 +1,49 @@
 import React, { useState, useEffect } from "react";
-import { db, auth } from "../../firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
+import { fetchData } from "../../API/MealCredits";
 
 interface Transaction {
   amount: number;
   date: string;
 }
 
-interface TransactionProps {
-  transactions: Transaction[];
-}
-
-const Transaction: React.FC<TransactionProps> = () => {
+const Transaction: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       setError(null);
-      const currentUser = auth.currentUser;
+
       if (currentUser) {
         try {
-          setUserEmail(currentUser.email);
+          const userId = currentUser.email;
+          setUserEmail(userId);
 
-          // Use currentUser.email if that's how you reference the document in Firestore
-          const userDocRef = doc(db, "moneyOut", currentUser.email!);
+          // Fetch data from the API
+          const data = await fetchData(`MealCredits/Retrieve/${userId}`);
 
-          const userDocSnapshot = await getDoc(userDocRef);
+          // Find the default account
+          const defaultAccount = data.accounts.find(
+            (account: any) => account.isDefault
+          );
 
-          if (userDocSnapshot.exists()) {
-            const userData = userDocSnapshot.data();
-            console.log("Fetched data:", userData); // Correct variable name
+          if (defaultAccount) {
+            // Extract the moneyOut transactions
+            const moneyOutTransactions = Object.entries(
+              defaultAccount.moneyOut || {}
+            ).map(([date, amount]) => ({
+              date,
+              amount: typeof amount === "number" ? amount : parseFloat(amount as string), // Ensure the amount is a number
+            }));
 
-            const amounts = userData?.Amounts || [];
-            const dates = userData?.Dates || [];
-
-            // Combine amounts and dates into transactions
-            const loadedTransactions = amounts.map((amount: number, index: number) => {
-              const dateObj = dates[index]?.toDate(); // Convert Firestore Timestamp to JavaScript Date
-              const formattedDate = dateObj ? dateObj.toLocaleDateString("en-UK") : ""; // Format the date
-              
-              return {
-                amount,
-                date: formattedDate, // Use the formatted date string
-              };
-            });
-
-            setTransactions(loadedTransactions);
+            setTransactions(moneyOutTransactions as Transaction[]);
           } else {
-            console.log("No such document!");
-            setError("No transactions found.");
+            setError("No default account found.");
           }
         } catch (error) {
           console.error("Error fetching transactions:", error);
@@ -62,9 +53,9 @@ const Transaction: React.FC<TransactionProps> = () => {
         setError("No user is logged in.");
       }
       setLoading(false);
-    };
+    });
 
-    fetchTransactions();
+    return () => unsubscribe();
   }, []);
 
   if (loading) {
@@ -97,7 +88,7 @@ const Transaction: React.FC<TransactionProps> = () => {
                   -{transaction.amount.toFixed(2)} Kudus
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">
-                  {transaction.date}
+                  {new Date(transaction.date).toLocaleDateString("en-UK")}
                 </td>
               </tr>
             ))}

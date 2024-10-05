@@ -202,7 +202,7 @@ const DietaryManagementPage: React.FC = () => {
         {/* You can add more content or a feedback form here */}
       </div>
      {/* Tabs for the Dashboard */}
-     <div className="absolute top-36 left-64 flex w-3/4 ">
+     <div className="fixed top-36 left-64 flex w-3/4 ">
         <button
           className={`flex-1 py-3 px-5 text-black transition-all duration-300 group relative ${
             activeTab === "DietaryManagement"
@@ -225,7 +225,7 @@ const DietaryManagementPage: React.FC = () => {
         </button>
       </div>
       {/* Tab Content */}
-      <div className="relative grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-auto">
+      <div className="fixed grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-scroll max-h-[80vh]">
       {activeTab === "DietaryManagement" && <DietaryPreferencesHandler/>}
       </div>
     </div>

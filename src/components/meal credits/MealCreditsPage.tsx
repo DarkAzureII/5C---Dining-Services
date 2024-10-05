@@ -9,13 +9,6 @@ const MealCreditsPage: React.FC = () => {
   const navigate = useNavigate();
 
   // States
-
-  // Sample transactions
-  const transactions = [
-    { amount: 25.75, date: "2024-09-01" },
-    { amount: 10.0, date: "2024-09-03" },
-    { amount: 5.5, date: "2024-09-10" },
-  ];
   const [activeTab, setActiveTab] = useState("Balance");
   const [searchTerm, setSearchTerm] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
@@ -185,7 +178,8 @@ const MealCreditsPage: React.FC = () => {
           <button
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleDietaryClick}
-          >Dietary Management
+          >
+            Dietary Management
           </button>
 
           {/* Meal Credits Button */}
@@ -195,8 +189,8 @@ const MealCreditsPage: React.FC = () => {
           >
             Meal Credits
           </button>
-         {/* Dining Reservations Dropdown */}
-         <button
+          {/* Dining Reservations Dropdown */}
+          <button
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleReservationClick} // Use the new handler
           >
@@ -205,7 +199,7 @@ const MealCreditsPage: React.FC = () => {
         </ul>
       </div>
       {/* Tabs for the Dashboard */}
-      <div className="absolute top-36 left-64 flex w-3/4 ">
+      <div className="fixed top-36 left-64 flex w-3/4 ">
         <button
           className={`flex-1 py-3 px-5 text-black transition-all duration-300 group relative ${
             activeTab === "Balance" ? "bg-transparent bg-opacity-20" : ""
@@ -264,7 +258,7 @@ const MealCreditsPage: React.FC = () => {
         </button>
       </div>
       {/* Tab Content */}
-      <div className="absolute border rounded top-64 left-64 w-3/4 p-5 text-black text-center overflow-y-auto max-h-[80vh]">
+      <div className="fixed border rounded top-64 left-64 w-3/4 p-5 text-black text-center overflow-y-scroll max-h-[60vh]">
         {/* {activeTab === "MealCredits" && (
           <div>
             <h2 className="text-2xl font-bold">Meal Credits</h2>
@@ -274,7 +268,7 @@ const MealCreditsPage: React.FC = () => {
         {activeTab === "Balance" && <BalanceTab />}
 
         {activeTab === "Transactions" && (
-          <Transaction transactions={transactions} />
+          <Transaction/>
         )}
         {activeTab === "TrackUsage" && <TrackUsage />}
       </div>
@@ -292,7 +286,6 @@ const MealCreditsPage: React.FC = () => {
           {/* Feedback system content goes here */}
         </div>
       )}
-      
     </div>
   );
 };

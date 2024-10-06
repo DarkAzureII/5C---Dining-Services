@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import { auth } from "../../firebaseConfig";
 
 interface Reservation {
   id: string;
@@ -9,20 +10,29 @@ interface Reservation {
   userID: string;
 }
 
-interface ViewReservationsProps {
-  userEmail: string | null;
-}
-
-const ViewReservations: React.FC<ViewReservationsProps> = ({ userEmail }) => {
+const ViewReservations: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserEmail(user.email); 
+      } else {
+        setUserEmail(null);
+      }
+    });
+    return () => unsubscribe(); 
+  }, []);
 
   useEffect(() => {
     const fetchReservations = async () => {
       if (!userEmail) return;
 
       try {
+        setLoading(true); // Set loading to true when starting the fetch
         const response = await fetch(
           `https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations?userID=${userEmail}`
         );
@@ -33,9 +43,10 @@ const ViewReservations: React.FC<ViewReservationsProps> = ({ userEmail }) => {
 
         const data = await response.json();
 
+        // Filter reservations for upcoming ones and only use valid data
         const today = new Date();
         const upcomingReservations: Reservation[] = data.filter(
-          (reservation: Reservation) => new Date(reservation.resDate) >= today
+          (reservation: Reservation) => new Date(reservation.resDate) >= today && reservation.id
         );
 
         setReservations(upcomingReservations);
@@ -84,7 +95,7 @@ const ViewReservations: React.FC<ViewReservationsProps> = ({ userEmail }) => {
         <ul className="space-y-4">
           {reservations.map((reservation) => (
             <li
-              key={reservation.id}
+              key={reservation.id || reservation.resDate + reservation.resTime} // Fallback key if id is empty
               className="bg-blue-100 border-l-4 border-blue-500 shadow-md p-4 rounded-lg text-left hover:bg-blue-200 transition-colors"
             >
               <p className="font-semibold">
@@ -94,18 +105,22 @@ const ViewReservations: React.FC<ViewReservationsProps> = ({ userEmail }) => {
               <p className="font-semibold">Venue: {reservation.venue}</p>
 
               <div className="space-x-2">
-                <button
-                  onClick={() => handleEdit(reservation)}
-                  className="text-blue-500 hover:underline"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(reservation.id)}
-                  className="text-red-500 hover:underline"
-                >
-                  Cancel
-                </button>
+                {reservation.id && (
+                  <>
+                    <button
+                      onClick={() => handleEdit(reservation)}
+                      className="text-blue-500 hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(reservation.id)}
+                      className="text-red-500 hover:underline"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
               </div>
             </li>
           ))}

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getAuth } from 'firebase/auth'; // Firebase Auth import
 
 interface Reservation {
-  id: string;
+  id?: string;
   resDate: string; // ISO string representing date
   resTime: string;
   venue: string;
@@ -12,16 +13,31 @@ interface Reservation {
 const MakeReservation: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { reservationId, initialData, userEmail } = location.state || {}; // Retrieve data from navigation state
+  const { reservationId: initialReservationId, initialData } = location.state || {}; // Retrieve data from navigation state
 
-  // Initial state based on whether it's an edit or a new reservation
   const [date, setDate] = useState(initialData?.resDate || '');
   const [time, setTime] = useState(initialData?.resTime || '');
   const [diningHall, setDiningHall] = useState(initialData?.venue || '');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [userEmail, setUserEmail] = useState<string | null>(null); // Store userEmail
+  const [reservationId, setReservationId] = useState<string | null>(initialReservationId || null); // Store reservationId
 
-  // Title and button text change dynamically based on the mode
+  useEffect(() => {
+    const auth = getAuth(); // Initialize Firebase Auth
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserEmail(user.email); // Set the email instead of userId
+      } else {
+        setUserEmail(null); // Clear the userEmail if no user is authenticated
+        navigate('/login'); // Redirect to login page if the user is not authenticated
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
   const formTitle = reservationId ? 'Edit Reservation' : 'Make a New Reservation';
   const buttonText = reservationId ? 'Update Reservation' : 'Reserve Now';
 
@@ -29,32 +45,90 @@ const MakeReservation: React.FC = () => {
     event.preventDefault();
     setLoading(true);
     setMessage('');
-
-    // Create the reservation data object dynamically using the userEmail from props or context
-    const reservationData: Reservation = {
-      id: reservationId || '', // Use empty string if no ID (for new reservations)
+    
+    if (!userEmail) {
+      setMessage('Error: User is not authenticated');
+      setLoading(false);
+      return;
+    }
+  
+    const reservationData: Omit<Reservation, 'id'> = {
       resDate: date,
       resTime: time,
       venue: diningHall,
-      userID: userEmail, // Dynamically passed in from location state
+      userID: userEmail, // Get the userEmail from Firebase Auth
     };
-
+  
     try {
-      const url = reservationId
-        ? `https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations/${reservationId}`
-        : 'https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations';
-
+      let url = 'https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations';
+      let method = 'POST';
+  
+      if (reservationId) {
+        // If editing, update the existing reservation with the reservationId
+        url = `https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations/${reservationId}`;
+        method = 'PUT';
+      }
+  
       const response = await fetch(url, {
-        method: reservationId ? 'PUT' : 'POST',
+        method: method,
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(reservationData),
       });
-
+  
+      const contentType = response.headers.get('content-type');
+  
+      if (!response.ok) {
+        let errorData;
+        if (contentType && contentType.includes('application/json')) {
+          errorData = await response.json(); // Parse JSON error response
+        } else {
+          errorData = await response.text(); // Handle non-JSON error response
+        }
+        setMessage(`Error: ${errorData}`);
+        setLoading(false);
+        return;
+      }
+  
+      // If the response is OK, handle the success case
+      let responseData;
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json(); // Parse JSON success response
+      } else {
+        responseData = await response.text(); // Handle non-JSON success response
+      }
+  
+      const newReservationId = responseData.id || reservationId; // Get the new reservationId from the response
+      
+      if (!reservationId) {
+        setReservationId(newReservationId); // Update the form with the new ID for future edits
+      }
+  
+      setMessage(reservationId ? 'Reservation updated successfully!' : 'Reservation created successfully!');
+    } catch (error: any) {
+      const errorMsg = error?.message || String(error);
+      setMessage(`Error: ${errorMsg}`);
+    }
+  
+    setLoading(false);
+  };
+  
+  
+  const handleDelete = async () => {
+    if (!reservationId) return; // No reservation to delete
+    try {
+      const response = await fetch(
+        `https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations/${reservationId}`,
+        {
+          method: 'DELETE',
+        }
+      );
+  
       if (response.ok) {
-        setMessage(reservationId ? 'Reservation updated successfully!' : 'Reservation created successfully!');
-        navigate('/dashboard', { state: { userEmail } }); // Navigate back to the reservations list
+        setMessage('Reservation deleted successfully.');
+        setReservationId(null); // Clear the reservationId after deletion
+        navigate('/dashboard'); // Redirect to the dashboard after deletion
       } else {
         const errorData = await response.json();
         setMessage(`Error: ${errorData.message}`);
@@ -63,10 +137,8 @@ const MakeReservation: React.FC = () => {
       const errorMsg = error?.message || String(error);
       setMessage(`Error: ${errorMsg}`);
     }
-
-    setLoading(false);
   };
-
+  
   return (
     <div>
       <h3 className="text-2xl font-bold mb-4">{formTitle}</h3>
@@ -81,6 +153,9 @@ const MakeReservation: React.FC = () => {
             className="border border-gray-300 rounded-lg p-2"
             required
           />
+            <p className="text-red-500 text-sm mt-1">
+             Please note: Reservations must be made at least one day in advance.
+  </p>
         </div>
 
         <div className="flex flex-col">
@@ -114,6 +189,12 @@ const MakeReservation: React.FC = () => {
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-4" disabled={loading}>
           {loading ? 'Processing...' : buttonText}
         </button>
+
+        {reservationId && (
+          <button type="button" className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4" onClick={handleDelete}>
+            Delete Reservation
+          </button>
+        )}
 
         {message && <p className="mt-4">{message}</p>}
       </form>

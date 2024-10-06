@@ -45,7 +45,7 @@ const ReservationHistory: React.FC = () => {
       if (!userEmail) return; // Wait for the userEmail to be set
 
       try {
-        const response = await fetch(`${apiUrl}/userReservations?userId=${userEmail}`);
+        const response = await fetch(`https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations?userID=${userEmail}`);
         if (!response.ok) {
           throw new Error("Failed to fetch reservations");
         }

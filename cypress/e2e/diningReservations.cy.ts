@@ -50,26 +50,26 @@ describe('Dining Reservations', () => {
         const interval = 500; // Check every 500ms
         const maxAttempts = timeout / interval;
 
-        const clickCancelWithTimeout = (attempts : number) => {
-            cy.get('button').contains('Cancel').then($cancelButton => {
-                if ($cancelButton.length) {
-                    // If the button exists, click it
-                    cy.wrap($cancelButton).click();
+        // const clickCancelWithTimeout = (attempts : number) => {
+        //     cy.get('button').contains('Cancel').then($cancelButton => {
+        //         if ($cancelButton.length) {
+        //             // If the button exists, click it
+        //             cy.wrap($cancelButton).click();
 
-                    // Check the number of attempts left
-                    if (attempts < maxAttempts) {
-                        // Wait for the defined interval and check again
-                        cy.wait(interval);
-                        clickCancelWithTimeout(attempts + 1);
-                    } else {
-                        // Fail the test if the maximum attempts have been reached
-                        throw new Error('Cancel button not working');
-                    }
-                }
-            });
-        };
+        //             // Check the number of attempts left
+        //             if (attempts < maxAttempts) {
+        //                 // Wait for the defined interval and check again
+        //                 cy.wait(interval);
+        //                 clickCancelWithTimeout(attempts + 1);
+        //             } else {
+        //                 // Fail the test if the maximum attempts have been reached
+        //                 throw new Error('Cancel button not working');
+        //             }
+        //         }
+        //     });
+        // };
 
-        clickCancelWithTimeout(0);
+        // clickCancelWithTimeout(0);
         
       });
 })

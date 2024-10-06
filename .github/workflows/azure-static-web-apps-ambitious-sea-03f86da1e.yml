@@ -47,6 +47,20 @@ jobs:
           build: npm run build
           start: npm start
           browser: chrome
+
+      # Notify GitHub of the Deployment Start
+      - name: Create deployment
+        uses: actions/github-script@v6
+        id: create_deployment
+        with:
+          script: |
+            const deployment = await github.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.ref,
+              required_contexts: []  // Bypass commit status checks if needed
+            });
+            return deployment.data.id;
       
       # Build And Deploy
       - name: Build And Deploy
@@ -57,6 +71,38 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for GitHub integrations (i.e., PR comments)
           action: "upload"
           output_location: "dist" # Built app content directory
+                    
+      # Update Deployment Status to Success
+      - name: Deployment success
+        if: success()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: steps.create_deployment.outputs.deployment_id,
+              state: 'success',
+              environment: 'production',
+              description: 'Deployment completed successfully.',
+              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            });
+
+      # Update Deployment Status to Failure
+      - name: Deployment failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: steps.create_deployment.outputs.deployment_id,
+              state: 'failure',
+              environment: 'production',
+              description: 'Deployment failed.',
+              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            });
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

@@ -61,6 +61,10 @@ jobs:
               required_contexts: []  // Bypass commit status checks if needed
             });
             return { deployment_id: deployment.data.id };
+        
+      - name: Output deployment ID
+        run: |
+          echo "Deployment ID: ${{ steps.create_deployment.outputs.deployment_id }}"
       
       # Build And Deploy
       - name: Build And Deploy
@@ -72,37 +76,37 @@ jobs:
           action: "upload"
           output_location: "dist" # Built app content directory
 
-      # Update Deployment Status to Success
-      - name: Deployment success
-        if: success()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            await github.rest.repos.createDeploymentStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              deployment_id: steps.create_deployment.outputs.deployment_id,
-              state: 'success',
-              environment: 'production',
-              description: 'Deployment completed successfully.',
-              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
-            });
+      # # Update Deployment Status to Success
+      # - name: Deployment success
+      #   if: success()
+      #   uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       await github.rest.repos.createDeploymentStatus({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         deployment_id: steps.create_deployment.outputs.deployment_id,
+      #         state: 'success',
+      #         environment: 'production',
+      #         description: 'Deployment completed successfully.',
+      #         log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+      #       });
 
-      # Update Deployment Status to Failure
-      - name: Deployment failure
-        if: failure()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            await github.rest.repos.createDeploymentStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              deployment_id: steps.create_deployment.outputs.deployment_id,
-              state: 'failure',
-              environment: 'production',
-              description: 'Deployment failed.',
-              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
-            });
+      # # Update Deployment Status to Failure
+      # - name: Deployment failure
+      #   if: failure()
+      #   uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       await github.rest.repos.createDeploymentStatus({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         deployment_id: steps.create_deployment.outputs.deployment_id,
+      #         state: 'failure',
+      #         environment: 'production',
+      #         description: 'Deployment failed.',
+      #         log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+      #       });
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

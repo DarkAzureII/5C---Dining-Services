@@ -47,20 +47,20 @@ jobs:
           build: npm run build
           start: npm start
           browser: chrome
-
+      
       # Notify GitHub of the Deployment Start
       - name: Create deployment
         uses: actions/github-script@v6
         id: create_deployment
         with:
           script: |
-            const deployment = await octokit.repos.createDeployment({
+            const deployment = await github.rest.repos.createDeployment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: context.ref,
               required_contexts: []  // Bypass commit status checks if needed
             });
-            return deployment.data.id;
+            return { deployment_id: deployment.data.id };
       
       # Build And Deploy
       - name: Build And Deploy
@@ -78,7 +78,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            await octokit.repos.createDeploymentStatus({
+            await github.rest.repos.createDeploymentStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
               deployment_id: steps.create_deployment.outputs.deployment_id,
@@ -94,7 +94,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            await octokit.repos.createDeploymentStatus({
+            await github.rest.repos.createDeploymentStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
               deployment_id: steps.create_deployment.outputs.deployment_id,
@@ -103,7 +103,7 @@ jobs:
               description: 'Deployment failed.',
               log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
             });
-            
+
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest

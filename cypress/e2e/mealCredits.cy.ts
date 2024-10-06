@@ -135,11 +135,15 @@ describe('Meal Credits', () => {
     
         // Check if transactions are displayed correctly
         cy.contains('Money In - 10/2020').should('be.visible');
-        cy.contains('Transaction 1').should('be.visible').and('contain', '100.00 Kudus');
-        cy.contains('Transaction 2').should('be.visible').and('contain', '50.00 Kudus');
+        cy.contains('Transaction 1').should('be.visible')
+        cy.contains('100.00 Kudus').should('be.visible');
+        cy.contains('Transaction 2').should('be.visible')
+        cy.contains('50.00 Kudus').should('be.visible');
     
         cy.contains('Money Out - 10/2020').should('be.visible');
-        cy.contains('Expense 1').should('be.visible').and('contain', '30.00 Kudus');
-        cy.contains('Expense 2').should('be.visible').and('contain', '20.00 Kudus');
+        cy.contains('Expense 1').should('be.visible')
+        cy.contains('30.00 Kudus').should('be.visible');
+        cy.contains('Expense 2').should('be.visible')
+        cy.contains('20.00 Kudus').should('be.visible');
       });
 });

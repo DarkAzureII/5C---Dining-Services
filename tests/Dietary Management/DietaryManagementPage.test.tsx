@@ -8,7 +8,6 @@ import { vi, it, expect, describe, beforeEach, afterEach } from 'vitest';
 import { auth } from '../../src/firebaseConfig';
 import DietaryManagementPage from '../../src/components/Dietary Management/DietaryManagementPage'; // Adjust the path to your Dashboard
 import DietaryPreferencesHandler from '../../src/components/Dietary Management/DietaryPreferencesHandler';
-import DietaryPreferencesList from '../../src/components/Dietary Management/DietaryPreferencesList';
 
 describe('DietaryManagementPage', () => {
 

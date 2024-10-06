@@ -13,7 +13,7 @@ jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Build, Test, and Deploy Job
     steps:
       - uses: actions/checkout@v3
         with:
@@ -26,6 +26,27 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y apt-utils
 
+      # Install Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+      
+      # Run Vitest unit tests
+      - name: Run Vitest
+        run: npm run test # Ensure this script exists in your package.json
+
+      # Run Cypress end-to-end tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+      
+      # Build And Deploy
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1

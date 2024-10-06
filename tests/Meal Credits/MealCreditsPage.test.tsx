@@ -6,7 +6,7 @@ import axios from "axios";
 import MockAdapter from 'axios-mock-adapter';
 import { vi, it, expect, describe, beforeEach, afterEach } from 'vitest';
 import { auth } from '../../src/firebaseConfig';
-import MealCreditsPage from '../../src/components/Meal Credits/MealCreditsPage'; // Adjust the path to your Dashboard
+import MealCreditsPage from '../../src/components/meal credits/MealCreditsPage'; // Adjust the path to your Dashboard
 
 describe('MealCreditsPage', () => {
 

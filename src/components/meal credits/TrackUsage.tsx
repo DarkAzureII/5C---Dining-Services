@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../../firebaseConfig";
-import { fetchData } from "../../API/MealCredits"; // Assuming your API methods are in api.ts
+import { fetchData } from "../../API/MealCredits"; // Assuming your API methods are in API.ts
 
 interface Transaction {
   amount: number;
@@ -28,7 +28,7 @@ const TrackUsage: React.FC = () => {
     year: number
   ) => {
     return transactions.filter((transaction) => {
-      const date = new Date(transaction.date); // Convert date string back to Date object
+      const date = new Date(transaction.date);
       return date.getMonth() + 1 === month && date.getFullYear() === year;
     });
   };
@@ -52,23 +52,8 @@ const TrackUsage: React.FC = () => {
 
           if (defaultAccount) {
             // Extract moneyIn and moneyOut from the default account
-            const moneyInMap = defaultAccount.moneyIn || {};
-            const moneyOutMap = defaultAccount.moneyOut || {};
-
-            // Convert maps to arrays of transactions
-            const moneyInTransactions: Transaction[] = Object.entries(
-              moneyInMap
-            ).map(([date, amount]) => ({
-              amount: Number(amount), // Ensure amount is a number
-              date: new Date(date).toISOString(), // Convert date string to ISO format
-            }));
-
-            const moneyOutTransactions: Transaction[] = Object.entries(
-              moneyOutMap
-            ).map(([date, amount]) => ({
-              amount: Number(amount), // Ensure amount is a number
-              date: new Date(date).toISOString(), // Convert date string to ISO format
-            }));
+            const moneyInTransactions: Transaction[] = defaultAccount.moneyIn || [];
+            const moneyOutTransactions: Transaction[] = defaultAccount.moneyOut || [];
 
             // Filter transactions by selected month and year
             const filteredMoneyIn = filterTransactionsByMonth(
@@ -165,6 +150,8 @@ const TrackUsage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {loading && <p>Loading transactions...</p>}
     </div>
   );
 };

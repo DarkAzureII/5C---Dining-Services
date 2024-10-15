@@ -16,12 +16,10 @@ interface Account {
 const BalanceTab: React.FC = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [newAccountName, setNewAccountName] = useState("");
-  const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [transferAmount, setTransferAmount] = useState<number>(0);
   const [fromAccount, setFromAccount] = useState<string>("");
   const [toAccount, setToAccount] = useState<string>("");
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   // Fetch current user's accounts from the API
   useEffect(() => {
@@ -50,8 +48,6 @@ const BalanceTab: React.FC = () => {
           console.error("Error fetching accounts:", error);
           setAccounts([]);
         }
-      } else {
-        setAccounts([]);
       }
     });
 
@@ -59,17 +55,16 @@ const BalanceTab: React.FC = () => {
   }, []);
 
   // Function to handle adding a new account
-  const handleAddAccount = async () => {
+  const handleAddAccount = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (newAccountName.trim() && userEmail) {
-      const userId = userEmail;
-
       try {
-        await postData(`MealCredits/Create/${userId}`, {
+        await postData(`MealCredits/Create/${userEmail}`, {
           accountName: newAccountName,
         });
 
         const updatedAccounts = await fetchData(
-          `MealCredits/Retrieve/${userId}`
+          `MealCredits/Retrieve/${userEmail}`
         );
 
         if (updatedAccounts && updatedAccounts.accounts) {
@@ -80,11 +75,8 @@ const BalanceTab: React.FC = () => {
               default: account.isDefault || false,
             }))
           );
-        } else {
-          setAccounts([]);
         }
-
-        setNewAccountName("");
+        setNewAccountName(""); // Reset input
       } catch (error) {
         console.error("Error adding account:", error);
       }
@@ -94,20 +86,18 @@ const BalanceTab: React.FC = () => {
   // Function to handle setting an account as default
   const handleSetDefault = async (index: number) => {
     if (userEmail) {
-      const userId = userEmail;
       const accountName = accounts[index].name;
-
       const updatedAccounts = accounts.map((account, i) => ({
         ...account,
         default: i === index,
       }));
 
       try {
-        await updateData(`MealCredits/Update/${userId}/${accountName}`, {
+        await updateData(`MealCredits/Update/${userEmail}/${accountName}`, {
           isDefault: true,
         });
 
-        setAccounts(updatedAccounts);
+        setAccounts(updatedAccounts); // Update the state immediately after setting default
       } catch (error) {
         console.error("Error setting default account:", error);
       }
@@ -117,27 +107,18 @@ const BalanceTab: React.FC = () => {
   // Function to handle deleting an account
   const handleDeleteAccount = async (index: number) => {
     if (userEmail) {
-      const userId = userEmail;
       const accountName = accounts[index].name;
 
+      if (accounts[index].default) {
+        alert("Cannot delete the default account.");
+        return;
+      }
+
       try {
-        await deleteData(`MealCredits/Delete/${userId}/${accountName}`);
+        await deleteData(`MealCredits/Delete/${userEmail}/${accountName}`);
 
-        const updatedAccounts = await fetchData(
-          `MealCredits/Retrieve/${userId}`
-        );
-
-        if (updatedAccounts && updatedAccounts.accounts) {
-          setAccounts(
-            updatedAccounts.accounts.map((account: any) => ({
-              name: account.accountName,
-              balance: account.balance,
-              default: account.isDefault || false,
-            }))
-          );
-        } else {
-          setAccounts([]);
-        }
+        const updatedAccounts = accounts.filter((_, i) => i !== index);
+        setAccounts(updatedAccounts);
       } catch (error) {
         console.error("Error deleting account:", error);
       }
@@ -145,7 +126,14 @@ const BalanceTab: React.FC = () => {
   };
 
   // Function to handle transferring money between accounts
-  const handleTransferMoney = async () => {
+  const handleTransferMoney = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (fromAccount === toAccount) {
+      alert("Cannot transfer money to the same account.");
+      return;
+    }
+
     if (fromAccount && toAccount && transferAmount > 0 && userEmail) {
       const fromAccountObj = accounts.find((acc) => acc.name === fromAccount);
       const toAccountObj = accounts.find((acc) => acc.name === toAccount);
@@ -155,10 +143,7 @@ const BalanceTab: React.FC = () => {
         toAccountObj &&
         fromAccountObj.balance >= transferAmount
       ) {
-        // Create a date for the transaction
         const transactionDate = new Date().toISOString();
-
-        // Update the accounts in local state
         const updatedAccounts = accounts.map((acc) => {
           if (acc.name === fromAccount) {
             return {
@@ -174,30 +159,27 @@ const BalanceTab: React.FC = () => {
           return acc;
         });
 
-        try {
-          // Call API to update both accounts with transaction details
-          await Promise.all([
-            updateData(`MealCredits/Update/${userEmail}/${fromAccount}`, {
-              account: fromAccount,
-              amount: transferAmount,
-              transactionType: "moneyOut", // Specify transaction type for fromAccount
-              date: transactionDate, // Associate the transfer with the current date
-            }),
-            updateData(`MealCredits/Update/${userEmail}/${toAccount}`, {
-              account: toAccount,
-              amount: transferAmount,
-              transactionType: "moneyIn", // Specify transaction type for toAccount
-              date: transactionDate, // Associate the transfer with the current date
-            }),
-          ]);
+        setAccounts(updatedAccounts);
 
-          // Update local state
-          setAccounts(updatedAccounts);
+        try {
+          await updateData(`MealCredits/Update/${userEmail}/${fromAccount}`, {
+            amount: transferAmount,
+            transactionType: "moneyOut",
+            date: transactionDate,
+          });
+
+          await updateData(`MealCredits/Update/${userEmail}/${toAccount}`, {
+            amount: transferAmount,
+            transactionType: "moneyIn",
+            date: transactionDate,
+          });
+
           setTransferAmount(0);
           setFromAccount("");
           setToAccount("");
         } catch (error) {
           console.error("Error transferring money:", error);
+          alert("Error transferring money. Please try again.");
         }
       } else {
         alert("Insufficient funds in the source account or invalid accounts.");
@@ -221,7 +203,7 @@ const BalanceTab: React.FC = () => {
                 className="flex justify-between items-center p-4 bg-gray-100 rounded shadow"
               >
                 <span className="font-semibold">{account.name}</span>
-                <span test-id={`bal-${account.name}`} className="text-gray-700">
+                <span className="text-gray-700">
                   {account.balance.toFixed(2)} Kudus
                 </span>
                 <div className="flex space-x-2">
@@ -236,7 +218,6 @@ const BalanceTab: React.FC = () => {
                     {account.default ? "Default" : "Set as Default"}
                   </button>
                   <button
-                    test-id={`dropdown-${account.name}`}
                     className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                     onClick={() => handleDeleteAccount(index)}
                   >
@@ -250,7 +231,7 @@ const BalanceTab: React.FC = () => {
       </div>
 
       {/* Input for adding a new account */}
-      <div className="mt-6">
+      <form onSubmit={handleAddAccount} className="mt-6">
         <input
           type="text"
           value={newAccountName}
@@ -258,16 +239,13 @@ const BalanceTab: React.FC = () => {
           placeholder="New Account Name"
           className="border rounded p-2 mr-2"
         />
-        <button
-          onClick={handleAddAccount}
-          className="bg-blue-500 text-white rounded px-4 py-2"
-        >
+        <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2">
           Add Account
         </button>
-      </div>
+      </form>
 
       {/* Transfer Money Section */}
-      <div className="mt-6">
+      <form onSubmit={handleTransferMoney} className="mt-6">
         <h3 className="text-xl font-semibold">Transfer Money</h3>
         <input
           type="number"
@@ -301,12 +279,12 @@ const BalanceTab: React.FC = () => {
           ))}
         </select>
         <button
-          onClick={handleTransferMoney}
+          type="submit"
           className="bg-green-500 text-white rounded px-4 py-2"
         >
           Transfer
         </button>
-      </div>
+      </form>
     </div>
   );
 };

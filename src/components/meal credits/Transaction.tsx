@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
-import { fetchData } from "../../API/MealCredits";
+import { fetchData } from "../../API/MealCredits"; // Ensure this fetches data correctly
 
 interface Transaction {
   amount: number;
@@ -24,7 +24,7 @@ const Transaction: React.FC = () => {
           const userId = currentUser.email;
           setUserEmail(userId);
 
-          // Fetch data from the API
+          // Fetch data from the API (assuming this correctly hits your API routes)
           const data = await fetchData(`MealCredits/Retrieve/${userId}`);
 
           // Find the default account
@@ -34,12 +34,14 @@ const Transaction: React.FC = () => {
 
           if (defaultAccount) {
             // Extract the moneyOut transactions
-            const moneyOutTransactions = Object.entries(
-              defaultAccount.moneyOut || {}
-            ).map(([date, amount]) => ({
-              date,
-              amount: typeof amount === "number" ? amount : parseFloat(amount as string), // Ensure the amount is a number
-            }));
+            const moneyOutTransactions = (defaultAccount.moneyOut || []).map(
+              (transaction: any) => ({
+                date: transaction.date,
+                amount: typeof transaction.amount === "number"
+                  ? transaction.amount
+                  : parseFloat(transaction.amount), // Ensure the amount is a valid number
+              })
+            );
 
             setTransactions(moneyOutTransactions as Transaction[]);
           } else {

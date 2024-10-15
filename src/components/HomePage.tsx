@@ -5,6 +5,7 @@ import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import { auth } from '../firebaseConfig'; // Import Firebase auth
 import { User } from 'firebase/auth'; // Import User type
+import RightSidebarFooter from './RightSidebarFooter'; // Import RightSidebarFooter component
 
 const HomePage: React.FC = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -62,12 +63,13 @@ const HomePage: React.FC = () => {
         <h1 className="ml-5 text-xl font-bold">Smart Campus!</h1>
       </div>
 
+      {/* Main Image Section */}
       <div className="mt-[10%] w-full h-[calc(100vh-60px-20%)] flex justify-center items-center">
         <img src="Wits-DH.jpg" alt="Main Image" className="w-full h-1/2 object-cover" />
       </div>
-      
 
-
+      {/* Right Sidebar Footer */}
+      <RightSidebarFooter />
     </div>
   );
 };

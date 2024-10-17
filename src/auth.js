@@ -5,52 +5,51 @@ document.addEventListener('DOMContentLoaded', () => {
   const signupContainer = document.getElementById('signup-container');
   const showSignupLink = document.getElementById('show-signup');
   const showLoginLink = document.getElementById('show-login');
-  const logoutBtn = document.getElementById('logout'); // Select logout button
+  const logoutBtn = document.getElementById('logout');
+  const googleSignInBtn = document.getElementById('google-signin-btn'); // Select Google Sign-In button
 
-  function toggleContainers(showLogin) {
-    if (showLogin) {
-      loginContainer.style.display = 'block';
-      signupContainer.style.display = 'none';
+  // Function to toggle containers
+  function toggleContainers(container) {
+    if (container.style.display === 'block') {
+      container.style.display = 'none';
     } else {
       loginContainer.style.display = 'none';
-      signupContainer.style.display = 'block';
+      signupContainer.style.display = 'none';
+      container.style.display = 'block';
     }
   }
 
   loginBtn.addEventListener('click', () => {
-    toggleContainers(true);
+    toggleContainers(loginContainer);
   });
 
   signupBtn.addEventListener('click', () => {
-    toggleContainers(false);
+    toggleContainers(signupContainer);
   });
 
   showSignupLink.addEventListener('click', (e) => {
     e.preventDefault();
-    toggleContainers(false);
+    toggleContainers(signupContainer);
   });
 
   showLoginLink.addEventListener('click', (e) => {
     e.preventDefault();
-    toggleContainers(true);
+    toggleContainers(loginContainer);
   });
 
-  // Initially hide the containers
   loginContainer.style.display = 'none';
   signupContainer.style.display = 'none';
 
-  // Listen for auth status changes
   auth.onAuthStateChanged((user) => {
     if (user) {
-      //window.location.href = 'UserDashboard.html'; // Redirect to UserDashboard.html if logged in
-    } 
+      // User is logged in
+      console.log('Logged in user provider:', user.providerData[0].providerId); // To check login type
+    }
   });
 
-  // Signup form submission
   const signupForm = document.querySelector('#signup-form');
   signupForm.addEventListener('submit', (e) => {
     e.preventDefault();
-
     const email = signupForm['signup-email'].value;
     const password = signupForm['signup-password'].value;
     const confirmPassword = signupForm['signup-confirm-password'].value;
@@ -64,19 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
       .then((cred) => {
         console.log('User signed up:', cred.user);
         signupForm.reset();
-        toggleContainers(true); // Show login form after signup
+        toggleContainers(loginContainer);
       })
       .catch((error) => {
         document.getElementById('signup-error').textContent = error.message;
-        console.error('Signup error:', error.message);
       });
   });
 
-  // Login form submission
   const loginForm = document.querySelector('#login-form');
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
-
     const email = loginForm['login-email'].value;
     const password = loginForm['login-password'].value;
 
@@ -84,26 +80,44 @@ document.addEventListener('DOMContentLoaded', () => {
       .then((cred) => {
         console.log('User logged in:', cred.user);
         loginForm.reset();
-        window.location.href = 'UserDashboard.html'; // Redirect to UserDashboard.html on successful login
+        window.location.href = 'UserDashboard.html';
       })
       .catch((error) => {
         document.getElementById('login-error').textContent = error.message;
-        console.error('Login error:', error.message);
       });
   });
 
-  // Logout
   if (logoutBtn) {
     logoutBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      auth.signOut()
-        .then(() => {
-          console.log('User logged out');
-          window.location.href = 'index.html'; // Redirect to homepage or login page on logout
-        })
-        .catch((error) => {
-          console.error('Logout error:', error.message);
-        });
+      
+      const user = auth.currentUser;
+      if (user) {
+        const providerId = user.providerData[0].providerId;
+
+        if (providerId === 'google.com') {
+          console.log('Logging out from Google account');
+        } else if (providerId === 'password') {
+          console.log('Logging out from email-password account');
+        }
+
+        auth.signOut()
+          .then(() => {
+            console.log('User logged out');
+            window.location.href = 'index.html';
+          })
+          .catch((error) => {
+            console.error('Logout error:', error.message);
+          });
+      }
+    });
+  }
+
+  // Google Sign-In button click event
+  if (googleSignInBtn) {
+    googleSignInBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      googleSignIn();
     });
   }
 });

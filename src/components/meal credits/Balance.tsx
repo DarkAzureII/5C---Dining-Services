@@ -105,17 +105,91 @@ const BalanceTab: React.FC = () => {
   };
 
   // Function to handle deleting an account
-  const handleDeleteAccount = async (index: number) => {
-    if (userEmail) {
-      const accountName = accounts[index].name;
+  const handleDeleteAccount = async (event: React.FormEvent, index: number) => {
+    event.preventDefault(); // Prevent page reload
 
-      if (accounts[index].default) {
-        alert("Cannot delete the default account.");
+    if (userEmail) {
+      const accountToDelete = accounts[index];
+      const mainAccountIndex = 0; // Assuming the first account is always the main account
+      const mainAccount = accounts[mainAccountIndex];
+
+      // Prevent deleting the main account
+      if (index === mainAccountIndex) {
+        alert("Cannot delete the main account.");
         return;
       }
 
+      // Step 1: Transfer the balance to the main account
+      if (accountToDelete.balance > 0) {
+        const updatedAccounts = accounts.map((acc, i) => {
+          if (i === mainAccountIndex) {
+            return {
+              ...acc,
+              balance: acc.balance + accountToDelete.balance,
+            };
+          }
+          return acc;
+        });
+
+        setAccounts(updatedAccounts);
+
+        // Perform balance update in the database
+        try {
+          const transactionDate = new Date().toISOString();
+
+          // Update main account with the incoming balance
+          await updateData(
+            `MealCredits/Update/${userEmail}/${mainAccount.name}`,
+            {
+              amount: accountToDelete.balance,
+              transactionType: "moneyIn",
+              date: transactionDate,
+            }
+          );
+
+          // Reset the balance of the account to be deleted to 0 (optional)
+          await updateData(
+            `MealCredits/Update/${userEmail}/${accountToDelete.name}`,
+            {
+              amount: accountToDelete.balance,
+              transactionType: "moneyOut",
+              date: transactionDate,
+            }
+          );
+        } catch (error) {
+          console.error("Error transferring balance before deletion:", error);
+          alert("Error transferring balance. Please try again.");
+          return;
+        }
+      }
+
+      // Step 2: Check if the account is default and set the main account as default if needed
+      if (accountToDelete.default) {
+        const updatedAccounts = accounts.map((acc, i) => ({
+          ...acc,
+          default: i === mainAccountIndex, // Set main account as default
+        }));
+        setAccounts(updatedAccounts);
+
+        // Update the default status in the database
+        try {
+          await updateData(
+            `MealCredits/Update/${userEmail}/${mainAccount.name}`,
+            {
+              isDefault: true,
+            }
+          );
+        } catch (error) {
+          console.error("Error setting main account as default:", error);
+          return;
+        }
+      }
+
+      // Step 3: Proceed to delete the account
       try {
-        await deleteData(`MealCredits/Delete/${userEmail}/${accountName}`);
+        await deleteData(
+          `MealCredits/Delete/${userEmail}/${accountToDelete.name}`
+        );
 
         const updatedAccounts = accounts.filter((_, i) => i !== index);
         setAccounts(updatedAccounts);
@@ -219,7 +293,7 @@ const BalanceTab: React.FC = () => {
                   </button>
                   <button
                     className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                    onClick={() => handleDeleteAccount(index)}
+                    onClick={(event) => handleDeleteAccount(event, index)}// Pass event here
                   >
                     Delete
                   </button>
@@ -239,7 +313,10 @@ const BalanceTab: React.FC = () => {
           placeholder="New Account Name"
           className="border rounded p-2 mr-2"
         />
-        <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white rounded px-4 py-2"
+        >
           Add Account
         </button>
       </form>

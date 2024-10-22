@@ -6,7 +6,7 @@ import VeganMenu from "./Menu Access/VeganMenu";
 import GlutenFreeMenu from "./Menu Access/GlutenFreeMenu";
 import Feedback from "./Feedback System/Feedback";
 import ViewReservations from "./Dining Reservations/ViewReservation";
-import ReservationHistory from './Feedback System/ReservationHistory';
+import ReservationHistory from "./Feedback System/ReservationHistory";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -144,33 +144,26 @@ const Dashboard: React.FC = () => {
 
           {/* Welcome User Dropdown */}
           <div className="">
-            <div
-              test-id="user-dropdown"
-              className="text-[#a0c3ff] text-lg font-bold mr-5 cursor-pointer"
-              onClick={toggleUserDropdown}
-            >
-              Welcome, {userEmail || "Guest"} ▼
+            {/* Welcome User */}
+            <div className="flex items-center justify-center mb-2 text-blue-900 text-lg font-bold mr-5">
+              <span>Welcome {userEmail || "Guest"} </span>
+              <img
+                src="https://freesvg.org/img/abstract-user-flat-3.png"
+                alt="User Icon"
+                className="w-6 h-6 mr-2"
+              />
             </div>
-            {userDropdownVisible && (
-              <div className="absolute top-full right-0 bg-white border border-gray-300 rounded-md shadow-md p-2.5 w-36 text-center mt-2">
-                <button
-                  className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out"
-                  onClick={handleLogoutClick}
-                >
-                  Log Out
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>
-
       {/* Side Menu */}
       <div
-        className={`fixed top-0 ${menuVisible ? "left-0" : "left-[-275px]"} w-[275px] h-full bg-[#0c0d43] shadow-lg transition-all duration-300 z-20`}
+        className={`fixed top-0 ${
+          menuVisible ? "left-0" : "left-[-275px]"
+        } w-[275px] h-full bg-[#0c0d43] shadow-lg transition-all duration-300 z-20`}
       >
         <button
-          test-id = "close-menu-button"
+          test-id="close-menu-button"
           className="absolute top-4 right-4 text-2xl bg-none border-none cursor-pointer text-white"
           onClick={toggleMenu}
         >
@@ -222,6 +215,25 @@ const Dashboard: React.FC = () => {
             History
           </button>
         </ul>
+        {/* User Email and Logout Button */}
+        <div className="absolute bottom-10 left-0 w-full text-center text-white">
+          <div className="text-sm mb-2">Logged in as:</div>
+          <div className="flex items-center justify-center mb-2">
+            <img
+              src="https://freesvg.org/img/abstract-user-flat-3.png"
+              alt="User Icon"
+              className="w-5 h-5 mr-2"
+            />
+            <span>{userEmail || "Guest"}</span>
+          </div>
+          <button
+            test-id="logout-button"
+            onClick={handleLogoutClick}
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md w-4/5 mx-auto hover:bg-[#0056b3]"
+          >
+            Log Out
+          </button>
+        </div>
       </div>
 
       {/* Reservation History Side Tab */}
@@ -282,7 +294,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="fixed grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-scroll max-h-[70vh]">
+      <div className="fixed grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-scroll ">
         {activeTab === "menuAccess" && (
           <div className="">
             <h2 className="text-2xl font-bold">Menu Access</h2>
@@ -292,7 +304,7 @@ const Dashboard: React.FC = () => {
         {activeTab === "diningReservations" && (
           <div>
             <h2 className="text-2xl font-bold">Upcoming Reservations</h2>
-            <ViewReservations userEmail={userEmail}/>
+            <ViewReservations userEmail={userEmail} />
           </div>
         )}
       </div>
@@ -311,4 +323,3 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
-

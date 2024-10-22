@@ -104,27 +104,95 @@ const BalanceTab: React.FC = () => {
     }
   };
 
-  // Function to handle deleting an account
-  const handleDeleteAccount = async (index: number) => {
+  const handleDeleteAccount = async (event: React.FormEvent, index: number) => {
+    event.preventDefault();
+  
     if (userEmail) {
-      const accountName = accounts[index].name;
-
-      if (accounts[index].default) {
-        alert("Cannot delete the default account.");
+      const accountToDelete = accounts[index];
+      const mainAccountIndex = 0; // Assuming the first account is always the main account
+      const mainAccount = accounts[mainAccountIndex];
+  
+      // Prevent deleting the main account
+      if (index === mainAccountIndex) {
+        alert("Cannot delete the main account.");
         return;
       }
-
-      try {
-        await deleteData(`MealCredits/Delete/${userEmail}/${accountName}`);
-
-        const updatedAccounts = accounts.filter((_, i) => i !== index);
+  
+      // Step 1: Transfer the balance to the main account
+      if (accountToDelete.balance > 0) {
+        // Update local state immediately
+        const updatedAccounts = accounts.map((acc, i) => {
+          if (i === mainAccountIndex) {
+            return {
+              ...acc,
+              balance: acc.balance + accountToDelete.balance,
+            };
+          }
+          return acc;
+        });
+  
+        // Remove the account from the list before sending to backend
+        const accountsAfterDeletion = updatedAccounts.filter((_, i) => i !== index);
+        setAccounts(accountsAfterDeletion);
+  
+        try {
+          const transactionDate = new Date().toISOString();
+  
+          // Update main account balance in the backend
+          await updateData(`MealCredits/Update/${userEmail}/${mainAccount.name}`, {
+            amount: accountToDelete.balance,
+            transactionType: "moneyIn",
+            date: transactionDate,
+          });
+  
+          // Optional: Reset the balance of the deleted account in the backend (before deletion)
+          await updateData(
+            `MealCredits/Update/${userEmail}/${accountToDelete.name}`,
+            {
+              amount: accountToDelete.balance,
+              transactionType: "moneyOut",
+              date: transactionDate,
+            }
+          );
+        } catch (error) {
+          console.error("Error transferring balance before deletion:", error);
+          alert("Error transferring balance. Please try again.");
+          return;
+        }
+      }
+  
+      // Step 2: Check if the account is default and set the main account as default if needed
+      if (accountToDelete.default) {
+        const updatedAccounts = accounts.map((acc, i) => ({
+          ...acc,
+          default: i === mainAccountIndex, // Set main account as default
+        }));
         setAccounts(updatedAccounts);
+  
+        // Update the default status in the database
+        try {
+          await updateData(
+            `MealCredits/Update/${userEmail}/${mainAccount.name}`,
+            {
+              isDefault: true,
+            }
+          );
+        } catch (error) {
+          console.error("Error setting main account as default:", error);
+          return;
+        }
+      }
+  
+      // Step 3: Proceed to delete the account in the backend
+      try {
+        await deleteData(`MealCredits/Delete/${userEmail}/${accountToDelete.name}`);
       } catch (error) {
         console.error("Error deleting account:", error);
+        alert("Error deleting account. Please try again.");
       }
     }
   };
-
+  
   // Function to handle transferring money between accounts
   const handleTransferMoney = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -219,7 +287,7 @@ const BalanceTab: React.FC = () => {
                   </button>
                   <button
                     className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                    onClick={() => handleDeleteAccount(index)}
+                    onClick={(event) => handleDeleteAccount(event, index)}// Pass event here
                   >
                     Delete
                   </button>
@@ -239,7 +307,10 @@ const BalanceTab: React.FC = () => {
           placeholder="New Account Name"
           className="border rounded p-2 mr-2"
         />
-        <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white rounded px-4 py-2"
+        >
           Add Account
         </button>
       </form>

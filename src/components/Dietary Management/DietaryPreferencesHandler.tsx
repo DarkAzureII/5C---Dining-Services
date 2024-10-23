@@ -185,7 +185,7 @@ const DietaryManagement: React.FC = () => {
             <textarea
               value={allergies}
               onChange={(e) => setAllergies(e.target.value)} // Store allergies as a string
-              placeholder="Enter allergies, separated by commas"
+              placeholder="Enter allergies, separated by commas(Type 'None' if you do not have any)"
               className="block w-full px-4 py-2 border border-gray-300 rounded-md"
             ></textarea>
           </div>

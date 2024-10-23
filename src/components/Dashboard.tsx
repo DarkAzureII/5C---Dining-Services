@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"
 import Menu from "./Menu Access/Menu";
 import VeganMenu from "./Menu Access/VeganMenu";
 import GlutenFreeMenu from "./Menu Access/GlutenFreeMenu";
 import Feedback from "./Feedback System/Feedback";
 import ViewReservations from "./Dining Reservations/ViewReservation";
 import ReservationHistory from "./Feedback System/ReservationHistory";
+
+const API_BASE_URL = 'https://appdietary-appdietary-xu5p2zrq7a-uc.a.run.app/DietaryManagement';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -17,25 +20,27 @@ const Dashboard: React.FC = () => {
   const [userDropdownVisible, setUserDropdownVisible] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [dietaryPreference, setDietaryPreference] = useState<string | null>(null);
   const [dietType, setDietType] = useState<string | null>(null); // State to manage the diet type
   const [showReservationHistory, setShowReservationHistory] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserEmail(user.email);
-        // Check localStorage for saved diet preference
-        const savedDietType = localStorage.getItem("dietType");
-        if (savedDietType) {
-          setDietType(savedDietType); // Restore saved diet type
-        }
-      } else {
-        setUserEmail(null);
-        setDietType(null); // Clear diet type if user logs out
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    if (user && user.email) {
+      setUserId(user.email);
+      setUserEmail(user.email); // Set the user email to display in the welcome message
+      fetchUserPreference(user.email); // Fetch user preference after getting email
+    } else {
+      setUserId(null); // User is not logged in or email is null
+      setUserEmail(null); // Clear the user email if not logged in
+    }
+  });
+  return () => unsubscribe();
+}, []);
+
+
 
   const openTab = (tabName: string) => {
     setActiveTab(tabName);
@@ -90,21 +95,32 @@ const Dashboard: React.FC = () => {
     setShowReservationHistory(!showReservationHistory);
   };
 
-  // Save diet type in localStorage
-  const handleDietTypeChange = (newDietType: string) => {
-    setDietType(newDietType);
-    localStorage.setItem("dietType", newDietType); // Save diet type to localStorage
+  const fetchUserPreference = async (userID: string) => {
+    try {
+      const response = await axios.get(API_BASE_URL, { params: { userID } });
+      const preferences = response.data;
+
+      // Assuming there's only one preference returned
+      if (preferences.length > 0) {
+        setDietaryPreference(preferences[0].type);
+      } else {
+        setDietaryPreference(null); // No preference found, show default menu
+      }
+    } catch (error) {
+      console.error("Error fetching dietary preference:", error);
+    }
   };
 
   const renderMenu = () => {
-    if (dietType === "Vegan") {
-      return <VeganMenu />;
-    } else if (dietType === "Gluten-Free") {
-      return <GlutenFreeMenu />;
-    } else {
-      return <Menu />;
-    }
-  };
+  if (dietaryPreference === "Vegan") {
+    return <VeganMenu />;
+  } else if (dietaryPreference === "Gluten-Free") {
+    return <GlutenFreeMenu />;
+  } else {
+    return <Menu />;
+  }
+};
+
 
   return (
     <div className="fixed min-h-screen overflow-y-scroll">

@@ -66,14 +66,12 @@ const DietaryManagement: React.FC = () => {
 
   // Validate and format the allergies input before saving it
   const validateAllergies = (allergies: string): string => {
-    // Remove leading/trailing spaces and extra commas, enforce valid allergy format
     const cleanedAllergies = allergies
       .split(',')
       .map((allergy) => allergy.trim()) // Trim spaces around each word
       .filter((allergy) => allergy.length > 0) // Remove empty entries
       .join(', '); // Rejoin as a clean, comma-separated string
 
-    // Ensure only letters and commas are allowed (you can adjust this regex if needed)
     const validCharacters = /^[a-zA-Z\s,]+$/;
     if (!validCharacters.test(cleanedAllergies)) {
       displayMessage("Please enter only valid allergy names (letters and commas).", "error");
@@ -83,9 +81,23 @@ const DietaryManagement: React.FC = () => {
     return cleanedAllergies;
   };
 
+  // Reset form and exit edit mode
+  const resetForm = () => {
+    setSelectedPreference("");
+    setDescription("");
+    setAllergies("");
+    setEditingPreferenceId(null);
+  };
+
   const handleAddOrUpdatePreference = async () => {
     if (!userId) {
       displayMessage("User is not authenticated.", "error");
+      return;
+    }
+
+    // Validate that a preference is selected
+    if (!selectedPreference) {
+      displayMessage("Please choose a dietary preference.", "error");
       return;
     }
 
@@ -100,7 +112,6 @@ const DietaryManagement: React.FC = () => {
       (preference) => preference.userID === userId
     );
 
-    // If the user has a preference and is not editing, show an error message
     if (existingPreference && !editingPreferenceId) {
       displayMessage("You already have a dietary preference. Please update it instead of adding a new one.", "error");
       return;
@@ -110,21 +121,15 @@ const DietaryManagement: React.FC = () => {
       const newPreference = { userID: userId, type: selectedPreference, addNotes: description, allergens: cleanedAllergies };
 
       if (editingPreferenceId) {
-        // Update existing preference
         await axios.put(`${API_BASE_URL}/${editingPreferenceId}`, newPreference);
         displayMessage("Preference updated successfully!", "success");
       } else {
-        // Add new preference
         await axios.post(API_BASE_URL, newPreference);
         displayMessage("Preference added successfully!", "success");
       }
 
-      // Refresh preferences and reset form fields
       getPreferences();
-      setSelectedPreference("");
-      setDescription("");
-      setAllergies(""); // Reset allergies
-      setEditingPreferenceId(null);
+      resetForm(); // Reset the form after successful operation
     } catch (error) {
       displayMessage("An error occurred. Please try again.", "error");
     }
@@ -132,21 +137,18 @@ const DietaryManagement: React.FC = () => {
 
   const handleDeletePreference = async (preferenceId: string) => {
     try {
-      // Optimistically update the preferences list before the API call
       setDietaryPreferences((prevPreferences) =>
         prevPreferences.filter((preference) => preference.id !== preferenceId)
       );
 
-      // Now perform the delete operation
       await axios.delete(`${API_BASE_URL}/${preferenceId}`);
       
       displayMessage("Preference deleted successfully!", "success");
 
-      // Re-fetch preferences to ensure the local state is in sync with the server
-      getPreferences(); 
+      getPreferences();
+      resetForm(); // Reset form after deletion if in edit mode
     } catch (error) {
       displayMessage("Failed to delete preference. Please try again.", "error");
-      // If there is an error, refetch the preferences to recover the correct state
       getPreferences();
     }
   };
@@ -154,7 +156,7 @@ const DietaryManagement: React.FC = () => {
   const handleEditPreference = (preference: DietaryPreference) => {
     setSelectedPreference(preference.type);
     setDescription(preference.addNotes || "");
-    setAllergies(preference.allergens || ""); // Set the allergies string
+    setAllergies(preference.allergens || ""); 
     setEditingPreferenceId(preference.id || null);
   };
 
@@ -184,8 +186,8 @@ const DietaryManagement: React.FC = () => {
             <label className="block text-gray-700 mb-2">Allergies (comma separated)</label>
             <textarea
               value={allergies}
-              onChange={(e) => setAllergies(e.target.value)} // Store allergies as a string
-              placeholder="Enter allergies, separated by commas(Type 'None' if you do not have any)"
+              onChange={(e) => setAllergies(e.target.value)} 
+              placeholder="Enter allergies, separated by commas"
               className="block w-full px-4 py-2 border border-gray-300 rounded-md"
             ></textarea>
           </div>
@@ -204,6 +206,11 @@ const DietaryManagement: React.FC = () => {
           <button onClick={handleAddOrUpdatePreference} className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
             {editingPreferenceId ? "Update Preference" : "Add Preference"}
           </button>
+          {editingPreferenceId && (
+            <button onClick={resetForm} className="w-full mt-4 bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
+              Cancel
+            </button>
+          )}
         </div>
 
         {/* Right: List of dietary preferences */}

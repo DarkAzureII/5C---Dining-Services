@@ -16,7 +16,7 @@ const Menu: React.FC = () => {
   const [weeklySchedule, setWeeklySchedule] = useState<Record<string, DocumentData[][]>>({});
   const [loading, setLoading] = useState(true);
   const [showNutritionalInfo, setShowNutritionalInfo] = useState<{ [key: number]: boolean }>({});
-
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -337,53 +337,28 @@ const renderProduct = (product: DocumentData, index: number) => {
 
       {/* Weekly Schedule Table */}
       <h3 className="text-xl font-semibold mt-4 text-center">Weekly Schedule</h3>
-      <table className="table-auto w-full mt-4 border-collapse">
-        <thead>
-          <tr>
-            <th className="border px-4 py-2">Day</th>
-            <th className="border px-4 py-2">Breakfast</th>
-            <th className="border px-4 py-2">Lunch</th>
-            <th className="border px-4 py-2">Supper</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.keys(weeklySchedule).map((day: string) => (
-            <tr key={day}>
-              <td className="border px-4 py-2 text-center font-bold">{day}</td>
-              <td className="border px-4 py-2">
-                <div className="flex justify-center gap-2">
-                  {weeklySchedule[day][0].map((item: DocumentData, index: number) => (
-                    <div key={index} className="w-24">
-                      <img src={item.imageUrl || '/defaultImage.jpg'} alt={item.Name} className="w-full h-16 object-cover rounded" />
-                      <p className="text-sm text-center">{item.Name}</p>
-                    </div>
-                  ))}
-                </div>
-              </td>
-              <td className="border px-4 py-2">
-                <div className="flex justify-center gap-2">
-                  {weeklySchedule[day][1].map((item: DocumentData, index: number) => (
-                    <div key={index} className="w-24">
-                      <img src={item.imageUrl || '/defaultImage.jpg'} alt={item.Name} className="w-full h-16 object-cover rounded" />
-                      <p className="text-sm text-center">{item.Name}</p>
-                    </div>
-                  ))}
-                </div>
-              </td>
-              <td className="border px-4 py-2">
-                <div className="flex justify-center gap-2">
-                  {weeklySchedule[day][2].map((item: DocumentData, index: number) => (
-                    <div key={index} className="w-24">
-                      <img src={item.imageUrl || '/defaultImage.jpg'} alt={item.Name} className="w-full h-16 object-cover rounded" />
-                      <p className="text-sm text-center">{item.Name}</p>
-                    </div>
-                  ))}
-                </div>
-              </td>
-            </tr>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+      {Object.keys(weeklySchedule).map((day) => (
+        <div key={day} className="border rounded p-4 shadow-md bg-white">
+          <h4 className="font-bold text-center">{day}</h4>
+          {weeklySchedule[day].map((mealArray, mealIndex) => (
+            <div key={mealIndex} className="mt-2">
+              <h5 className="font-semibold">{['Breakfast', 'Lunch', 'Supper'][mealIndex]}</h5>
+              <div className="flex flex-wrap justify-center gap-2">
+                {mealArray.map((item, index) => (
+                  <div key={index} className="w-24 flex flex-col items-center">
+                    <img src={item.imageUrl || '/defaultImage.jpg'} alt={item.Name} className="w-full h-16 object-cover rounded" />
+                    <p className="text-sm text-center">{item.Name}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      ))}
+    </div>
+
+
     </div>
   );
 };

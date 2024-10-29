@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebaseConfig"; // Assuming you have Firebase initialized
+import { auth, db } from "../firebaseConfig"; 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,11 +12,13 @@ import { postData, updateData } from "../API/MealCredits";
 type LoginFormProps = {
   isActive: boolean;
   onCreateAccountClick: () => void;
+  onToggle: () => void; // New prop for toggling
 };
 
 const LoginForm: React.FC<LoginFormProps> = ({
   isActive,
   onCreateAccountClick,
+  onToggle, // Destructure the new prop
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,12 +55,10 @@ const LoginForm: React.FC<LoginFormProps> = ({
         const userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
-          // User doesn't exist, create a new document
           await postData(`MealCredits/Create/${Email}`, {
             accountName: "Main Account",
           });
 
-          // Set initial balance as 100 Kudus
           await updateData(`MealCredits/Update/${Email}/Main Account`, {
             amount: 100,
             transactionType: "moneyIn",
@@ -82,11 +82,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <div
-      className={`fixed top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                     bg-white bg-opacity-80 p-5 rounded-lg shadow-lg w-96 text-center z-10
-                     ${isActive ? "block" : "hidden"}`}
+      className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                  bg-white bg-opacity-80 p-5 rounded-lg shadow-lg max-w-xs w-full text-center z-10
+                  ${isActive ? "block" : "hidden"} md:max-w-sm`}
     >
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
+      <h2 className="text-lg md:text-xl font-bold mb-4">Login</h2>
       <form onSubmit={handleLogin} className="space-y-4">
         <input
           test-id="email-input"
@@ -118,29 +118,27 @@ const LoginForm: React.FC<LoginFormProps> = ({
           className="w-full py-2 px-4 flex items-center justify-center bg-white text-gray-700 border border-gray-300 rounded-md shadow hover:bg-gray-100 focus:outline-none transition duration-200"
         >
           <img
-            src="https://th.bing.com/th/id/OIP.Din44az7iZZDfbsrD1kfGQHaHa?rs=1&pid=ImgDetMain"
-            alt="Google Logo"
-            className="w-5 h-5 mr-2"
+            src="https://th.bing.com/th/id/OIP.HCzHcP_9sY5TPAIqHeoy5AHaHa?pid=ImgDet&rs=1"
+            alt="Google"
+            className="w-4 h-4 mr-2"
           />
-          Continue with Google
+          Sign in with Google
         </button>
-        {error && <p className="text-red-500">invalid credentials</p>}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
       </form>
-      <div className="mt-4">
-        <p>
-          Don't have an account?{" "}
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onCreateAccountClick();
-            }}
-            className="text-blue-900 font-bold hover:underline"
-          >
-            Create an account
-          </a>
-        </p>
-      </div>
+      <p className="mt-2 text-sm">
+        Don't have an account?{" "}
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onCreateAccountClick();
+          }}
+          className="text-blue-600 font-bold hover:underline"
+        >
+          Sign Up
+        </a>
+      </p>
     </div>
   );
 };

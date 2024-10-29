@@ -8,7 +8,7 @@ export default defineConfig({
       return config
     },
     supportFile: 'cypress/support/e2e.ts',
-    baseUrl: 'http://localhost:5173', // Your app's URL
+    baseUrl: 'http://localhost:5173',
   },
 
   component: {

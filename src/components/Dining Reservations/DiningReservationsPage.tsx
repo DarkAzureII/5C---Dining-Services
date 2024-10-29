@@ -6,6 +6,16 @@ import Feedback from "../Feedback System/Feedback";
 import Reservations from "./MakeReservation";
 import ReservationHistory from "../Feedback System/ReservationHistory";
 
+
+interface Reservation {
+  id: string;
+  resDate: string; // ISO string representing date
+  resTime: string;
+  venue: string;
+  userID: string;
+}
+
+
 const DiningReservationsPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("DiningReservations");
@@ -16,6 +26,22 @@ const DiningReservationsPage: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   //const [userName, setUserName] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+     // Fetch the current user's email from Firebase Auth
+     const [userId, setUserId] = useState<string | null>(null);
+
+ 
+     useEffect(() => {
+       const unsubscribe = auth.onAuthStateChanged((user) => {
+         if (user) {
+           setUserId(user.email);
+         } else {
+           setUserId(null); // User is not logged in
+         }
+       });
+       return () => unsubscribe(); // Clean up the subscription
+     }, []);
+
 
   // UseEffect to fetch user info
   useEffect(() => {
@@ -77,7 +103,19 @@ const DiningReservationsPage: React.FC = () => {
   };
 
   const handleReservationClick = () => {
-    navigate("/dining-reservations"); // Route to Dining Reservations
+    
+    const blankReservation: Reservation = {
+      id: '',
+      resDate: '',
+      resTime: '',
+      venue: '',
+      userID: ''
+    };
+
+    navigate('/dining-reservations', {
+      state: {initialData: blankReservation }
+    });
+
   };
   const handleDietaryClick = () => {
     navigate("/dietary-management"); // Route to Dietary Management

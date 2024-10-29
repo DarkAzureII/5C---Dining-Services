@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { auth } from "../../firebaseConfig"; 
 
 interface Reservation {
   id: string;
@@ -9,67 +11,99 @@ interface Reservation {
   userID: string;
 }
 
-interface ViewReservationsProps {
-  userEmail: string | null;
-}
+const API_BASE_URL = 'https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations';
 
-const ViewReservations: React.FC<ViewReservationsProps> = ({ userEmail }) => {
+
+
+const ViewReservations: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<"success" | "error" | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchReservations = async () => {
-      if (!userEmail) return;
+   // Fetch the current user's email from Firebase Auth
+   const [userId, setUserId] = useState<string | null>(null);
 
-      try {
-        const response = await fetch(
-          `https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations?userID=${userEmail}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch reservations.");
+ 
+    useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        if (user) {
+          setUserId(user.email);
+        } else {
+          setUserId(null); // User is not logged in
         }
+      });
+      return () => unsubscribe(); // Clean up the subscription
+    }, []);
 
-        const data = await response.json();
-
+    // Fetch preferences from the API when the user is authenticated
+    const fetchReservations = async () => {
+      if (!userId) return; // Exit if no user ID
+  
+      try {
+        const response = await axios.get(API_BASE_URL, { params: { userID: userId } });
+        const reservationData = response.data as Reservation[];
         const today = new Date();
-        const upcomingReservations: Reservation[] = data.filter(
+        const upcomingReservations: Reservation[] = reservationData.filter(
           (reservation: Reservation) => new Date(reservation.resDate) >= today
         );
 
         setReservations(upcomingReservations);
-        setLoading(false);
+        setLoading(false)
+
       } catch (error) {
-        console.error("Error fetching reservations: ", error);
-        setLoading(false);
+        console.error("Error fetching reservations:", error);
       }
     };
+  
+    useEffect(() => {
+      if (userId) {
+        fetchReservations(); // Fetch reservations when user is available
+      }
+    }, [userId]);
 
-    fetchReservations();
-  }, [userEmail]);
+
+
+      // Function to handle success or error message display
+      const displayMessage = (msg: string, type: "success" | "error") => {
+      setMessage(msg);
+      setMessageType(type);
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType(null);
+      }, 3000); // Clear message after 3 seconds
+  };
+
+
 
   const handleEdit = (reservation: Reservation) => {
+
+    if (!userId) {
+      displayMessage("User is not authenticated.", "error");
+      return;
+    }
+
+    alert(reservation.id);
+
     navigate('/dining-reservations', {
-      state: { reservationId: reservation.id, initialData: reservation, userEmail }
+      state: {initialData: reservation }
     });
+
   };
 
   const handleDelete = async (reservationId: string) => {
-    try {
-      const response = await fetch(
-        `https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations/${reservationId}`,
-        {
-          method: 'DELETE',
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to delete reservation.");
-      }
+    displayMessage("hello", "success");
+
+    try {
 
       setReservations(reservations.filter((reservation) => reservation.id !== reservationId));
-      alert('Reservation cancelled successfully.');
+
+      await axios.delete(`${API_BASE_URL}/${reservationId}`);
+
+      displayMessage('Reservation cancelled successfully.', "success");
+
     } catch (error: any) {
       const errorMsg = error?.message || String(error);
       alert(`Error deleting reservation: ${errorMsg}`);
@@ -77,6 +111,13 @@ const ViewReservations: React.FC<ViewReservationsProps> = ({ userEmail }) => {
   };
 
   return (
+    <div className="container mx-auto p-4 bg-white rounded-lg shadow-md" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
+    {message && (
+      <div className={`p-4 mb-4 text-white ${messageType === 'success' ? 'bg-green-500' : 'bg-red-500'} rounded`}>
+        {message}
+      </div>
+    )}
+
     <div>
       {loading ? (
         <p>Loading...</p>
@@ -113,6 +154,7 @@ const ViewReservations: React.FC<ViewReservationsProps> = ({ userEmail }) => {
       ) : (
         <p className="text-center">No upcoming reservations found.</p>
       )}
+    </div>
     </div>
   );
 };

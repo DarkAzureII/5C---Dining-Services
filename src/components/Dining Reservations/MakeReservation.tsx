@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { auth } from "../../firebaseConfig"; 
 
 interface Reservation {
   id: string;
@@ -12,15 +14,31 @@ interface Reservation {
 const MakeReservation: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { reservationId, initialData, userEmail } = location.state || {}; // Retrieve data from navigation state
+  const {initialData} = location.state || {}; // Retrieve data from navigation state
 
   // Initial state based on whether it's an edit or a new reservation
+  const [reservationId, setReservationId] = useState(initialData?.id || '');
   const [date, setDate] = useState(initialData?.resDate || '');
   const [time, setTime] = useState(initialData?.resTime || '');
   const [diningHall, setDiningHall] = useState(initialData?.venue || '');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
+   // Fetch the current user's email from Firebase Auth
+   const [userId, setUserId] = useState<string | null>(null);
+
+   useEffect(() => {
+     const unsubscribe = auth.onAuthStateChanged((user) => {
+       if (user) {
+         setUserId(user.email);
+       } else {
+         setUserId(null); // User is not logged in
+       }
+     });
+     return () => unsubscribe(); // Clean up the subscription
+   }, []);
+
+ 
   // Title and button text change dynamically based on the mode
   const formTitle = reservationId ? 'Edit Reservation' : 'Make a New Reservation';
   const buttonText = reservationId ? 'Update Reservation' : 'Reserve Now';
@@ -31,12 +49,11 @@ const MakeReservation: React.FC = () => {
     setMessage('');
 
     // Create the reservation data object dynamically using the userEmail from props or context
-    const reservationData: Reservation = {
-      id: reservationId || '', // Use empty string if no ID (for new reservations)
+    const reservationData = {
       resDate: date,
       resTime: time,
       venue: diningHall,
-      userID: userEmail, // Dynamically passed in from location state
+      userID: userId, // Dynamically passed in from location state
     };
 
     try {
@@ -44,25 +61,19 @@ const MakeReservation: React.FC = () => {
         ? `https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations/${reservationId}`
         : 'https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations';
 
-      const response = await fetch(url, {
-        method: reservationId ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reservationData),
-      });
-
-      if (response.ok) {
-        setMessage(reservationId ? 'Reservation updated successfully!' : 'Reservation created successfully!');
-        navigate('/dashboard', { state: { userEmail } }); // Navigate back to the reservations list
-      } else {
-        const errorData = await response.json();
-        setMessage(`Error: ${errorData.message}`);
+        if (reservationId) {
+          await axios.put(url, reservationData);
+          setMessage('Reservation updated successfully!');
+        } else {
+          await axios.post(url, reservationData);
+          setMessage('Reservation created successfully!');
+        }
+    
+        navigate('/dashboard', { state: { userEmail: userId } }); // Navigate back to the reservations list
+      } catch (error: any) {
+        const errorMsg = error?.response?.data?.message || error.message || "An error occurred. Please try again.";
+        setMessage(`Error: ${errorMsg}`);
       }
-    } catch (error: any) {
-      const errorMsg = error?.message || String(error);
-      setMessage(`Error: ${errorMsg}`);
-    }
 
     setLoading(false);
   };

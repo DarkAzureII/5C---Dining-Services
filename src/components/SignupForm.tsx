@@ -1,22 +1,24 @@
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { postData, updateData } from "../API/MealCredits"; // Import postData and updateData
+import { postData, updateData } from "../API/MealCredits";
 
 type SignupFormProps = {
   isActive: boolean;
-  onAlreadyHaveAccountClick: () => void;
+  onAlreadyHaveAccountClick: () => void; // Existing prop for toggling to login
+  onToggle: () => void; // New prop for toggling between forms
 };
 
 const SignupForm: React.FC<SignupFormProps> = ({
   isActive,
   onAlreadyHaveAccountClick,
+  onToggle, // Destructure the new onToggle prop
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null); // State for success message
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,39 +36,36 @@ const SignupForm: React.FC<SignupFormProps> = ({
       );
       const user = userCredential.user;
 
-      // Use email as the document ID, ensuring it's suitable for Firestore
-      const userId = user.email; // Using email as the document ID
+      const userId = user.email;
 
-      // Create account for the user with account name "Main Account"
       await postData(`MealCredits/Create/${userId}`, {
         accountName: "Main Account",
-      }); // Use userId as the document ID
+      });
 
-      // Set the initial balance to 100 Kudus as a 'moneyIn' transaction
       await updateData(`MealCredits/Update/${userId}/Main Account`, {
         amount: 100,
         transactionType: "moneyIn",
-        date: new Date().toISOString(), // Use current date
-        isDefault: true, // Set as default if applicable
+        date: new Date().toISOString(),
+        isDefault: true,
       });
 
       setSuccess("Account created successfully!");
-      setError(null); // Clear any previous error
-      // Optionally navigate to a different page or perform further actions here
+      setError(null);
     } catch (err: any) {
       setError(err.message);
-      setSuccess(null); // Clear any previous success message
+      setSuccess(null);
     }
   };
 
   return (
     <div
-      className={`fixed top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                     bg-white bg-opacity-80 p-5 rounded-lg shadow-lg w-96 text-center z-10
-                     ${isActive ? "block" : "hidden"}`}
+      className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                  bg-white bg-opacity-90 p-3 rounded-md shadow-md 
+                  w-full max-w-xs text-center z-10 sm:max-w-sm md:max-w-md
+                  ${isActive ? "block" : "hidden"}`}
     >
-      <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <h2 className="text-lg font-semibold mb-2 sm:text-xl">Sign Up</h2>
+      <form onSubmit={handleSubmit} className="space-y-2">
         <input
           test-id="email-input"
           type="email"
@@ -74,7 +73,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-1 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
         />
         <input
           test-id="password-input"
@@ -83,7 +82,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-1 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
         />
         <input
           test-id="confirm-password-input"
@@ -92,20 +91,19 @@ const SignupForm: React.FC<SignupFormProps> = ({
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
-          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-1 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
         />
         <button
           type="submit"
-          className="w-full py-2 px-4 bg-blue-900 text-white rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200"
+          className="w-full py-1 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition duration-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
         >
           Sign Up
         </button>
-        {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-500">{success}</p>}{" "}
-        {/* Display success message */}
+        {error && <p className="text-red-500 text-xs sm:text-sm">{error}</p>}
+        {success && <p className="text-green-500 text-xs sm:text-sm">{success}</p>}
       </form>
-      <div className="mt-4">
-        <p>
+      <div className="mt-2">
+        <p className="text-xs sm:text-sm">
           Already have an account?{" "}
           <a
             href="#"
@@ -118,6 +116,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
             Login
           </a>
         </p>
+       
       </div>
     </div>
   );

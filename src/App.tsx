@@ -1,35 +1,22 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginForm from "./components/LoginForm";
-import SignupForm from "./components/SignupForm";
-import HomePage from "./components/HomePage";
-import Dashboard from "./components/Dashboard";
-import MealCreditsPage from "./components/meal credits/MealCreditsPage"; // Import the Meal Credits page
-import DiningReservationsPage from "./components/Dining Reservations/DiningReservationsPage";
-import DietaryManagementPage from "./components/Dietary Management/DietaryManagementPage";
-import ReservationHistory from './components/Feedback System/ReservationHistory';
-
+import HomePage from "./components/HomePage"; // Ensure this has a default export
+import Dashboard from "./components/Dashboard"; // Ensure this has a default export
+import MealCreditsPage from "./components/meal credits/MealCreditsPage"; // Ensure this has a default export
+import DiningReservationsPage from "./components/Dining Reservations/DiningReservationsPage"; // Ensure this has a default export
+import DietaryManagementPage from "./components/Dietary Management/DietaryManagementPage"; // Ensure this has a default export
+import ReservationHistory from './components/Feedback System/ReservationHistory'; // Ensure this has a default export
+import AuthPage from "./components/AuthPage"; // Ensure this has a default export
 
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route
-          path="/login"
-          element={
-            <LoginForm isActive={true} onCreateAccountClick={() => {}} />
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <SignupForm isActive={true} onAlreadyHaveAccountClick={() => {}} />
-          }
-        />
+        <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/meal-credits" element={<MealCreditsPage />} /> {/* Add this route */}
-        <Route path="/dining-reservations" element={<DiningReservationsPage />} /> {/* Add the route for Dining Reservations */}
-        <Route path="/dietary-management" element={<DietaryManagementPage/>} /> {/* Add the route for Dietary Management*/}
+        <Route path="/meal-credits" element={<MealCreditsPage />} />
+        <Route path="/dining-reservations" element={<DiningReservationsPage />} />
+        <Route path="/dietary-management" element={<DietaryManagementPage />} />
         <Route path="/reservation-history" element={<ReservationHistory />} />
       </Routes>
     </Router>

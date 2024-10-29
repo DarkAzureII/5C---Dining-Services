@@ -15,7 +15,7 @@ const RightSidebarFooter: React.FC = () => {
   };
 
   return (
-    <div className="fixed top-[calc(60px+20%)] right-0 h-[calc(100vh-0px-20%)] w-[300px] bg-[#c7c7c7c8] text-black flex flex-col p-4">
+    <div className="fixed top-[calc(60px+20%)] right-0 h-[calc(100vh-0px-20%)] w-[200px] md:w-[250px] bg-[#c7c7c7c8] text-black flex flex-col p-4">
       
       {/* Top Section: Dining Services Description */}
       <div className="mb-4">

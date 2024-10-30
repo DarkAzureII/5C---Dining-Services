@@ -84,8 +84,6 @@ const ViewReservations: React.FC = () => {
       return;
     }
 
-    alert(reservation.id);
-
     navigate('/dining-reservations', {
       state: {initialData: reservation }
     });
@@ -94,7 +92,6 @@ const ViewReservations: React.FC = () => {
 
   const handleDelete = async (reservationId: string) => {
 
-    displayMessage("hello", "success");
 
     try {
 

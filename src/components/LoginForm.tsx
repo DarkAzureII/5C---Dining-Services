@@ -118,7 +118,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           className="w-full py-2 px-4 flex items-center justify-center bg-white text-gray-700 border border-gray-300 rounded-md shadow hover:bg-gray-100 focus:outline-none transition duration-200"
         >
           <img
-            src="https://th.bing.com/th/id/OIP.HCzHcP_9sY5TPAIqHeoy5AHaHa?pid=ImgDet&rs=1"
+            src="Google.jpg"
             alt="Google"
             className="w-4 h-4 mr-2"
           />

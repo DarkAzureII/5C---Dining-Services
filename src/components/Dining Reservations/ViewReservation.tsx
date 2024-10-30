@@ -16,7 +16,7 @@ const API_BASE_URL = 'https://appreservations-appreservations-xu5p2zrq7a-uc.a.ru
 
 
 
-const ViewReservations: React.FC = () => {
+const ViewReservations: React.FC = ({ user }) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);

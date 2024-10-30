@@ -230,26 +230,20 @@ const Dashboard: React.FC = () => {
           </button>
         </ul>
 
-      {/* Reservation History Sidebar */}
-      <div
-        className={`
-          fixed top-0 left-0 
-          transform ${showReservationHistory ? "translate-x-0" : "-translate-x-full"} 
-          transition-transform duration-500 ease-in-out 
-          w-[80%] md:w-[600px] h-full 
-          bg-gray-50 shadow-lg z-30 
-          overflow-y-auto
-        `}
-      >
-        <button
-          className="absolute top-4 right-4 text-xl text-gray-700 hover:text-gray-900"
-          onClick={() => setShowReservationHistory(false)}
-        >
-          &times;
-        </button>
-        <ReservationHistory />
-      </div>
-
+        {/* Reservation History Block */}
+        {showReservationHistory && (
+          <div className="mt-4 px-5 pb-5">
+            <div className="bg-gray-50 shadow-lg p-3 rounded-md transition-transform duration-500 ease-in-out">
+              <button
+                className="absolute top-3 right-3 text-lg text-gray-700 hover:text-gray-900"
+                onClick={() => setShowReservationHistory(false)}
+              >
+                &times;
+              </button>
+              <ReservationHistory />
+            </div>
+          </div>
+        )}
         {/* User Email and Logout Button */}
         <div className="absolute bottom-10 left-0 w-full text-center text-white">
           <div className="text-sm mb-2">Logged in as:</div>
@@ -301,14 +295,9 @@ const Dashboard: React.FC = () => {
 
       {/* Feedback Sidebar */}
       <div
-        className={`
-          fixed top-0 right-0 
-          transform ${feedbackSidebarVisible ? "translate-x-0" : "translate-x-full"} 
-          transition-transform duration-500 ease-in-out 
-          w-[300px] md:w-[400px] h-full 
-          bg-white shadow-lg z-40 
-          overflow-y-auto p-5
-        `}
+        className={`fixed top-0 right-0 w-[300px] h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-[1000] p-5 ${
+          feedbackSidebarVisible ? "translate-x-0" : "translate-x-full"
+        }`}
       >
         <button
           className="absolute top-4 right-4 text-xl text-gray-700 hover:text-gray-900"
@@ -336,33 +325,15 @@ const Dashboard: React.FC = () => {
         )}
       </div>
 
-            {/* Rate the app button - Hidden when Reservation Sidebar is Open */}
-      {!showReservationHistory && (
-        <div className="fixed bottom-4 right-4 z-50 mb-7">
-          <button
-            onClick={toggleFeedbackSidebar}
-            className="
-              bg-blue-500 
-              text-white 
-              rounded-full 
-              shadow-lg 
-              hover:bg-blue-600 
-              focus:outline-none
-              transition 
-              duration-300
-              ease-in-out
-              p-2 
-              sm:p-3 
-              md:p-4 
-              text-xs 
-              sm:text-sm 
-              md:text-base
-            "
-          >
-            {feedbackSidebarVisible ? "Close Feedback" : "Rate the app!"}
-          </button>
-        </div>
-      )}
+      {/* Rate the app button */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <button
+          onClick={toggleFeedbackSidebar}
+          className="bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none"
+        >
+          {feedbackSidebarVisible ? "Close Feedback" : "Rate the app!"}
+        </button>
+      </div>
     </div>
   );
 };

@@ -34,13 +34,7 @@ const Feedback: React.FC = () => {
   >([]); // Array to store fetched reviews
   const [userEmail, setUserEmail] = useState<string | null>(null); // Store current user's email
   const [userFeedbackExists, setUserFeedbackExists] = useState(false); // Check if user already provided feedback
-  const [userReview, setUserReview] = useState<{
-    id: string;
-    review: string;
-    rating: number;
-    timestamp: string;
-  } | null>(null); // Store user's feedback if exists
-  const [isEditing, setIsEditing] = useState(false); // New state for edit mode
+  const [userReview, setUserReview] = useState<{ review: string; rating: number; timestamp: string } | null>(null); // Store user's feedback if exists
 
   // Fetch the current authenticated user
   useEffect(() => {
@@ -59,14 +53,13 @@ const Feedback: React.FC = () => {
   const checkUserFeedback = async (email: string) => {
     try {
       const response = await fetch(
-        `https://feedback-xu5p2zrq7a-uc.a.run.app/appFeedback?userId=${encodeURIComponent(email)}`
+        `https://feedback-xu5p2zrq7a-uc.a.run.app/appFeedback?userId=${email}`
       );
       const data = await response.json();
 
       if (response.status === 200 && Array.isArray(data) && data.length > 0) {
         setUserFeedbackExists(true); // User has already submitted feedback
         setUserReview({
-          id: data[0].id, // Assuming each feedback has a unique 'id'
           review: data[0].review,
           rating: data[0].rating,
           timestamp: data[0].timestamp,
@@ -119,103 +112,52 @@ const Feedback: React.FC = () => {
         timestamp: new Date().toISOString(),
       };
 
-      let response;
-      let data;
+      const response = await fetch("https://feedback-xu5p2zrq7a-uc.a.run.app/appFeedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(feedbackData),
+      });
 
-      if (isEditing && userReview) {
-        // Update existing feedback
-        response = await fetch(`https://feedback-xu5p2zrq7a-uc.a.run.app/appFeedback/${userReview.id}`, {
-          method: "PUT", // or "PATCH" depending on your API
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(feedbackData),
-        });
-      } else {
-        // Submit new feedback
-        response = await fetch("https://feedback-xu5p2zrq7a-uc.a.run.app/appFeedback", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(feedbackData),
-        });
-      }
+      const data = await response.json();
 
-      data = await response.json();
-
-      if (response.status === 201 || response.status === 200) {
+      if (response.status === 201) {
         setReview(""); // Clear the input after submission
         setRating(null); // Clear the rating after submission
         setSubmitted(true); // Set submission state to true
         setError(""); // Clear any error
         fetchReviews(); // Refresh the reviews after submission
-
-        if (isEditing) {
-          setUserReview({
-            id: userReview!.id, // Retain the same ID
-            review: feedbackData.review,
-            rating: feedbackData.rating,
-            timestamp: feedbackData.timestamp,
-          });
-          setIsEditing(false); // Exit edit mode
-        } else {
-          setUserFeedbackExists(true); // Mark that the user has submitted feedback
-        }
+        setUserFeedbackExists(true); // Mark that the user has submitted feedback
       } else {
         console.error("Error submitting feedback:", data.message);
         setError("Error submitting feedback. Please try again.");
       }
     } catch (e) {
-      console.error("Error submitting feedback: ", e);
+      console.error("Error adding review: ", e);
       setError("Error submitting feedback. Please try again.");
     }
   };
 
-  // Handle Edit button click
-  const handleEdit = () => {
-    if (userReview) {
-      setReview(userReview.review);
-      setRating(userReview.rating);
-      setIsEditing(true);
-      setSubmitted(false);
-      setError("");
-    }
-  };
-
-  // Handle Cancel Edit
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setReview("");
-    setRating(null);
-    setError("");
-  };
-
   return (
-    <div className="p-3 bg-gray-100 rounded-lg shadow-md">
+    <div className="p-6 bg-gray-100 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Submit Feedback</h2>
 
-      {userFeedbackExists && userReview && !isEditing ? (
+      {userFeedbackExists && userReview ? (
         <div>
           <p className="text-green-600 font-semibold">
             You have already submitted feedback. Thank you!
           </p>
           <div className="bg-white p-4 rounded-lg shadow-lg mb-4">
-            <h2 className="text-xl font-bold mb-2">Your Review:</h2>
+            <h3 className="text-xl font-bold mb-4">Your Review:</h3>
             <p className="text-gray-800">{userReview.review}</p>
             <StarRating rating={userReview.rating} readOnly={true} />
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-600 mt-4">
               Date: {new Date(userReview.timestamp).toLocaleDateString()}
             </p>
           </div>
-          <button
-            onClick={handleEdit}
-            className="bg-yellow-500 text-white ml-6 px-3 py-2 rounded-lg hover:bg-yellow-600 transition duration-200"
-          >
-            Edit Feedback
-          </button>
         </div>
-      ) : submitted && !isEditing ? (
+      ) : submitted ? (
         <p className="text-green-600 font-semibold">
           Thank you for your feedback!
         </p>
@@ -244,23 +186,12 @@ const Feedback: React.FC = () => {
 
           {error && <p className="text-red-500 mb-4">{error}</p>}
 
-          <div className="flex space-x-2">
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition duration-200"
-            >
-              {isEditing ? "Update" : "Submit Feedback"}
-            </button>
-            {isEditing && (
-              <button
-                type="button"
-                onClick={handleCancelEdit}
-                className="bg-gray-500 text-white px-3 py-2 rounded-lg hover:bg-gray-600 transition duration-200"
-              >
-                Cancel
-              </button>
-            )}
-          </div>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+          >
+            Submit Feedback
+          </button>
         </form>
       )}
     </div>
@@ -268,4 +199,3 @@ const Feedback: React.FC = () => {
 };
 
 export default Feedback;
-

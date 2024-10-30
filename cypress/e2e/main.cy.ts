@@ -17,8 +17,8 @@ describe('Homepage', () => {
     
     // Check that the LoginForm is visible
     cy.get('form').within(() => {
-      cy.get('input[test-id="email-input"]').should('be.visible');
-      cy.get('input[test-id="password-input"]').should('be.visible');
+      cy.get('input[data-testid="email-input"]').should('be.visible');
+      cy.get('input[data-testid="password-input"]').should('be.visible');
       cy.get('button').contains('Login').should('be.visible');
     });
   });
@@ -29,9 +29,9 @@ describe('Homepage', () => {
     
     // Check that the SignupForm is visible
     cy.get('form').within(() => {
-      cy.get('input[test-id="email-input"]').should('be.visible'); // Adjust input fields according to SignupForm
-      cy.get('input[test-id="password-input"]').should('be.visible');
-      cy.get('input[test-id="confirm-password-input"]').should('be.visible');
+      cy.get('input[data-testid="email-input"]').should('be.visible'); // Adjust input fields according to SignupForm
+      cy.get('input[data-testid="password-input"]').should('be.visible');
+      cy.get('input[data-testid="confirm-password-input"]').should('be.visible');
       cy.get('button').contains('Sign Up').should('be.visible');
     });
   });
@@ -46,7 +46,7 @@ describe('Homepage', () => {
     });
 
     // Click "Create Account" to switch to signup
-    cy.get('a').contains('Create an account').click();
+    cy.get('a').contains('Sign Up').click();
     
     // Check that the SignupForm is visible
     cy.get('form').within(() => {
@@ -67,10 +67,11 @@ describe('Homepage', () => {
     cy.get('button').contains('Signup').click();
     
     // Now click the logo to hide all forms
-    cy.get('img[test-id="wits-logo"]').click();
+    cy.get('img[data-testid="wits-logo"]').click();
     
-    // Ensure both forms are hidden and SystemDescription is back
-    cy.get('div').contains('Enhancing Campus Life').should('be.visible');
+    cy.get('form').should('not.exist');
+
+ 
   });
 
   it('displays error message on invalid login attempt', () => {
@@ -80,14 +81,14 @@ describe('Homepage', () => {
     cy.get('button').contains('Login').click();
 
     // Type invalid credentials
-    cy.get('[test-id="email-input"]').type(invalidEmail);
-    cy.get('[test-id="password-input"]').type(invalidPassword);
+    cy.get('[data-testid="email-input"]').type(invalidEmail);
+    cy.get('[data-testid="password-input"]').type(invalidPassword);
 
     // Submit the form
     cy.get('button[type="submit"]').click();
 
     // Assert error message
-    cy.get('p.text-red-500').should('contain', 'invalid credentials');
+    cy.get('p.text-red-500').should('contain', 'invalid-credential');
   });
 
   it('can type email and password', () => {
@@ -97,12 +98,12 @@ describe('Homepage', () => {
     cy.get('button').contains('Login').click();
 
     // Type into the email input
-    cy.get('[test-id="email-input"]')
+    cy.get('[data-testid="email-input"]')
       .type(testEmail)
       .should('have.value', testEmail);
 
     // Type into the password input
-    cy.get('[test-id="password-input"]')
+    cy.get('[data-testid="password-input"]')
       .type(testPassword)
       .should('have.value', testPassword);
   });
@@ -126,8 +127,8 @@ describe('Homepage', () => {
     });
 
     // Fill out the form with valid credentials
-    cy.get('[test-id="email-input"]').type(validEmail);
-    cy.get('[test-id="password-input"]').type(validPassword);
+    cy.get('[data-testid="email-input"]').type(validEmail);
+    cy.get('[data-testid="password-input"]').type(validPassword);
 
     // Submit the form
     cy.get('button[type="submit"]').click();

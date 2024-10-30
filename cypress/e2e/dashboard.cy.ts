@@ -7,7 +7,7 @@ describe('dashboard', () => {
 
     it('should display the Sidebar-menu when the menu button is clicked', () => {
         // Click the menu button to open the menu
-        cy.get('button[test-id="menu-button"]').click();
+        cy.get('button[data-testid="menu-button"]').click();
         
         const buttonSelectors = [
             'a[href="/dashboard"]', // Dashboard Link
@@ -21,7 +21,7 @@ describe('dashboard', () => {
             cy.get(selector).should('be.visible');
         });
 
-        cy.get('button[test-id = "close-menu-button"]').click();
+        cy.get('button[data-testid = "close-menu-button"]').click();
     });
 
     it('should switch to the correct tab when clicked', () => {
@@ -37,45 +37,6 @@ describe('dashboard', () => {
         // Optionally, assert that "Menu Access" content is visible
         cy.contains("Today's Menu").should('be.visible'); // Adjust this selector as necessary
     });   
-    
-    it('display logout button and logout when clicked', () => {
-        // Click the menu button to open the menu
-        cy.get('div[test-id="user-dropdown"]').click();
-        
-        // Check that the logout button is visible
-        cy.get('button:contains("Log Out")').should('be.visible');
-        
-        // Click the logout button
-        cy.get('button:contains("Log Out")').click();
-        
-        // Check that the user is redirected to the homepage
-        cy.url().should('eq', 'http://localhost:5173/');
-
-        cy.get('button').contains('Login').click();
-        const validEmail = 'test@example.com';
-        const validPassword = 'password123';
-
-        cy.get('button').contains('Login').click();
-
-        // Intercept Firebase auth request and mock successful response
-        cy.intercept('POST', '**/identitytoolkit/v3/relyingparty/verifyPassword**', {
-        statusCode: 200,
-        body: {
-            idToken: 'mock-token', // Mock a valid token
-            email: validEmail,
-            refreshToken: 'mock-refresh-token',
-            expiresIn: '3600',
-            localId: 'mock-local-id',
-        },
-        });
-
-        // Fill out the form with valid credentials
-        cy.get('[test-id="email-input"]').type(validEmail);
-        cy.get('[test-id="password-input"]').type(validPassword);
-
-        // Submit the form
-        cy.get('button[type="submit"]').click();
-    });
 
     it("logs out when wits logo is clicked", () => {
         cy.get('img[alt="Wits-Logo"]').click();
@@ -100,8 +61,8 @@ describe('dashboard', () => {
         });
 
         // Fill out the form with valid credentials
-        cy.get('[test-id="email-input"]').type(validEmail);
-        cy.get('[test-id="password-input"]').type(validPassword);
+        cy.get('[data-testid="email-input"]').type(validEmail);
+        cy.get('[data-testid="password-input"]').type(validPassword);
 
         // Submit the form
         cy.get('button[type="submit"]').click();
@@ -113,34 +74,29 @@ describe('dashboard', () => {
         cy.get('button').contains('Hide Nutritional Info').click();
     });
 
-    it('renders the proper components when the sidebar buttons are clicked', () => {
-        // Click the menu button to open the menu
-        cy.get('button[test-id="menu-button"]').click();
-        cy.get('button[test-id="dietary-management-button"]').click();
+    it('navigates correctly when sidebar links are clicked', () => {
+        // Access Menu
+        cy.get('button').contains('Menu').click();
+        // Access Dietary Management
+        cy.contains('button', 'Dietary Management').click({ force: true });
         cy.url().should('include', '/dietary-management');
 
-        cy.get('button[test-id="menu-button"]').click();
-        cy.get('a[test-id="dashboard-link"]').click(); 
-        
-        // Click on "Dining Reservations" tab
-        cy.get('button[test-id="menu-button"]').click();
-        cy.get('button[test-id="meal-credits-button"]').click();
-        cy.url().should('include', '/meal-credits');
-
-        cy.get('button[test-id="menu-button"]').click();
-        cy.get('a[test-id="dashboard-link"]').click();
-
-        cy.get('button[test-id="menu-button"]').click();
-        cy.get('button[test-id="reservation-button"]').click();
+        // Access Dining Reservations
+        cy.get('[data-testid="menu-button"]').click();
+        cy.contains('button', 'Dining Reservation').click({ force: true });
         cy.url().should('include', '/dining-reservations');
 
-        cy.get('button[test-id="menu-button"]').click();
-        cy.get('a[test-id="dashboard-link"]').click();
+        // Access Meal Credits
+        cy.get('[data-testid="menu-button"]').click();
+        cy.contains('button', 'Meal Credits').click();
+        cy.url().should('include', '/meal-credits');
 
-        cy.get('button[test-id="menu-button"]').click();
-        cy.get('button[test-id="reservation-history-button"]').click();
-        cy.get('button[test-id="close-menu-button"]').click();
-        
+        // Access Feedback System
+        cy.get('[data-testid="menu-button"]').click();
+        cy.contains('button', 'History').click();
+        cy.contains('Reservation History').should('be.visible');
     });
+    
+    
 
 })

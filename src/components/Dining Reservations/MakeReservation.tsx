@@ -157,7 +157,7 @@ const MakeReservation: React.FC = () => {
         className="border border-gray-300 rounded-lg p-2"
         required
       >
-        <option value="">Choose a venue</option>
+        <option data-testid='diningHall-select' value="">Choose a venue</option>
         {venues.map((venueName) => (
           <option key={venueName} value={venueName}>
             {venueName}

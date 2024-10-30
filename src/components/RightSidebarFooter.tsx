@@ -33,7 +33,7 @@ const RightSidebarFooter: React.FC = () => {
         <h3 className="text-md font-semibold mb-2">Components:</h3>
         <ul className="space-y-2">
           <li>
-            <a href="/menu-access" onClick={(e) => handleLinkClick(e, "/menu-access")} className="hover:text-gray-600">
+            <a href="/menu-access" data-testid="dietary-management-link" onClick={(e) => handleLinkClick(e, "/menu-access")} className="hover:text-gray-600">
               Menu Access
             </a>
           </li>

@@ -105,6 +105,7 @@ const TrackUsage: React.FC = () => {
 
         <input
           type="number"
+          data-testid="year-input"
           value={selectedYear}
           onChange={(e) => setSelectedYear(Number(e.target.value))}
           className="border p-2"

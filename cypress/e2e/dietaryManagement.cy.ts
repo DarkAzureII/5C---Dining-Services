@@ -22,13 +22,13 @@ describe('Dietary Management', () => {
         });
 
         // Fill out the form with valid credentials
-        cy.get('[test-id="email-input"]').type(validEmail);
-        cy.get('[test-id="password-input"]').type(validPassword);
+        cy.get('[data-testid="email-input"]').type(validEmail);
+        cy.get('[data-testid="password-input"]').type(validPassword);
 
         // Submit the form
         cy.get('button[type="submit"]').click();
-        cy.get('button[test-id="menu-button"]').click();
-        cy.get('button[test-id="dietary-management-button"]').click();
+        cy.get('button[data-testid="menu-button"]').click();
+        cy.contains('button', 'Dietary Management').click({ force: true });
     })
 
     it('displays a message when there are no dietary preferences', () => {

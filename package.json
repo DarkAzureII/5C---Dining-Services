@@ -13,6 +13,7 @@
     "test:e2e": "cypress run"
   },
   "dependencies": {
+    "@testing-library/user-event": "^14.5.2",
     "axios": "^1.7.7",
     "axios-mock-adapter": "^2.0.0",
     "bootstrap": "^5.2.3",

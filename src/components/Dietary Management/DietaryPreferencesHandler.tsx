@@ -208,6 +208,7 @@ const DietaryManagement: React.FC = () => {
           Choose a preference
         </label>
         <select
+          data-testid="preference-select"
           value={selectedPreference}
           onChange={(e) => setSelectedPreference(e.target.value)}
           className={`block w-full px-4 py-2 border border-gray-300 rounded-md ${isMobile ? 'text-sm' : 'text-base'}`}

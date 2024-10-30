@@ -22,54 +22,56 @@ describe('Dining Reservations', () => {
         });
 
         // Fill out the form with valid credentials
-        cy.get('[test-id="email-input"]').type(validEmail);
-        cy.get('[test-id="password-input"]').type(validPassword);
+        cy.get('[data-testid="email-input"]').type(validEmail);
+        cy.get('[data-testid="password-input"]').type(validPassword);
 
         // Submit the form
         cy.get('button[type="submit"]').click();
-        cy.get('button[test-id="menu-button"]').click();
-        cy.get('button[test-id="reservation-button"]').click();
+        cy.get('button[data-testid="menu-button"]').click();
+        cy.contains('button', 'Dining Reservation').click({ force: true });
     })
 
-    it('should allow the user to create a new reservation', () => {
+    it('should allow the user to create, edit and cancel a reservation', () => {
         // Fill in the reservation form
-        cy.get('#date').type('2024-10-15');
-        cy.get('#time').type('18:00');
+        cy.get('#date').type('2024-10-31');
+        cy.contains('Choose a time').click({ force: true });
+        cy.get('#time').select('09:00');
         cy.get('#diningHall').select('Dining Hall 1');
     
         // Submit the form
         cy.get('button[type="submit"]').click();
     
-        //wait for a 3 seconds
+        // Wait for 3 seconds
+        cy.wait(3000);
+    
+        cy.get('button').contains('Dining Reservations').click();
+        cy.contains('Date: 10/31/2024').should('be.visible');
+        cy.contains('Time: 09:00').should('be.visible');
+        cy.contains('Venue: Dining Hall 1').should('be.visible');
+
+        cy.get('button').contains('Edit').should('exist');
+        cy.get('button').contains('Edit').click();
+
+        cy.get('#date').type('2024-10-31');
+        cy.contains('Choose a time').click({ force: true });
+        cy.get('#time').select('10:00');
+        cy.get('#diningHall').select('Dining Hall 1');
+
+        cy.get('button').contains('Update Reservation').click();
+
         cy.wait(3000);
 
         cy.get('button').contains('Dining Reservations').click();
+        cy.contains('Date: 10/31/2024').should('be.visible');
+        cy.contains('Time: 10:00').should('be.visible');
+        cy.contains('Venue: Dining Hall 1').should('be.visible');
 
         // Continuously press the "Cancel" button until it is no longer available
-        const timeout = 5000; // 10 seconds
-        const interval = 500; // Check every 500ms
-        const maxAttempts = timeout / interval;
-
-        // const clickCancelWithTimeout = (attempts : number) => {
-        //     cy.get('button').contains('Cancel').then($cancelButton => {
-        //         if ($cancelButton.length) {
-        //             // If the button exists, click it
-        //             cy.wrap($cancelButton).click();
-
-        //             // Check the number of attempts left
-        //             if (attempts < maxAttempts) {
-        //                 // Wait for the defined interval and check again
-        //                 cy.wait(interval);
-        //                 clickCancelWithTimeout(attempts + 1);
-        //             } else {
-        //                 // Fail the test if the maximum attempts have been reached
-        //                 throw new Error('Cancel button not working');
-        //             }
-        //         }
-        //     });
-        // };
-
-        // clickCancelWithTimeout(0);
-        
-      });
+        cy.get('button').contains('Cancel').should('exist'); // Ensure the button initially exists
+        cy.get('button')
+            .contains('Cancel')
+            .should('be.visible')
+            .click({ multiple: true, timeout: 5000 }); // Attempt to click until button disappears or timeout is reached
+    });
+    
 })

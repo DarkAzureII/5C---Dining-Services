@@ -271,11 +271,12 @@ const BalanceTab: React.FC = () => {
                 className="flex justify-between items-center p-4 bg-gray-100 rounded shadow"
               >
                 <span className="font-semibold">{account.name}</span>
-                <span className="text-gray-700">
+                <span data-testid = {`bal-${account.name}`} className="text-gray-700">
                   {account.balance.toFixed(2)} Kudus
                 </span>
                 <div className="flex space-x-2">
                   <button
+                    data-testid={`set-default-${account.name}`}
                     className={`text-sm px-2 py-1 rounded ${
                       account.default
                         ? "bg-blue-500 text-white"
@@ -286,6 +287,7 @@ const BalanceTab: React.FC = () => {
                     {account.default ? "Default" : "Set as Default"}
                   </button>
                   <button
+                    data-testid={`delete-${account.name}`}
                     className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                     onClick={(event) => handleDeleteAccount(event, index)}// Pass event here
                   >

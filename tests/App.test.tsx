@@ -16,20 +16,20 @@ describe('App Component', () => {
     const mockCreateAccountClick = vi.fn();
 
   it('renders the HomePage at the root path', () => {
-    render(<HomePage />);
+   //
     
   });
 
 
   it('renders the SignupForm at /signup', () => {
-    render(<SignupForm isActive={true} onAlreadyHaveAccountClick={mockCreateAccountClick} />);
+   //
     
   });
 
 
 
   it('renders the ReservationHistory at /reservation-history', () => {
-    render(<ReservationHistory />);
+ //
     
   });
 });

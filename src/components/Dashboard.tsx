@@ -10,6 +10,11 @@ import ViewReservations from "./Dining Reservations/ViewReservation";
 import ReservationHistory from "./Feedback System/ReservationHistory";
 import { useMediaQuery } from "react-responsive";
 
+interface DashboardProps {
+  user: string | null;
+  // Add other props if necessary
+}
+
 const API_BASE_URL =
   "https://appdietary-appdietary-xu5p2zrq7a-uc.a.run.app/DietaryManagement";
 

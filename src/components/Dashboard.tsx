@@ -8,6 +8,7 @@ import GlutenFreeMenu from "./Menu Access/GlutenFreeMenu";
 import Feedback from "./Feedback System/Feedback";
 import ViewReservations from "./Dining Reservations/ViewReservation";
 import ReservationHistory from "./Feedback System/ReservationHistory";
+import { useMediaQuery } from "react-responsive";
 
 const API_BASE_URL =
   "https://appdietary-appdietary-xu5p2zrq7a-uc.a.run.app/DietaryManagement";
@@ -27,7 +28,8 @@ const Dashboard: React.FC = () => {
   const [dietType, setDietType] = useState<string | null>(null); // State to manage the diet type
   const [showReservationHistory, setShowReservationHistory] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-
+  const isMobile = useMediaQuery({ maxWidth: 1025 }); // Adjust breakpoint as needed
+  const isLaptop = useMediaQuery({ minWidth: 1026 });
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user && user.email) {
@@ -172,12 +174,12 @@ const Dashboard: React.FC = () => {
       {/* Side Menu */}
       <div
         className={`fixed top-0 ${
-          menuVisible ? "left-0" : "left-[-250px]"
-        } w-[250px] md:w-[200px] h-full bg-[#0c0d43] shadow-lg transition-all duration-300 z-20`}
+          menuVisible ? "left-0" : "left-[-275px]"
+        } w-[275px] h-full bg-[#0c0d43] shadow-lg transition-all duration-300 z-20`}
       >
         <button
+          className="absolute top-4 right-4 text-2xl bg-none border-none cursor-pointer text-white"
           data-testid="close-menu-button"
-          className="absolute top-3 right-3 text-xl md:text-2xl bg-none border-none cursor-pointer text-white"
           onClick={toggleMenu}
         >
           &times;
@@ -187,19 +189,19 @@ const Dashboard: React.FC = () => {
         <a
           data-testid="dashboard-link"
           href="/dashboard"
+          className="block text-white text-lg py-2 px-4 bg-[#003080] rounded-md text-center my-12 mx-auto w-11/12 hover:bg-[#0056b3] no-underline"
           onClick={handleDashboardClick}
-          className="block text-white text-sm md:text-base py-2 px-3 bg-[#003080] rounded-md text-center my-10 mx-auto w-11/12 hover:bg-[#0056b3] no-underline"
         >
           Dashboard
         </a>
 
         {/* Line separator */}
-        <div className="w-4/5 h-px bg-gray-300 my-2 mx-auto"></div>
+        <div className="w-4/5 h-px bg-gray-300 my-2.5 mx-auto"></div>
 
-        <ul className="list-none pt-5 pb-5 px-5 mt-6">
+        <ul className="list-none pt-7 pb-7 px-7 mt-10">
           {/* Dietary Management Dropdown */}
           <button
-            className="block text-white text-xs md:text-sm py-1.5 px-2 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2"
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleDietaryClick}
           >
             Dietary Management
@@ -207,43 +209,26 @@ const Dashboard: React.FC = () => {
 
           {/* Meal Credits Button */}
           <button
-            className="block text-white text-xs md:text-sm py-1.5 px-2 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2"
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleMealCreditsClick}
           >
             Meal Credits
           </button>
-
-          {/* Dining Reservations Button */}
+          {/* Dining Reservations Dropdown */}
           <button
-            className="block text-white text-xs md:text-sm py-1.5 px-2 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2"
-            onClick={handleReservationClick}
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
+            onClick={handleReservationClick} // Use the new handler
           >
             Dining Reservation
           </button>
-
           {/* History Dropdown */}
           <button
-            className="block text-white text-xs md:text-sm py-1.5 px-2 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2"
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={toggleReservationHistory}
           >
             History
           </button>
         </ul>
-
-        {/* Reservation History Block */}
-        {showReservationHistory && (
-          <div className="mt-4 px-5 pb-5">
-            <div className="bg-gray-50 shadow-lg p-3 rounded-md transition-transform duration-500 ease-in-out">
-              <button
-                className="absolute top-3 right-3 text-lg text-gray-700 hover:text-gray-900"
-                onClick={() => setShowReservationHistory(false)}
-              >
-                &times;
-              </button>
-              <ReservationHistory />
-            </div>
-          </div>
-        )}
         {/* User Email and Logout Button */}
         <div className="absolute bottom-10 left-0 w-full text-center text-white">
           <div className="text-sm mb-2">Logged in as:</div>
@@ -265,15 +250,46 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Reservation History Side Tab */}
+      {showReservationHistory && (
+        <div
+          className={`fixed ${
+            isMobile
+              ? "top-24 left-0 w-full h-auto"
+              : "top-0 left-[275px] w-[600px] h-full"
+          } bg-gray-50 shadow-lg transition-transform duration-500 ease-in-out z-[1000]`}
+        >
+          <button
+            className={`absolute ${
+              isMobile ? "top-4 left-4" : "top-4 right-4"
+            } text-xl text-gray-700 hover:text-gray-900`}
+            onClick={() => setShowReservationHistory(false)}
+          >
+            &times;
+          </button>
+          <div className={isMobile ? "p-4 mt-2" : "h-full overflow-y-scroll"}>
+            <ReservationHistory />
+          </div>
+        </div>
+      )}
+
       {/* Tabs for the Dashboard */}
-      <div className="fixed top-36 left-64 flex w-3/4">
+      <div
+        className={`fixed ${
+          isMobile
+            ? "top-20 w-full flex flex-col items-center" // Mobile layout
+            : "top-36 left-64 flex-row w-3/4 flex" // Laptop layout
+        }`}
+      >
         {[
           { label: "Menu Access", value: "menuAccess" },
           { label: "Dining Reservations", value: "diningReservations" },
         ].map((tab) => (
           <button
             key={tab.value}
-            className={`flex-1 py-3 px-5 text-black bg-transparent transition-all duration-300 group relative ${
+            className={`${
+              isMobile ? "w-full py-2 text-sm" : "flex-1 py-3 px-5 text-base"
+            } text-black bg-transparent transition-all duration-300 group relative ${
               activeTab === tab.value ? "bg-opacity-20" : ""
             }`}
             onClick={() => openTab(tab.value)}
@@ -293,6 +309,30 @@ const Dashboard: React.FC = () => {
         ))}
       </div>
 
+      {/* Tab Content */}
+      <div
+        className={`fixed grow bg-transparent border rounded ${
+          isMobile ? "top-56 w-full" : "top-64 left-64 w-3/4"
+        } p-5 max-h-screen text-black text-center overflow-y-scroll`}
+      >
+        {activeTab === "menuAccess" && (
+          <div>
+            <h2 className={`${isMobile ? "text-xl" : "text-2xl"} font-bold`}>
+              Menu Access
+            </h2>
+            {renderMenu()}
+          </div>
+        )}
+        {activeTab === "diningReservations" && (
+          <div>
+            <h2 className={`${isMobile ? "text-xl" : "text-2xl"} font-bold`}>
+              Upcoming Reservations
+            </h2>
+            <ViewReservations user={userEmail} />
+          </div>
+        )}
+      </div>
+
       {/* Feedback Sidebar */}
       <div
         className={`fixed top-0 right-0 w-[300px] h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-[1000] p-5 ${
@@ -307,22 +347,6 @@ const Dashboard: React.FC = () => {
         </button>
         <h2>Feedback System</h2>
         <Feedback />
-      </div>
-
-      {/* Tab Content */}
-      <div className="fixed grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 max-h-screen text-black text-center overflow-y-scroll ">
-        {activeTab === "menuAccess" && (
-          <div className="">
-            <h2 className="text-2xl font-bold">Menu Access</h2>
-            {renderMenu()}
-          </div>
-        )}
-        {activeTab === "diningReservations" && (
-          <div>
-            <h2 className="text-2xl font-bold">Upcoming Reservations</h2>
-            <ViewReservations userEmail={userEmail} />
-          </div>
-        )}
       </div>
 
       {/* Rate the app button */}

@@ -6,7 +6,7 @@ import Feedback from "../Feedback System/Feedback";
 import Reservations from "./MakeReservation";
 import ReservationHistory from "../Feedback System/ReservationHistory";
 
-
+import { useMediaQuery } from "react-responsive";
 interface Reservation {
   id: string;
   resDate: string; // ISO string representing date
@@ -14,7 +14,6 @@ interface Reservation {
   venue: string;
   userID: string;
 }
-
 
 const DiningReservationsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,22 +25,21 @@ const DiningReservationsPage: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   //const [userName, setUserName] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const isMobile = useMediaQuery({ maxWidth: 1025 }); // Adjust breakpoint as needed
+  const isLaptop = useMediaQuery({ minWidth: 1026 });
+  // Fetch the current user's email from Firebase Auth
+  const [userId, setUserId] = useState<string | null>(null);
 
-     // Fetch the current user's email from Firebase Auth
-     const [userId, setUserId] = useState<string | null>(null);
-
- 
-     useEffect(() => {
-       const unsubscribe = auth.onAuthStateChanged((user) => {
-         if (user) {
-           setUserId(user.email);
-         } else {
-           setUserId(null); // User is not logged in
-         }
-       });
-       return () => unsubscribe(); // Clean up the subscription
-     }, []);
-
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.email);
+      } else {
+        setUserId(null); // User is not logged in
+      }
+    });
+    return () => unsubscribe(); // Clean up the subscription
+  }, []);
 
   // UseEffect to fetch user info
   useEffect(() => {
@@ -103,19 +101,17 @@ const DiningReservationsPage: React.FC = () => {
   };
 
   const handleReservationClick = () => {
-    
     const blankReservation: Reservation = {
-      id: '',
-      resDate: '',
-      resTime: '',
-      venue: '',
-      userID: ''
+      id: "",
+      resDate: "",
+      resTime: "",
+      venue: "",
+      userID: "",
     };
 
-    navigate('/dining-reservations', {
-      state: {initialData: blankReservation }
+    navigate("/dining-reservations", {
+      state: { initialData: blankReservation },
     });
-
   };
   const handleDietaryClick = () => {
     navigate("/dietary-management"); // Route to Dietary Management
@@ -138,7 +134,7 @@ const DiningReservationsPage: React.FC = () => {
         className="fixed inset-0 w-full h-full object-cover"
         style={{ minHeight: "100vh", minWidth: "100vw" }} // Ensures the image fills the viewport
       />
-     
+
       {/* Navigation Bar */}
       <div className="flex items-center px-4 sm:px-5 py-2 bg-transparent fixed top-0 w-full z-10 shadow-md">
         <button
@@ -171,15 +167,14 @@ const DiningReservationsPage: React.FC = () => {
           </div>
         </div>
       </div>
-{/* Side Menu */}
-<div
+      {/* Side Menu */}
+      <div
         className={`fixed top-0 ${
-          menuVisible ? "left-0" : "left-[-250px]"
-        } w-[250px] md:w-[200px] h-full bg-[#0c0d43] shadow-lg transition-all duration-300 z-20`}
+          menuVisible ? "left-0" : "left-[-275px]"
+        } w-[275px] h-full bg-[#0c0d43] shadow-lg transition-all duration-300 z-20`}
       >
         <button
-          test-id="close-menu-button"
-          className="absolute top-3 right-3 text-xl md:text-2xl bg-none border-none cursor-pointer text-white"
+          className="absolute top-4 right-4 text-2xl bg-none border-none cursor-pointer text-white"
           onClick={toggleMenu}
         >
           &times;
@@ -189,18 +184,18 @@ const DiningReservationsPage: React.FC = () => {
         <a
           test-id="dashboard-link"
           href="/dashboard"
-          className="block text-white text-sm md:text-base py-2 px-3 bg-[#003080] rounded-md text-center my-10 mx-auto w-11/12 hover:bg-[#0056b3] no-underline"
+          className="block text-white text-lg py-2 px-4 bg-[#003080] rounded-md text-center my-12 mx-auto w-11/12 hover:bg-[#0056b3] no-underline"
         >
           Dashboard
         </a>
 
         {/* Line separator */}
-        <div className="w-4/5 h-px bg-gray-300 my-2 mx-auto"></div>
+        <div className="w-4/5 h-px bg-gray-300 my-2.5 mx-auto"></div>
 
-        <ul className="list-none pt-5 pb-5 px-5 mt-6">
+        <ul className="list-none pt-7 pb-7 px-7 mt-10">
           {/* Dietary Management Dropdown */}
           <button
-            className="block text-white text-xs md:text-sm py-1.5 px-2 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2"
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleDietaryClick}
           >
             Dietary Management
@@ -208,43 +203,26 @@ const DiningReservationsPage: React.FC = () => {
 
           {/* Meal Credits Button */}
           <button
-            className="block text-white text-xs md:text-sm py-1.5 px-2 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2"
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={handleMealCreditsClick}
           >
             Meal Credits
           </button>
-
-          {/* Dining Reservations Button */}
+          {/* Dining Reservations Dropdown */}
           <button
-            className="block text-white text-xs md:text-sm py-1.5 px-2 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2"
-            onClick={handleReservationClick}
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
+            onClick={handleReservationClick} // Use the new handler
           >
             Dining Reservation
           </button>
-
           {/* History Dropdown */}
           <button
-            className="block text-white text-xs md:text-sm py-1.5 px-2 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2"
+            className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md text-center shadow-md w-full mx-auto no-underline hover:bg-[#0056b3] mb-2.5"
             onClick={toggleReservationHistory}
           >
             History
           </button>
         </ul>
-
-        {/* Reservation History Block */}
-        {showReservationHistory && (
-          <div className="mt-4 px-5 pb-5">
-            <div className="bg-gray-50 shadow-lg p-3 rounded-md transition-transform duration-500 ease-in-out">
-              <button
-                className="absolute top-3 right-3 text-lg text-gray-700 hover:text-gray-900"
-                onClick={() => setShowReservationHistory(false)}
-              >
-                &times;
-              </button>
-              <ReservationHistory />
-            </div>
-          </div>
-        )}
         {/* User Email and Logout Button */}
         <div className="absolute bottom-10 left-0 w-full text-center text-white">
           <div className="text-sm mb-2">Logged in as:</div>
@@ -265,10 +243,32 @@ const DiningReservationsPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Reservation History Side Tab */}
+      {showReservationHistory && (
+        <div className="fixed top-0 left-[275px] w-[600px] h-full bg-gray-50 shadow-lg transition-transform duration-500 ease-in-out z-[1000] translate-x-0">
+          <button
+            className="absolute top-4 right-4 text-xl text-gray-700 hover:text-gray-900"
+            onClick={() => setShowReservationHistory(false)}
+          >
+            &times;
+          </button>
+          <ReservationHistory />
+        </div>
+      )}
+
       {/* Tabs for the Dashboard */}
-      <div className="fixed top-36 left-64 flex w-3/4 ">
+      <div
+        className={`fixed ${
+          isMobile
+            ? "top-20 w-full flex flex-col items-center" // Mobile layout
+            : "top-36 left-64 flex-row w-3/4" // Laptop layout
+        }`}
+      >
         <button
-          className={`flex-1 py-3 px-5 text-black transition-all duration-300 group relative ${
+          className={`${
+            isMobile ? "w-full py-2 text-sm" : "flex-1 py-3 px-5 text-base"
+          } transition-all duration-300 group relative ${
             activeTab === "DiningReservations"
               ? "bg-transparent bg-opacity-20"
               : ""
@@ -288,8 +288,13 @@ const DiningReservationsPage: React.FC = () => {
           ></span>
         </button>
       </div>
+
       {/* Tab Content */}
-      <div className="fixed grow bg-transparent border rounded top-64 left-64 w-3/4 p-5 text-black text-center overflow-y-scroll max-h-[80vh]">
+      <div
+        className={`fixed border rounded ${
+          isMobile ? "top-56 w-full" : "top-64 left-64 w-3/4"
+        } p-5 text-black text-center overflow-y-scroll max-h-[80vh]`}
+      >
         {activeTab === "DiningReservations" && <Reservations />}
       </div>
     </div>

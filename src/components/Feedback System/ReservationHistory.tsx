@@ -6,23 +6,28 @@ interface Reservation {
   id: string;
   resDate: string;
   resTime: string;
-  userId: string;  // Now using email
+  userId: string; // Using email
   venue: string;
+  review?: string;
+  rating?: number;
+  mealOption?: string;
+  mealDetails?: string;
+  reviewId?: string;
 }
 
 const ReservationHistory: React.FC = () => {
-  const [review, setReview] = useState('');
-  const maxReviewLength = 1000;
-  const [expandedReservation, setExpandedReservation] = useState<string | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [submittedReviews, setSubmittedReviews] = useState<{ [key: string]: string }>({});
+  const [expandedReservation, setExpandedReservation] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null); // Store user email
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Form States
+  const [review, setReview] = useState('');
   const [rating, setRating] = useState<number | null>(null);
-  const [submittedRatings, setSubmittedRatings] = useState<{ [key: string]: number }>({});
   const [mealOption, setMealOption] = useState('');
   const [mealDetails, setMealDetails] = useState('');
-  const [submittedMealOptions, setSubmittedMealOptions] = useState<{ [key: string]: string }>({});
-  const [submittedMealDetails, setSubmittedMealDetails] = useState<{ [key: string]: string }>({});
-  const [userEmail, setUserEmail] = useState<string | null>(null); // Store user email
+  const maxReviewLength = 1000;
 
   // API URL
   const apiUrl = 'https://feedback-xu5p2zrq7a-uc.a.run.app';
@@ -39,32 +44,74 @@ const ReservationHistory: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // Fetch reservations from the API using the user's email and sort them in descending order
+  // Fetch reservations and their reviews
   useEffect(() => {
-    const fetchReservations = async () => {
-      if (!userEmail) return; // Wait for the userEmail to be set
+    const fetchData = async () => {
+      if (!userEmail) return;
+
+      setLoading(true);
+      setError(null);
 
       try {
-        const response = await fetch(`${apiUrl}/userReservations?userId=${userEmail}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch reservations");
+        // Fetch Reservations
+        const reservationsResponse = await fetch(`${apiUrl}/userReservations?userID=${encodeURIComponent(userEmail)}`);
+        if (!reservationsResponse.ok) {
+          throw new Error('Failed to fetch reservations');
         }
-        const data = await response.json();
+
+        const data = await reservationsResponse.json();
+        const reservationsData = Array.isArray(data) ? data : [];
 
         // Sort reservations by date and time in descending order
-        const sortedReservations = data.sort((a: Reservation, b: Reservation) => {
-          const dateA = new Date(`${a.resDate}T${a.resTime}:00`);
-          const dateB = new Date(`${b.resDate}T${b.resTime}:00`);
-          return dateB.getTime() - dateA.getTime(); // Sort by descending order
+        const sortedReservations = reservationsData.sort((a: Reservation, b: Reservation) => {
+          const dateA = new Date(`${a.resDate}T${a.resTime}:00`).getTime();
+          const dateB = new Date(`${b.resDate}T${b.resTime}:00`).getTime();
+          return dateB - dateA; // Descending order
         });
 
-        setReservations(sortedReservations);
-      } catch (error) {
-        console.error("Error fetching reservations: ", error);
+        // Fetch Reviews for All Reservations in Parallel
+        const reviewsPromises = sortedReservations.map(async (reservation) => {
+          const reviewResponse = await fetch(`${apiUrl}/reservationReviews/${encodeURIComponent(reservation.id)}`);
+          if (!reviewResponse.ok) {
+            console.error(`Failed to fetch review for reservation ID: ${reservation.id}`);
+            return { reservationId: reservation.id, reviewData: null };
+          }
+          const reviewData = await reviewResponse.json();
+          return { reservationId: reservation.id, reviewData };
+        });
+
+        const reviewsResults = await Promise.all(reviewsPromises);
+
+        // Map reviews to reservations
+        const reservationsWithReviews = sortedReservations.map((reservation) => {
+          const reviewResult = reviewsResults.find((r) => r.reservationId === reservation.id);
+          if (reviewResult && Array.isArray(reviewResult.reviewData) && reviewResult.reviewData.length > 0) {
+            // Assuming only one review per reservation per user
+            const userReview = reviewResult.reviewData.find((r: any) => r.userID === userEmail);
+            if (userReview) {
+              return {
+                ...reservation,
+                review: userReview.review,
+                rating: userReview.rating,
+                mealOption: userReview.mealOption,
+                mealDetails: userReview.mealDetails,
+                reviewId: userReview.id,
+              };
+            }
+          }
+          return reservation;
+        });
+
+        setReservations(reservationsWithReviews);
+      } catch (err: any) {
+        console.error('Error fetching data:', err);
+        setError(err.message || 'An unexpected error occurred.');
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchReservations();
+    fetchData();
   }, [userEmail]);
 
   const handleReviewChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -97,8 +144,13 @@ const ReservationHistory: React.FC = () => {
   };
 
   const handleSubmitReview = async (reservationId: string) => {
-    if (review.trim() === "" || rating == null || mealOption === "" || mealDetails == "") {
-      alert("Review, rating, meal option, and meal details cannot be empty.");
+    if (!userEmail) {
+      alert('User not authenticated.');
+      return;
+    }
+
+    if (review.trim() === '' || rating == null || mealOption === '' || mealDetails.trim() === '') {
+      alert('Review, rating, meal option, and meal details cannot be empty.');
       return;
     }
 
@@ -110,7 +162,7 @@ const ReservationHistory: React.FC = () => {
         },
         body: JSON.stringify({
           reservationId,
-          userId: userEmail, // Use email as the user identifier
+          userID: userEmail, // Use email as the user identifier
           review,
           rating,
           mealOption,
@@ -120,37 +172,34 @@ const ReservationHistory: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to submit review');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit review');
       }
 
       const data = await response.json();
 
-      setSubmittedReviews((prevReviews) => ({
-        ...prevReviews,
-        [reservationId]: review,
-      }));
-
-      setSubmittedMealOptions((prevMealOptions) => ({
-        ...prevMealOptions,
-        [reservationId]: mealOption,
-      }));
-
-      setSubmittedMealDetails((prevMealDetails) => ({
-        ...prevMealDetails,
-        [reservationId]: mealDetails,
-      }));
-
-      setSubmittedRatings((prevRatings) => ({
-        ...prevRatings,
-        [reservationId]: rating,
-      }));
+      // Update the reservation with the new review
+      setReservations((prevReservations) =>
+        prevReservations.map((res) =>
+          res.id === reservationId
+            ? {
+                ...res,
+                review: review,
+                rating: rating,
+                mealOption: mealOption,
+                mealDetails: mealDetails,
+                reviewId: data.review.id,
+              }
+            : res
+        )
+      );
 
       resetForm(); // Reset after submission
       setExpandedReservation(null); // Close the review form after submission
-      alert("Review submitted successfully!");
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      alert("Failed to submit the review.");
+      alert('Review submitted successfully!');
+    } catch (error: any) {
+      console.error('Error submitting review:', error);
+      alert(error.message || 'Failed to submit the review.');
     }
   };
 
@@ -169,11 +218,11 @@ const ReservationHistory: React.FC = () => {
 
   const renderStars = (currentRating: number) => {
     return (
-      <div className="flex justify-center">
+      <div className="flex justify-center space-x-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <span
             key={star}
-            className={`cursor-pointer text-2xl ${star <= currentRating ? 'text-yellow-500' : 'text-gray-400'}`}
+            className={`cursor-pointer text-xl ${star <= currentRating ? 'text-yellow-500' : 'text-gray-400'}`}
             onClick={() => setRating(star)} // Set the clicked star's rating
           >
             {star <= currentRating ? '★' : '☆'}
@@ -185,11 +234,11 @@ const ReservationHistory: React.FC = () => {
 
   const displaySubmittedRatingStars = (submittedRating: number) => {
     return (
-      <div className="flex justify-center">
+      <div className="flex justify-center space-x-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <span
             key={star}
-            className={`text-2xl ${star <= submittedRating ? 'text-yellow-500' : 'text-gray-400'}`}
+            className={`text-xl ${star <= submittedRating ? 'text-yellow-500' : 'text-gray-400'}`}
           >
             {star <= submittedRating ? '★' : '☆'}
           </span>
@@ -198,121 +247,166 @@ const ReservationHistory: React.FC = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <div className="p-4 mt-4 h-full">
+        <p className="text-center">Loading reservations...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 mt-4 h-full">
+        <p className="text-center text-red-500">Error: {error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-5 h-full">
-      <div className="py-2 px-4 mb-4 text-center rounded" style={{ backgroundColor: '#0c0d43', color: 'white' }}>
-        <h2 className="text-2xl font-bold">Reservation History</h2>
+    <div className="p-4 mt-4 h-full">
+      <div className="py-1 px-3 mb-4 text-center rounded bg-[#0c0d43] text-white">
+        <h2 className="text-xl font-bold">Reservation History</h2>
       </div>
 
-      {/* Scrollable reservation list */}
-      <div className="overflow-y-auto max-h-[500px]"> 
-        <table className="w-full table-auto border-collapse">
+      {/* Responsive table container */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-fixed border-collapse text-xs">
           <thead>
             <tr className="bg-gray-200">
-              <th className="border px-4 py-2">Date</th>
-              <th className="border px-4 py-2">Time</th>
-              <th className="border px-4 py-2">Venue</th>
-              <th className="border px-4 py-2">Actions</th>
+              <th className="border px-2 py-1 w-1/5">Date</th>
+              <th className="border px-2 py-1 w-1/6">Time</th>
+              <th className="border px-2 py-1 w-1/3">Venue</th>
+              <th className="border px-2 py-1 w-1/4">Actions</th>
             </tr>
           </thead>
           <tbody>
             {reservations.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center py-4">No reservations found</td>
+                <td colSpan={4} className="text-center py-2">
+                  No reservations found
+                </td>
               </tr>
             ) : (
               reservations.map((reservation) => (
                 <React.Fragment key={reservation.id}>
-                  <tr>
-                    <td className="border px-4 py-2">{formatDate(reservation.resDate)}</td>
-                    <td className="border px-4 py-2">{reservation.resTime}</td>
-                    <td className="border px-4 py-2">
-                      {submittedMealOptions[reservation.id] 
-                        ? `${submittedMealOptions[reservation.id]} at ${reservation.venue}`
+                  <tr className="hover:bg-gray-100">
+                    <td className="border px-1 py-1 break-words">
+                      {format(new Date(reservation.resDate), 'MMM d, yyyy')}
+                    </td>
+                    <td className="border px-1 py-1 text-center">
+                      {reservation.resTime}
+                    </td>
+                    <td className="border px-1 py-1 break-words">
+                      {reservation.mealOption
+                        ? `${reservation.mealOption} at ${reservation.venue}`
                         : reservation.venue}
                     </td>
-                    <td className="border px-4 py-2">
-                      {submittedReviews[reservation.id] ? (
+                    <td className="border px-2 py-1 text-center">
+                      {reservation.review ? (
                         <button
-                          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+                          className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition text-xs"
                           onClick={() => toggleReviewForm(reservation.id)}
                         >
-                          {expandedReservation === reservation.id ? 'Close Review' : 'See Review'}
+                          {expandedReservation === reservation.id ? 'Close' : 'View'}
                         </button>
                       ) : (
                         canReviewReservation(reservation.resDate, reservation.resTime) ? (
                           <button
-                            className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition"
+                            className="bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 transition text-xs"
                             onClick={() => toggleReviewForm(reservation.id)}
                           >
-                            {expandedReservation === reservation.id ? 'Close Review' : 'Review'}
+                            {expandedReservation === reservation.id ? 'Close' : 'Review'}
                           </button>
                         ) : (
-                          <span className="text-gray-500">Review not available</span>
+                          <span className="text-gray-500 text-xs">Not Available</span>
                         )
                       )}
                     </td>
                   </tr>
 
                   {expandedReservation === reservation.id && (
-                    submittedReviews[reservation.id] ? (
+                    reservation.review ? (
                       <tr>
-                        <td colSpan={4} className="border px-4 py-2 bg-gray-100">
-                          <strong>Your Review:</strong>
-                          <p className="mt-2">{submittedReviews[reservation.id]}</p>
-                          <strong>Your Meal Option: </strong>
-                          <p className="mt-2">{submittedMealOptions[reservation.id]}</p>
-                          <strong>Meal Details: </strong>
-                          <p className="mt-2">{submittedMealDetails[reservation.id]}</p>
-                          <strong>Your Rating: </strong>
-                          <div>{displaySubmittedRatingStars(submittedRatings[reservation.id] || 0)}</div>
+                        <td colSpan={4} className="border px-2 py-1 bg-gray-100">
+                          <div className="space-y-1">
+                            <div>
+                              <strong>Your Review:</strong>
+                              <p className="mt-0.5 break-words">{reservation.review}</p>
+                            </div>
+                            <div>
+                              <strong>Meal Option:</strong>
+                              <p className="mt-0.5 break-words">{reservation.mealOption}</p>
+                            </div>
+                            <div>
+                              <strong>Meal Details:</strong>
+                              <p className="mt-0.5 break-words">{reservation.mealDetails}</p>
+                            </div>
+                            <div>
+                              <strong>Your Rating:</strong>
+                              <div>{displaySubmittedRatingStars(reservation.rating || 0)}</div>
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     ) : (
                       <tr>
-                        <td colSpan={4} className="border px-4 py-2 bg-gray-100">
-                          <textarea
-                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Write your review here..."
-                            value={review}
-                            onChange={handleReviewChange}
-                            rows={4}
-                            maxLength={maxReviewLength}
-                          />
-                          <div className="my-2">
-                            <strong>Meal Option:</strong>
-                            <select
-                              value={mealOption}
-                              onChange={handleMealOptionChange}
-                              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                              <option value="">Select a meal option</option>
-                              <option value="Breakfast">Breakfast</option>
-                              <option value="Lunch">Lunch</option>
-                              <option value="Dinner">Dinner</option>
-                            </select>
-                          </div>
-                          <div className="my-2">
-                            <strong>Elaborate on your meal:</strong>
-                            <textarea
-                              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              placeholder="Describe what you had (e.g., main dish, sides, drinks)..."
-                              value={mealDetails}
-                              onChange={handleMealDetailsChange}
-                              rows={3}
-                            />
-                          </div>
-                          <div className="my-2">
-                            <strong>Rating:</strong>
-                            {renderStars(rating || 0)}
-                          </div>
-                          <div className="text-right mt-2">
-                            <button
-                              className="bg-green-500 text-white py-1 px-4 rounded-lg hover:bg-green-600 transition"
-                              onClick={() => handleSubmitReview(reservation.id)}
-                            >
-                              Submit Review
-                            </button>
+                        <td colSpan={4} className="border px-2 py-1 bg-gray-100">
+                          <div className="flex flex-col space-y-2">
+                            {/* Review Textarea */}
+                            <div className="w-full">
+                              <textarea
+                                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                placeholder="Write your review here..."
+                                value={review}
+                                onChange={handleReviewChange}
+                                rows={2}
+                                maxLength={maxReviewLength}
+                              />
+                            </div>
+
+                            {/* Meal Option Select */}
+                            <div className="w-full">
+                              <label className="block text-xs font-semibold mb-1">Meal Option:</label>
+                              <select
+                                value={mealOption}
+                                onChange={handleMealOptionChange}
+                                className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
+                              >
+                                <option value="">Select a meal option</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                              </select>
+                            </div>
+
+                            {/* Meal Details */}
+                            <div className="w-full">
+                              <label className="block text-xs font-semibold mb-1">Elaborate on your meal:</label>
+                              <textarea
+                                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-xs"
+                                placeholder="Describe what you had (e.g., main dish, sides, drinks)..."
+                                value={mealDetails}
+                                onChange={handleMealDetailsChange}
+                                rows={2}
+                              />
+                            </div>
+
+                            {/* Rating */}
+                            <div className="w-full">
+                              <label className="block text-xs font-semibold mb-1">Rating:</label>
+                              {renderStars(rating || 0)}
+                            </div>
+
+                            {/* Submit Button */}
+                            <div className="w-full text-right">
+                              <button
+                                className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600 transition text-xs"
+                                onClick={() => handleSubmitReview(reservation.id)}
+                              >
+                                Submit
+                              </button>
+                            </div>
                           </div>
                         </td>
                       </tr>

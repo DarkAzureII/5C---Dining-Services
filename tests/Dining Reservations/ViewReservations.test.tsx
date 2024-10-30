@@ -4,7 +4,7 @@
 
 import React from "react";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import ViewReservations from "../../src/components/Dining Reservations/ViewReservation"; // Adjust the import path as needed
 import { auth } from "../../src/firebaseConfig";
 import axios from "axios";
@@ -52,7 +52,7 @@ describe("ViewReservations Component", () => {
     vi.resetAllMocks();
 
     // Mock auth.onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser); // Simulate an authenticated user
       return () => {}; // Mock unsubscribe function
     });

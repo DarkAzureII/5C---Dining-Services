@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import DietaryManagement from '../../src/components/Dietary Management/DietaryPreferencesHandler';
 import { auth } from '../../src/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +33,7 @@ describe('DietaryManagement', () => {
     vi.resetAllMocks();
 
     // Default mock implementation: unauthenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(null);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -74,7 +74,7 @@ describe('DietaryManagement', () => {
 
   it('sets user state correctly when authenticated', () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -93,7 +93,7 @@ describe('DietaryManagement', () => {
 
   it('fetches and displays dietary preferences when user is authenticated', async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -161,7 +161,7 @@ describe('DietaryManagement', () => {
 
   it('handles form validation for allergies input', async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -200,7 +200,7 @@ describe('DietaryManagement', () => {
 
   it('handles editing an existing dietary preference', async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -288,7 +288,7 @@ describe('DietaryManagement', () => {
 
   it('handles deleting a dietary preference successfully', async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -338,7 +338,7 @@ describe('DietaryManagement', () => {
 
   it('displays error message when API fetch fails', async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -359,7 +359,7 @@ describe('DietaryManagement', () => {
 
   it('prevents adding a preference when a preference already exists', async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -403,7 +403,7 @@ describe('DietaryManagement', () => {
 
   it('handles canceling an edit operation correctly', async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });

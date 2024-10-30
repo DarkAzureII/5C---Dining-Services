@@ -333,7 +333,7 @@ const Dashboard: React.FC = () => {
             <h2 className={`${isMobile ? "text-xl" : "text-2xl"} font-bold`}>
               Upcoming Reservations
             </h2>
-            <ViewReservations user={userEmail} />
+            <ViewReservations />
           </div>
         )}
       </div>

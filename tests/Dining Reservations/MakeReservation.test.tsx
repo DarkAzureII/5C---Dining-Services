@@ -4,7 +4,7 @@
 
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import MakeReservation from "../../src/components/Dining Reservations/MakeReservation"; // Adjust the import path as needed
 import { auth } from "../../src/firebaseConfig";
 import axios from "axios";
@@ -50,7 +50,7 @@ describe("MakeReservation Component", () => {
     vi.resetAllMocks();
 
     // Mock auth.onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser); // Simulate an authenticated user
       return () => {}; // Mock unsubscribe function
     });
@@ -369,7 +369,7 @@ describe("MakeReservation Component", () => {
 
   it("prevents reservation creation when user is not authenticated", async () => {
     // Mock user not authenticated
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(null); // Simulate unauthenticated user
       return () => {};
     });

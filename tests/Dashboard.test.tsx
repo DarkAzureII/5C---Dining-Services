@@ -3,7 +3,7 @@
 
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import Dashboard from "../src/components/Dashboard";
 import { auth } from "../src/firebaseConfig";
 import axios from "axios";
@@ -68,7 +68,7 @@ describe("Dashboard", () => {
     vi.resetAllMocks();
 
     // Set default mock implementations
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(null); // Default to unauthenticated
       return vi.fn(); // Mock unsubscribe function
     });
@@ -101,7 +101,7 @@ describe("Dashboard", () => {
 
   it("sets user state correctly when authenticated", () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -126,7 +126,7 @@ describe("Dashboard", () => {
 
   it("handles logout correctly", async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -191,7 +191,7 @@ describe("Dashboard", () => {
 
   it("fetches user dietary preference and renders appropriate menu", async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -218,7 +218,7 @@ describe("Dashboard", () => {
 
   it("renders default Menu when no dietary preference is found", async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });
@@ -314,7 +314,7 @@ describe("Dashboard", () => {
 
   it("renders Dining Reservations tab correctly", async () => {
     // Mock onAuthStateChanged to simulate authenticated user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Mock unsubscribe function
     });

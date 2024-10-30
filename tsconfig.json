@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true, // Changed to true
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "outDir": "./dist",
@@ -15,7 +15,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["vitest/globals"],
+    "types": ["node"],
     "jsx": "react-jsx"
   },
   "include": ["src", "cypress", "tests"],

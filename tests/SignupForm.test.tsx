@@ -23,7 +23,7 @@ vi.mock('../src/API/MealCredits', () => ({
 // 2. Now import modules after mocks
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import SignupForm from '../src/components/SignupForm';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { postData, updateData } from '../src/API/MealCredits';
@@ -101,15 +101,15 @@ describe('SignupForm', () => {
 
   it('handles successful sign up', async () => {
     // Mock successful Firebase auth
-    (createUserWithEmailAndPassword as unknown as vi.Mock).mockResolvedValue({
+    (createUserWithEmailAndPassword as unknown as Mock).mockResolvedValue({
       user: {
         email: 'test@example.com',
       },
     });
 
     // Mock successful API calls
-    (postData as unknown as vi.Mock).mockResolvedValue({});
-    (updateData as unknown as vi.Mock).mockResolvedValue({});
+    (postData as unknown as Mock).mockResolvedValue({});
+    (updateData as unknown as Mock).mockResolvedValue({});
 
     renderComponent();
 
@@ -145,7 +145,7 @@ describe('SignupForm', () => {
 
   it('handles Firebase auth error', async () => {
     // Mock Firebase auth failure
-    (createUserWithEmailAndPassword as unknown as vi.Mock).mockRejectedValue({
+    (createUserWithEmailAndPassword as unknown as Mock).mockRejectedValue({
       message: 'Firebase auth error',
     });
 
@@ -177,14 +177,14 @@ describe('SignupForm', () => {
 
   it('handles API postData error', async () => {
     // Mock successful Firebase auth
-    (createUserWithEmailAndPassword as unknown as vi.Mock).mockResolvedValue({
+    (createUserWithEmailAndPassword as unknown as Mock).mockResolvedValue({
       user: {
         email: 'test@example.com',
       },
     });
 
     // Mock postData failure
-    (postData as unknown as vi.Mock).mockRejectedValue({
+    (postData as unknown as Mock).mockRejectedValue({
       message: 'postData error',
     });
 
@@ -219,17 +219,17 @@ describe('SignupForm', () => {
 
   it('handles API updateData error', async () => {
     // Mock successful Firebase auth
-    (createUserWithEmailAndPassword as unknown as vi.Mock).mockResolvedValue({
+    (createUserWithEmailAndPassword as unknown as Mock).mockResolvedValue({
       user: {
         email: 'test@example.com',
       },
     });
 
     // Mock successful postData
-    (postData as unknown as vi.Mock).mockResolvedValue({});
+    (postData as unknown as Mock).mockResolvedValue({});
 
     // Mock updateData failure
-    (updateData as unknown as vi.Mock).mockRejectedValue({
+    (updateData as unknown as Mock).mockRejectedValue({
       message: 'updateData error',
     });
 

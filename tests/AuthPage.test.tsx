@@ -23,7 +23,7 @@ vi.mock('../src/firebaseConfig', () => ({
   // 2. Now import modules after mocks
   import React from 'react';
   import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-  import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+  import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
   import AuthPage from '../src/components/AuthPage';
   import { auth } from '../src/firebaseConfig';
   
@@ -81,7 +81,7 @@ vi.mock('../src/firebaseConfig', () => ({
       });
   
       // Mock onAuthStateChanged to call with null user
-      (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+      (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
         callback(null);
         return vi.fn(); // Mock unsubscribe function
       });
@@ -109,7 +109,7 @@ vi.mock('../src/firebaseConfig', () => ({
       });
   
       // Mock onAuthStateChanged to call with null user
-      (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+      (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
         callback(null);
         return vi.fn(); // Mock unsubscribe function
       });
@@ -130,7 +130,7 @@ vi.mock('../src/firebaseConfig', () => ({
       });
   
       // Mock onAuthStateChanged to call with null user
-      (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+      (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
         callback(null);
         return vi.fn(); // Mock unsubscribe function
       });
@@ -151,7 +151,7 @@ vi.mock('../src/firebaseConfig', () => ({
       });
   
       // Mock onAuthStateChanged to call with mockUser
-      (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+      (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
         callback(mockUser);
         return vi.fn(); // Mock unsubscribe function
       });
@@ -178,7 +178,7 @@ vi.mock('../src/firebaseConfig', () => ({
       });
   
       // Mock onAuthStateChanged to call with null user
-      (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+      (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
         callback(null);
         return vi.fn(); // Mock unsubscribe function
       });
@@ -213,7 +213,7 @@ vi.mock('../src/firebaseConfig', () => ({
       });
   
       // Mock onAuthStateChanged to call with null user
-      (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+      (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
         callback(null);
         return vi.fn(); // Mock unsubscribe function
       });
@@ -248,7 +248,7 @@ vi.mock('../src/firebaseConfig', () => ({
       });
   
       // Mock onAuthStateChanged to call with null user
-      (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+      (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
         callback(null);
         return vi.fn(); // Mock unsubscribe function
       });
@@ -283,7 +283,7 @@ vi.mock('../src/firebaseConfig', () => ({
       });
   
       // Mock onAuthStateChanged to call with null user
-      (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+      (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
         callback(null);
         return vi.fn(); // Mock unsubscribe function
       });
@@ -321,7 +321,7 @@ vi.mock('../src/firebaseConfig', () => ({
       });
   
       // Mock onAuthStateChanged to call with null user
-      (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+      (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
         callback(null);
         return vi.fn(); // Mock unsubscribe function
       });

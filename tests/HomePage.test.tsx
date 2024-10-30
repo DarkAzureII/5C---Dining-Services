@@ -21,7 +21,7 @@ vi.mock('react-router-dom', () => ({
 // 2. Now import modules after mocks
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import HomePage from '../src/components/HomePage';
 import { auth } from '../src/firebaseConfig';
 
@@ -38,7 +38,7 @@ describe('HomePage', () => {
 
   it('renders all main elements correctly', () => {
     // Mock onAuthStateChanged to immediately call the callback with mockUser
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Return a mock unsubscribe function
     });
@@ -73,7 +73,7 @@ describe('HomePage', () => {
 
   it('handles login button click and navigates to login page', () => {
     // Mock onAuthStateChanged to call with null user (not authenticated)
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(null);
       return vi.fn(); // Return a mock unsubscribe function
     });
@@ -90,7 +90,7 @@ describe('HomePage', () => {
 
   it('handles signup button click and navigates to signup page', () => {
     // Mock onAuthStateChanged to call with null user (not authenticated)
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(null);
       return vi.fn(); // Return a mock unsubscribe function
     });
@@ -107,7 +107,7 @@ describe('HomePage', () => {
 
   it('renders correctly when user is not authenticated', () => {
     // Mock onAuthStateChanged to call the callback with null user
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(null);
       return vi.fn(); // Return a mock unsubscribe function
     });
@@ -128,7 +128,7 @@ describe('HomePage', () => {
 
   it('calls handleLogoClick when logo is clicked', () => {
     // Mock onAuthStateChanged to call with mockUser
-    (auth.onAuthStateChanged as unknown as vi.Mock).mockImplementation((callback) => {
+    (auth.onAuthStateChanged as unknown as Mock).mockImplementation((callback: (user: any) => void) => {
       callback(mockUser);
       return vi.fn(); // Return a mock unsubscribe function
     });

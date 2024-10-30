@@ -40,7 +40,7 @@ vi.mock('react-router-dom', () => ({
 // 2. Now import modules after mocks
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import LoginForm from '../src/components/LoginForm';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -96,7 +96,7 @@ describe('LoginForm', () => {
 
   it('handles form submission successfully with email and password', async () => {
     // Mock successful signInWithEmailAndPassword
-    (signInWithEmailAndPassword as unknown as vi.Mock).mockResolvedValue({
+    (signInWithEmailAndPassword as unknown as Mock).mockResolvedValue({
       user: {
         email: 'test@example.com',
       },
@@ -126,7 +126,7 @@ describe('LoginForm', () => {
 
   it('handles form submission failure with email and password', async () => {
     // Mock failed signInWithEmailAndPassword
-    (signInWithEmailAndPassword as unknown as vi.Mock).mockRejectedValue(new Error('Invalid credentials'));
+    (signInWithEmailAndPassword as unknown as Mock).mockRejectedValue(new Error('Invalid credentials'));
 
     renderComponent();
 
@@ -155,19 +155,19 @@ describe('LoginForm', () => {
     const mockUser = {
       email: 'googleuser@example.com',
     };
-    (signInWithPopup as unknown as vi.Mock).mockResolvedValue({
+    (signInWithPopup as unknown as Mock).mockResolvedValue({
       user: mockUser,
     });
 
     // Mock getDoc to return non-existent user document
-    (doc as unknown as vi.Mock).mockReturnValue('docRef');
-    (getDoc as unknown as vi.Mock).mockResolvedValue({
+    (doc as unknown as Mock).mockReturnValue('docRef');
+    (getDoc as unknown as Mock).mockResolvedValue({
       exists: () => false,
     });
 
     // Mock postData and updateData
-    (postData as unknown as vi.Mock).mockResolvedValue({});
-    (updateData as unknown as vi.Mock).mockResolvedValue({});
+    (postData as unknown as Mock).mockResolvedValue({});
+    (updateData as unknown as Mock).mockResolvedValue({});
 
     renderComponent();
 
@@ -199,13 +199,13 @@ describe('LoginForm', () => {
     const mockUser = {
       email: 'existinguser@example.com',
     };
-    (signInWithPopup as unknown as vi.Mock).mockResolvedValue({
+    (signInWithPopup as unknown as Mock).mockResolvedValue({
       user: mockUser,
     });
 
     // Mock getDoc to return existing user document
-    (doc as unknown as vi.Mock).mockReturnValue('docRef');
-    (getDoc as unknown as vi.Mock).mockResolvedValue({
+    (doc as unknown as Mock).mockReturnValue('docRef');
+    (getDoc as unknown as Mock).mockResolvedValue({
       exists: () => true,
     });
 
@@ -229,7 +229,7 @@ describe('LoginForm', () => {
 
   it('handles Google sign-in failure', async () => {
     // Mock signInWithPopup to reject
-    (signInWithPopup as unknown as vi.Mock).mockRejectedValue(new Error('Google sign-in failed'));
+    (signInWithPopup as unknown as Mock).mockRejectedValue(new Error('Google sign-in failed'));
 
     renderComponent();
 
@@ -248,7 +248,7 @@ describe('LoginForm', () => {
 
   it('handles missing user email after Google sign-in', async () => {
     // Mock signInWithPopup to return a user without email
-    (signInWithPopup as unknown as vi.Mock).mockResolvedValue({
+    (signInWithPopup as unknown as Mock).mockResolvedValue({
       user: {},
     });
 

@@ -91,7 +91,7 @@ describe('dashboard', () => {
         cy.intercept('POST', '**/identitytoolkit/v3/relyingparty/verifyPassword**', {
         statusCode: 200,
         body: {
-            idToken: 'mock-token', // Mock a valid token
+            idToken: 'mock-token',
             email: validEmail,
             refreshToken: 'mock-refresh-token',
             expiresIn: '3600',

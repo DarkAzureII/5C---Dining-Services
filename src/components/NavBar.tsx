@@ -18,7 +18,7 @@ const NavBar: React.FC<NavBarProps> = ({ onLoginClick, onSignupClick, onLogoClic
       {/* Logo and Title */}
       <div className="flex items-center space-x-2 sm:space-x-3">
         <img
-          test-id="wits-logo"
+          data-testid="wits-logo"
           src="/wits-logo.png"
           alt="Wits-Logo"
           onClick={onLogoClick}

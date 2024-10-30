@@ -91,6 +91,11 @@ const Dashboard: React.FC = () => {
     navigate("/dietary-management");
   };
 
+  const handleDashboardClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault(); // Prevent default link behavior
+    navigate("/dashboard"); // Use navigate to change route
+  };
+
   const toggleReservationHistory = () => {
     setShowReservationHistory(!showReservationHistory);
   };
@@ -134,7 +139,7 @@ const Dashboard: React.FC = () => {
       {/* Navigation Bar */}
       <div className="flex items-center px-4 sm:px-5 py-2 bg-transparent fixed top-0 w-full z-10 shadow-md">
         <button
-          test-id="menu-button"
+          data-testid="menu-button"
           className="text-xl sm:text-2xl bg-none border-none cursor-pointer mr-4 sm:mr-5"
           onClick={toggleMenu}
         >
@@ -171,7 +176,7 @@ const Dashboard: React.FC = () => {
         } w-[250px] md:w-[200px] h-full bg-[#0c0d43] shadow-lg transition-all duration-300 z-20`}
       >
         <button
-          test-id="close-menu-button"
+          data-testid="close-menu-button"
           className="absolute top-3 right-3 text-xl md:text-2xl bg-none border-none cursor-pointer text-white"
           onClick={toggleMenu}
         >
@@ -180,8 +185,9 @@ const Dashboard: React.FC = () => {
 
         {/* Dashboard Link */}
         <a
-          test-id="dashboard-link"
+          data-testid="dashboard-link"
           href="/dashboard"
+          onClick={handleDashboardClick}
           className="block text-white text-sm md:text-base py-2 px-3 bg-[#003080] rounded-md text-center my-10 mx-auto w-11/12 hover:bg-[#0056b3] no-underline"
         >
           Dashboard
@@ -250,7 +256,7 @@ const Dashboard: React.FC = () => {
             <span>{userEmail || "Guest"}</span>
           </div>
           <button
-            test-id="logout-button"
+            data-testid="logout-button"
             onClick={handleLogoutClick}
             className="block text-white text-sm py-2 px-4 bg-[#003080] rounded-md w-4/5 mx-auto hover:bg-[#0056b3]"
           >

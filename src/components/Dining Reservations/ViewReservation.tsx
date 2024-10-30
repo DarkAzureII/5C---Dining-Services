@@ -4,6 +4,7 @@ import axios from 'axios';
 import { auth } from "../../firebaseConfig"; 
 
 interface Reservation {
+  user: string | null;
   id: string;
   resDate: string; // ISO string representing date
   resTime: string;

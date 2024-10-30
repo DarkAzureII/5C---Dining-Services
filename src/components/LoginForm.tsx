@@ -89,7 +89,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
       <h2 className="text-lg md:text-xl font-bold mb-4">Login</h2>
       <form onSubmit={handleLogin} className="space-y-4">
         <input
-          test-id="email-input"
+          data-testid="email-input"
           type="email"
           placeholder="Email"
           value={email}
@@ -98,7 +98,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
-          test-id="password-input"
+          data-testid="password-input"
           type="password"
           placeholder="Password"
           value={password}

@@ -38,7 +38,7 @@ jobs:
       
       # Run Vitest unit tests
       - name: Run Vitest
-        run: npm run test # Ensure this script exists in your package.json
+        run: npm run test
 
       # Run Cypress end-to-end tests
       - name: Cypress run
